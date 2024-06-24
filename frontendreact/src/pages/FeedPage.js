@@ -2,7 +2,10 @@ import React from 'react';
 import Header from '../components/header.js'
 import Footer from '../components/footer.js';
 import UserInputForm
- from '../components/userInputForm.js';
+from '../components/userInputForm.js';
+import '../components/messageBoard/messageBoard.js'
+import MessageBoard from '../components/messageBoard/messageBoard.js';
+
 function FeedPage() {
   return (
     <div>
@@ -11,6 +14,7 @@ function FeedPage() {
       </header>
       <main>
         <UserInputForm/>
+        <MessageBoard />
       </main>
       <footer>
         <Footer />

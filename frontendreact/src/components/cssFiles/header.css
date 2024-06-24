@@ -1,0 +1,38 @@
+.header {
+    background-color: #222831;
+    color: #fff;
+  }
+
+.header .navbar-brand {
+    width: 100px;
+    height: 55px;
+    color: #F7F6F6;
+    font-weight: bold;
+    font-size: 30px;
+    text-align: left;
+}
+
+.header .nav-link {
+    color: #FFFFFF;
+    font-weight: 400;
+    font-size: 16px;
+    text-align: right;
+}
+
+/* Style the hamburger icon and its border */
+.header .navbar-toggler {
+    border-color: #fff;
+  }
+  
+  .header .navbar-toggler-icon {
+    display: none; /* Reduces extra space ontop of the hamberger icon */
+  }
+
+.header .navbar-toggler::after {
+    content: "\2630"; /* Unicode for the hamburger icon */
+    color: #fff; 
+    font-size: 20px; 
+    display: block;
+    line-height: 20px;
+    padding: 5px;
+  }

@@ -1,7 +1,8 @@
 import React from 'react';
 import Header from '../components/header.js'
 import Footer from '../components/footer.js';
-
+import UserInputForm
+ from '../components/userInputForm.js';
 function FeedPage() {
   return (
     <div>
@@ -9,8 +10,7 @@ function FeedPage() {
         <Header />
       </header>
       <main>
-        <h1>Feed Page</h1>
-        <p>This is the feed page</p>
+        <UserInputForm/>
       </main>
       <footer>
         <Footer />

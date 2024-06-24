@@ -40,7 +40,7 @@ jobs:
         # Use sshpass to SSH into the server, checkout & pull main, restart docker containers with new updated code
         ssh -o StrictHostKeyChecking=no -i summer-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_IP_ADDRESS }} "
           echo 'Starting deployment' &&
-          cd project/project2-fomo &&
+          cd /project2-fomo &&
           git checkout main &&
           git pull origin main &&
           docker-compose down &&

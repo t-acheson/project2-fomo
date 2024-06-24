@@ -1,0 +1,53 @@
+#
+# GENERATE gRPC CLIENT
+#
+
+# Use the official Golang image as a base image
+FROM golang:latest as client
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Install the protobuf compiler
+RUN apt-get update && apt-get install -y protobuf-compiler
+
+# Install protoc-gen-go and protoc-gen-go-grpc plugins
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest \
+    && go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+# Set GOPATH 
+ENV GOPATH /go
+
+# Add the Go bin directory to PATH
+ENV PATH=$PATH:go/bin
+
+# Copy the .proto files into the container
+COPY ./recommendations.proto .
+
+# Create grpc-client directory
+RUN mkdir grpc-client
+
+# Generate Go code from .proto file
+RUN protoc --proto_path=. recommendations.proto --go_out=./grpc-client --go-grpc_out=./grpc-client
+
+#
+# GENERATE gRPC server
+#
+
+# Use official Python image as base
+FROM python:latest as server
+
+# Set working directory in container
+WORKDIR /app
+
+# pip install necessary dependencies
+RUN pip3 install grpcio-tools
+
+# Create grpc-server directory
+RUN mkdir grpc-server
+
+# Copy proto file again
+COPY ./recommendations.proto .
+
+# Generate python code from .proto file
+RUN python3 -m grpc_tools.protoc --proto_path=. --python_out=./grpc-server --pyi_out=./grpc-server --grpc_python_out=./grpc-server recommendations.proto

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+// ! WARNING:THIS MAY HAVE TO BE EDITED IN THE FUTURE
+option go_package=".";
+
+// The recommendation service definition
+service Recommendation {
+	// Calling send a calculates a recommendation
+	rpc SendRecommendation (RecommendationRequest) returns (RecommendationReply) {}
+}
+
+// Request format for Python gRPC server
+message RecommendationRequest {
+	string datetime = 1; //Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must be from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z inclusive.
+	string category = 2;
+}
+
+// Reply format from to Go stub/client
+message RecommendationReply {
+	string name = 1;
+	int32 id = 2;
+	float lat = 3;
+	float lng = 4;
+}

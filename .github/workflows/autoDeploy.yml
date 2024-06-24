@@ -15,6 +15,16 @@ jobs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0 #checks out full repo
+        
+    # Decode the Base64 encoded PEM file from the secret
+    - name: Decode summer-key.pem
+      run: echo "${{ secrets.SUMMER_KEY_BASE64 }}" | base64 --decode > summer-key.pem
+      shell: bash
+      
+    # Set correct permissions for the decoded PEM file
+    - name: Set permissions for summer-key.pem
+      run: chmod 400 summer-key.pem
+      shell: bash
 
 # this installs sshpass to allow passing the password non-interactively 
     - name: Install SSH client 
@@ -22,13 +32,13 @@ jobs:
 
     - name: SSH and deploy
       env:
-        SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+        # SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
         SSH_IP_ADDRESS: ${{ secrets.SSH_IP_ADDRESS }}
         
       run: |
         # Use sshpass to SSH into the server, checkout & pull main, restart docker containers with new updated code
-        sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_IP_ADDRESS }} "
+        ssh -o StrictHostKeyChecking=no -i summer-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_IP_ADDRESS }} "
           echo 'Starting deployment' &&
           cd project/project2-fomo &&
           git checkout main &&

@@ -2,15 +2,15 @@ import React from 'react';
 import Header from '../components/header.js'
 import Footer from '../components/footer.js';
 
-function MapPage() {
+function HomePage() {
   return (
-    <div className="Landing">
+    <div>
       <main>
-        <h1>map Page</h1>
-        <p>This is the map page</p>
+        <h1>Home Page</h1>
+        <p>This is the home page</p>
       </main>
     </div>
   );
 }
 
-export default MapPage;
+export default HomePage;

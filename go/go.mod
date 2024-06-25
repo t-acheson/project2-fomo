@@ -3,8 +3,8 @@ module backend
 go 1.22
 
 require (
-	github.com/golang/mock v1.6.0
 	github.com/gorilla/sessions v1.2.2
+	github.com/lib/pq v1.10.9
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.34.2
 )

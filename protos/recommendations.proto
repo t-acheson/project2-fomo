@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-// ! WARNING:THIS MAY HAVE TO BE EDITED IN THE FUTURE
 option go_package=".";
 
 // The recommendation service definition

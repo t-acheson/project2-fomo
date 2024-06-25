@@ -1,7 +1,7 @@
 # Create client files
 docker build -t go-gen --target client .
 docker create --name temp-go go-gen
-docker cp temp-go:/app/grpc-client/. ../go/grpc-client/
+docker cp temp-go:/app/grpc-client/. ../go/grpc-client
 docker rm -f temp-go
 docker image rm go-gen
 

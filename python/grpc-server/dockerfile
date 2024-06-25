@@ -17,4 +17,4 @@ COPY *.py .
 EXPOSE 50051
 
 # Set command to run server
-CMD ["python3", "recommendations_server.py"]
+CMD ["python3", "-u", "recommendations_server.py"]

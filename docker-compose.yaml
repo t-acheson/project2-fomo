@@ -3,6 +3,8 @@ services:
   go-server:
     container_name: go_server
     build: go/.
+    depends_on:
+      - grpc
     ports:
       - 80:80
 

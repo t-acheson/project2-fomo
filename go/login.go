@@ -1,7 +1,6 @@
 package main
 
 import (
-  //"log"
   "os"
   "database/sql"
   "fmt"
@@ -22,15 +21,15 @@ type dbStruct struct {
 func connectToPostgres() *sql.DB {
   // Create an instance of dbStruct
   dbLogin := dbStruct{
-    host: "localhost",
+    host: "postgres",
     port: 5432,
-    user: os.Getenv("PG_EMAIL"),
-    password: os.Getenv("PG_PASSWORD"),
+    user: os.Getenv("POSTGRES_USER"),
+    password: os.Getenv("POSTGRES_PASSWORD"),
     dbname: "main",
   }
 
   // Create login input
-  pgInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s", dbLogin.host, dbLogin.port, dbLogin.user, dbLogin.password, dbLogin.dbname)  
+  pgInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", dbLogin.host, dbLogin.port, dbLogin.user, dbLogin.password, dbLogin.dbname)  
  
   // Attempt to establish a database connection. Panic on error
   db, err := sql.Open("postgres", pgInfo)

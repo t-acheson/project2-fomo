@@ -23,15 +23,18 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	// Give the gRPC server a few seconds to open
-	time.Sleep(5 * time.Second)
+	// Give the gRPC server a second to open
+	time.Sleep(1 * time.Second)
 
 	//Test the gRPC server
 	testRecommend()
 
+	// Give postgres a few seconds to open
+	time.Sleep(5 * time.Second)
+
 	//Connects to Postgres/PostGIS db
-	//db := connectToPostgres()
-	//defer db.Close()
+	db := connectToPostgres()
+	defer db.Close()
 
 	//Set up HTTP handler at root URL
 	http.HandleFunc("/", handler)

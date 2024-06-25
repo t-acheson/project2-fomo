@@ -7,6 +7,9 @@ services:
       - grpc
     ports:
       - 80:80
+    environment:
+      POSTGRES_USER: ${PG_USERNAME}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
 
   # gRPC server
   grpc:

@@ -4,3 +4,4 @@ testing agin
 again 
 grpc didn't run as i was impatient, testing agin 
 again :) 
+testing go test 

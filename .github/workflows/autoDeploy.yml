@@ -30,6 +30,13 @@ jobs:
     - name: Install SSH client 
       run: sudo apt-get update && sudo apt-get install -y sshpass
 
+# Install Docker Compose
+    - name: Install Docker Compose
+      run: |
+        sudo curl -L "https://github.com/docker/compose/releases/download/2.12.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+        docker-compose --version
+        
     - name: SSH and deploy
       env:
         SSH_USERNAME: ${{ secrets.SSH_USERNAME }}

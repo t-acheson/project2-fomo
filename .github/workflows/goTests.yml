@@ -27,7 +27,7 @@ jobs:
     - name: Change directory to Go project
       run: |
         ls
-        cd project2-fomo/go
+        cd go
         ls
         go mod tidy
           

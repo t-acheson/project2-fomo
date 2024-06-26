@@ -2,7 +2,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'; // for the additional matchers
-import Footer from './Footer'; // adjust the path if necessary
+import Footer from '../components/footer';
 
 // Start of Footer test
 test('renders footer with copyright info', () => {

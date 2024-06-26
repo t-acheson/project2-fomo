@@ -1,0 +1,43 @@
+package main
+
+import (
+	"fmt"      //Formatted I/O
+	"log"      //Logging errors
+	"net/http" //HTTP server
+	"time" 
+
+	"github.com/gorilla/sessions" //Session management
+)
+
+// Struct to hold user session data
+type User struct {
+	UserID string
+}
+
+// Define a global session store
+var store = sessions.NewCookieStore([]byte("sampleKey"))
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	//Writes a response to a HTTP request to the HTTP response writer, w.
+	fmt.Fprintf(w, "Go server running")
+}
+
+func main() {
+	// Give the gRPC server a second to open
+	time.Sleep(1 * time.Second)
+
+	//Test the gRPC server
+	testRecommend()
+
+	// Give postgres a few seconds to open
+	time.Sleep(5 * time.Second)
+
+	//Connects to Postgres/PostGIS db
+	db := connectToPostgres()
+	defer db.Close()
+
+	//Set up HTTP handler at root URL
+	http.HandleFunc("/", handler)
+	//Start HTTP server on port 80. If server fails to start, log fatal error
+	log.Fatal(http.ListenAndServe(":80", nil))
+}

@@ -19,16 +19,16 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.20'
-    - name: Find correct directory
-      run:  
-        cd project2-fomo
-        cd go
-    
-    - name: Ensure Go modules are up to date
-      run: go mod tidy
+
+
+    - name: Change directory to Go project
+      run: |
+        cd project2-fomo/go
+        ls
+        go mod tidy 
           
     - name: Build
-      run: go build -v 
+      run: go build -v ./...
 
     - name: Test
-      run: go test -v 
+      run: go test -v ./...

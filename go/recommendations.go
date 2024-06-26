@@ -15,7 +15,7 @@ import (
 
 // Command line flags
 var (
-	tls                = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP") // Specify if TLS should be used
+	tlsFlag                = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP") // Specify if TLS should be used
 	caFile             = flag.String("ca_file", "", "The file containing the CA root cert file") // Specify path of CA root cert file
 	serverAddr         = flag.String("addr", "grpc:50051", "The server address in the format of host:port")
 	serverHostOverride = flag.String("server_host_override", "localhost", "The server name used to verify the hostname returned by the TLS handshake")
@@ -39,7 +39,7 @@ func printRecommendation(client pb.RecommendationClient, request *pb.Recommendat
 func testRecommend() {
   flag.Parse() // Parse command line flags
   var opts []grpc.DialOption
-  if *tls { // Configure gRPC dial options
+  if *tlsFlag { // Configure gRPC dial options
 		if *caFile == "" {
 			//*caFile = data.Path("x509/ca_cert.pem")
 			log.Fatalf("ca_file must be provided when tls is enabled")

@@ -14,6 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        ref: main
+        fetch-depth: 0 
 
     - name: Set up Go
       uses: actions/setup-go@v4
@@ -23,7 +26,7 @@ jobs:
 
     - name: Change directory to Go project
       run: |
-        cd ~/project2-fomo/go
+        cd project2-fomo/go
         ls
         go mod tidy
           

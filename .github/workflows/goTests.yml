@@ -13,35 +13,37 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: main
-        fetch-depth: 0 
+      - name: Clear Go test cache
+        run: go clean -testcache
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0 
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.22'
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
 
 
-    - name: Change directory to Go project
-      run: |
-        cd go
-        ls
-        go mod tidy
-          
-    # - name: Initialize Go module
-    #   run: go mod init backend
-
-    # - name: Install dependencies
-    #   run: go mod download
-
-    - name: Build
-      run: |
-        cd go
-        go build -v
-
-    - name: Test
-      run: |
-        cd go
-        go test -v .
+      - name: Change directory to Go project
+        run: |
+          cd go
+          ls
+          go mod tidy
+            
+      # - name: Initialize Go module
+      #   run: go mod init backend
+  
+      # - name: Install dependencies
+      #   run: go mod download
+  
+      - name: Build
+        run: |
+          cd go
+          go build -v
+  
+      - name: Test
+        run: |
+          cd go
+          go test -v .

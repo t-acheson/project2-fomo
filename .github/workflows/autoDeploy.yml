@@ -48,6 +48,6 @@ jobs:
           export PG_USERNAME=$PG_USERNAME &&
           export PG_PASSWORD=$PG_PASSWORD &&
           export PG_DATABASE=$PG_DATABASE &&
-          /usr/bin/docker-compose down &&
-          /usr/bin/docker-compose up --build -d
+          /usr/local/bin/docker-compose down &&
+          /usr/local/bin/docker-compose up --build -d
           "

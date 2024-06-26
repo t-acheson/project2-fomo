@@ -1,4 +1,10 @@
+# POSTGRES WEATHER SCRAPER
 
+#TODO timezone for Datetime; in code converts to NY timezone, prints out correctly and populates mySQL correctly
+#TODO contd: Datetime does not retain conversion when pulled into Postgres - I don't know why
+
+#! This code creates a database called summer and a table called weather_NY
+#! This may need to be removed when putting on server
 import json
 import psycopg2  # Import psycopg2 for PostgreSQL
 import requests
@@ -33,7 +39,7 @@ connection = psycopg2.connect(
 # Create cursor object - with previous connection
 cursor = connection.cursor()
 
-# Create new database/schema named "summer" - if it doesn't already exist
+#! Create new database/schema named "summer" - if it doesn't already exist
 cursor.execute("SELECT 1 FROM pg_catalog.pg_database WHERE datname = 'summer'")
 exists = cursor.fetchone()
 if not exists:
@@ -51,7 +57,7 @@ connection = psycopg2.connect(
     dbname="summer"
 )
 
-# Create cursor object - with above database connection
+#! Create cursor object - with above database connection
 cursor = connection.cursor()
 
 # Create table for New York weather data
@@ -83,9 +89,11 @@ except Exception as e:
     # Print out error message
     print(e)
 
+# start : function to extract relevant weather variables from API and commit to database
 def weather_to_db(text):
     weather = json.loads(text)
     
+    #TODO
     # Need to get datetime in New York - just datetime = Irish time
     ny_tz = pytz.timezone('America/New_York')  # Looking for New York timezone
     now = datetime.datetime.now(ny_tz)
@@ -123,8 +131,10 @@ def weather_to_db(text):
     vals = (now, weather_main, temperature_celsius, feels_celsius, wind_speed, wind_degrees, pressure, humidity, clouds, rain_1h, rain_3h, snow_1h, snow_3h)
     cursor.execute("INSERT INTO weather_NY VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", vals)
     connection.commit() 
+# end : weather variables extraction and commit to database function
 
-# Defining main function to call weather_to_db
+
+# start : Defining main function to call weather API and weather_to_db function
 def main():
     while True:  # Start infinite loop
         try:
@@ -142,5 +152,7 @@ def main():
         # time.sleep(5*60) #every 5 mins
         time.sleep(1*60)  # for testing
     return
+# end : main function
+
 
 main()

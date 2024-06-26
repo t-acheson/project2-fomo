@@ -29,12 +29,6 @@ jobs:
         cd go
         ls
         go mod tidy
-          
-    # - name: Initialize Go module
-    #   run: go mod init backend
-
-    # - name: Install dependencies
-    #   run: go mod download
 
     - name: Build
       run: |

@@ -30,14 +30,18 @@ jobs:
         ls
         go mod tidy
           
-    - name: Initialize Go module
-      run: go mod init backend
+    # - name: Initialize Go module
+    #   run: go mod init backend
 
-    - name: Install dependencies
-      run: go mod download
+    # - name: Install dependencies
+    #   run: go mod download
 
     - name: Build
-      run: go build -v .
+      run: |
+        cd go
+        go build -v
 
     - name: Test
-      run: go test -v .
+      run: |
+        cd go
+        go test -v .

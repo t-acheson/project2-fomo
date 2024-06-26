@@ -23,6 +23,9 @@ jobs:
       run:  
         cd project2-fomo
         cd go
+    
+    - name: Ensure Go modules are up to date
+      run: go mod tidy
           
     - name: Build
       run: go build -v ./...

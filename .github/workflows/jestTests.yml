@@ -21,12 +21,11 @@ jobs:
       - name: Change directory to frontendreact
         run: cd frontendreact && ls -l
 
-      - name: Clean npm cache and install dependencies
+      - name: Clean npm cache and reinstall dependencies
         run: |
           npm cache clean --force
-          npm cache verify
           rm -rf node_modules
-          npm ci --ignore-scripts  # Ignore scripts to avoid potential issues
+          npm install --legacy-peer-deps --ignore-scripts --no-audit
 
       - name: Run tests
         run: |

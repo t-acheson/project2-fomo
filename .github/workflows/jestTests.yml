@@ -19,19 +19,14 @@ jobs:
           node-version: '14'  # Adjust Node.js version as needed
 
       - name: Change directory to frontendreact
-        run: cd frontendreact && ls -l  # Verify directory contents for debugging
+        run: cd frontendreact && ls -l
 
-      - name: Clean npm cache
+      - name: Clean npm cache and install dependencies
         run: |
           npm cache clean --force
           npm cache verify
-
-      - name: Install dependencies
-        run: |
-          cd frontendreact
           npm ci --ignore-scripts  # Ignore scripts to avoid potential issues
 
       - name: Run tests
         run: |
-          cd frontendreact
           npm test

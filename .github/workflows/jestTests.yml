@@ -17,14 +17,13 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14'  # Adjust Node.js version as needed
-          
-      - name: Clear npm cache
-        run: npm cache clean --force
-        
-      - name: Install dependencies
-        run: |
+
+      - name: Installing NPM modules
+        run: 
           cd frontendreact
-          npm ci  # Using npm ci for a clean, reproducible installation
+          rm -rf node_modules
+          rm package-lock.json
+          npm install
 
       - name: Run tests
         run: |

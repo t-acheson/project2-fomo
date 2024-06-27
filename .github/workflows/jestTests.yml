@@ -18,12 +18,16 @@ jobs:
         with:
           node-version: '14'  # Adjust Node.js version as needed
 
+      - name: Change directory to frontendreact
+        run: cd frontendreact
+
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          npm install react-scripts --save-dev
 
       - name: Run tests
         run: |
           # Ensure CI=false is set for Create React App
           export CI=false
-          cd frontendreact
-          npm test
+          ./node_modules/.bin/react-scripts test

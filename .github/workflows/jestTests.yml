@@ -18,14 +18,14 @@ jobs:
         with:
           node-version: '14'  # Adjust Node.js version as needed
 
-      - name: Installing NPM modules
-        run: 
-          cd frontendreact
-          rm -rf node_modules
-          rm package-lock.json
-          npm install
-
-      - name: Run tests
+      - name: Change directory to frontendreact and clean up
         run: |
           cd frontendreact
-          npm test
+          rm -rf node_modules
+          rm -f package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test

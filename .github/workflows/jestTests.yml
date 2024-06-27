@@ -20,13 +20,12 @@ jobs:
 
       - name: Change directory to frontendreact
         run: |
-          ls
           cd frontendreact
-          ls 
           
       - name: Install dependencies
         run: npm install
 
       - name: Run tests
         run: |
+          cd frontendreact
           CI=false npm test

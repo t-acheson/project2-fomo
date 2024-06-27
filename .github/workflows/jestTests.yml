@@ -25,6 +25,7 @@ jobs:
         run: |
           npm cache clean --force
           npm cache verify
+          rm -rf node_modules
           npm ci --ignore-scripts  # Ignore scripts to avoid potential issues
 
       - name: Run tests

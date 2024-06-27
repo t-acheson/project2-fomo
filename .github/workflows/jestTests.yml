@@ -29,5 +29,6 @@ jobs:
 
       - name: Run tests
         run: |
+          cd frontendreact
           ls
           npm test

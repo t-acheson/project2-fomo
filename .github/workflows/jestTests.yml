@@ -22,13 +22,8 @@ jobs:
         run: cd frontendreact
 
       - name: Install dependencies
-        run: |
-          npm install
-          npm install react-scripts --save-dev
+        run: npm install
 
       - name: Run tests
         run: |
-          # Ensure CI=false is set for Create React App
-          export CI=false
-          cd frontendreact
-          npm test
+          CI=false npm test

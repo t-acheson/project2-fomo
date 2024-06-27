@@ -30,4 +30,5 @@ jobs:
         run: |
           # Ensure CI=false is set for Create React App
           export CI=false
-          ./node_modules/.bin/react-scripts test
+          cd frontendreact
+          npm test

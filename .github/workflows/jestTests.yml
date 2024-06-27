@@ -18,9 +18,6 @@ jobs:
         with:
           node-version: '14'  # Adjust Node.js version as needed
 
-      - name: Change directory to frontendreact
-        run: cd frontendreact
-
       - name: Install dependencies
         run: npm install
 
@@ -28,4 +25,5 @@ jobs:
         run: |
           # Ensure CI=false is set for Create React App
           export CI=false
+          cd frontendreact
           npm test

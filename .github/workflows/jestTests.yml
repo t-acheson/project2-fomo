@@ -17,15 +17,16 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '18' 
-
-      - name: Change directory to frontendreact
-        run: cd frontendreact && ls -l
-
-      - name: Clean npm cache and reinstall dependencies
+          
+      - name: Install dependencies
         run: |
-          npm cache clean --force
-          rm -rf node_modules
-          npm install --legacy-peer-deps --ignore-scripts --no-audit
+          cd frontendreact
+          npm install
+
+      - name: Install missing peer dependencies
+        run: |
+          cd frontendreact
+          npm install react react-dom @testing-library/react @testing-library/dom --legacy-peer-deps
 
       - name: Verify installation
         run: |
@@ -34,8 +35,30 @@ jobs:
           npm list react-dom
           npm list @testing-library/react
           npm list @testing-library/dom
-      
+
       - name: Run tests
         run: |
           cd frontendreact
           npx react-scripts test
+
+      # - name: Change directory to frontendreact
+      #   run: cd frontendreact && ls -l
+
+      # - name: Clean npm cache and reinstall dependencies
+      #   run: |
+      #     npm cache clean --force
+      #     rm -rf node_modules
+      #     npm install --legacy-peer-deps --ignore-scripts --no-audit
+
+      # - name: Verify installation
+      #   run: |
+      #     cd frontendreact
+      #     npm list react
+      #     npm list react-dom
+      #     npm list @testing-library/react
+      #     npm list @testing-library/dom
+      
+      # - name: Run tests
+      #   run: |
+      #     cd frontendreact
+      #     npx react-scripts test

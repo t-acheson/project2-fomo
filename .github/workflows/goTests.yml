@@ -40,4 +40,5 @@ jobs:
       - name: Test
         run: |
           cd go
+          git grep TestPrintRecommendation
           go test -v .

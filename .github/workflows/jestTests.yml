@@ -29,9 +29,8 @@ jobs:
       
       - name: Install react-scripts globally
         run: |
-          npm install react-scripts -g
-          ls node_modules/react
-
+          npm uninstall -g react-scripts
+          npm install --save-dev react-scripts@5.0.1
 
 
       - name: Run tests

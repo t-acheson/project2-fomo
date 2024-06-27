@@ -31,7 +31,17 @@ jobs:
           cd go
           ls
           go mod tidy
-
+            
+      - name: Verify TestPrintRecommendation is removed
+        run: |
+          cd go
+          if git grep -q 'TestPrintRecommendation'; then
+            echo "TestPrintRecommendation still exists in the codebase"
+            exit 1
+          else
+            echo "TestPrintRecommendation is not found"
+          fi
+          
       - name: Build
         run: |
           cd go

@@ -22,7 +22,9 @@ jobs:
         run: cd frontendreact && ls -l  # Verify directory contents for debugging
 
       - name: Clean npm cache
-        run: npm cache clean --force
+        run: |
+          npm cache clean --force
+          npm cache verify
 
       - name: Install dependencies
         run: |

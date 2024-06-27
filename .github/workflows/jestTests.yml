@@ -18,11 +18,12 @@ jobs:
         with:
           node-version: '14'  # Adjust Node.js version as needed
 
-      - name: Change directory to frontendreact
-        run: cd frontendreact
-
       - name: Install dependencies
-        run: npm ci  # Using npm ci for a clean, reproducible installation
+        run: |
+          cd frontendreact
+          npm ci  # Using npm ci for a clean, reproducible installation
 
       - name: Run tests
-        run: npm test
+        run: |
+          cd frontendreact
+          npm test

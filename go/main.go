@@ -36,7 +36,7 @@ func main() {
 	testRecommend()
 
 	// Give postgres a few seconds to open
-	time.Sleep(3 * time.Second)
+	time.Sleep(5 * time.Second)
 
 	//Connects to Postgres/PostGIS db
 	db := connectToPostgres()

@@ -7,9 +7,13 @@ services:
       - grpc
     ports:
       - 80:80
+      - 443:443
     environment:
       POSTGRES_USER: ${PG_USERNAME}
       POSTGRES_PASSWORD: ${PG_PASSWORD}
+      DOMAIN_NAME: ${DOMAIN}
+    volumes:
+      - /etc/letsencrypt/:/etc/letsencrypt
 
   # gRPC server
   grpc:

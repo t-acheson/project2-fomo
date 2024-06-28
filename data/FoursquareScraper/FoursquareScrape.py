@@ -95,19 +95,29 @@ import time
 import traceback
 import datetime
 import pytz 
-import configdb
+from configdb import MySQL_CONFIG
 import configkey
 
 # Connect to the database server again
 # Now specifying "summer" schema
 # mysql.connector
-#TODO need to adjust to correctly read from config file and need to update to work for Postgres
-connection = configdb.MySQL_CONFIG.connect(
-    host="host",
-    user="user",
-    password="password",
+#TODO need to update to work for Postgres
+# Connect to the relevant database server - currently local mySQL
+connection = mysql.connector.connect(
+    host= MySQL_CONFIG['host'],
+    user= MySQL_CONFIG['user'],
+    password= MySQL_CONFIG['password'],
     database="summer"
 )
+
+# Postgress connection:
+# Connect to database "summer"
+#connection = psycopg2.connect(
+    #host= Postgres_CONFIG['host'],
+    #user= Postgres_CONFIG['user'], 
+    #password= Postgres_CONFIG['password'],
+    #dbname="summer"
+#)
 
 #create cursor object - with above database connection
 cursor = connection.cursor()

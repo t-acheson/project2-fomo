@@ -132,6 +132,7 @@ categories = [
     #10013	Arts and Entertainment > Dance Hall
     #10010	Arts and Entertainment > Comedy Club
     #10007	Arts and Entertainment > Carnival
+    #10006	Arts and Entertainment > Bowling Alley
     #10003	Arts and Entertainment > Arcade
     #10001	Arts and Entertainment > Amusement Park
     #10000	Arts and Entertainment

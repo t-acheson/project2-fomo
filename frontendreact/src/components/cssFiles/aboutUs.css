@@ -1,0 +1,17 @@
+.aboutUsBlock {
+  margin: 50px 30px;
+}
+
+.aboutUsBlock .image {
+    padding-bottom: 20px;
+  }
+
+.aboutUsBlock .features [class*="col-"] {
+  padding-bottom: 30px;
+}
+
+img {
+
+  width: 100%; 
+  height: auto; 
+  }

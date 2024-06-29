@@ -58,13 +58,10 @@ func main() {
 	//Starting websocket chat on port 3000
 	go func() {
 		log.Printf("Starting websocket chat")
-		err := chat()
-		if err != nil {
-			log.Fatalf("Failed to start the websocket chat: %v", err)
-		}
-	}
+		chat()
+	}()
 
 	//Start HTTP listener on port 80
 	log.Printf("Starting HTTP listener")
-	log.Fatal(http.ListenAndServe(":80", http.HandlerFunc(redirectHTTP))
+	log.Fatal(http.ListenAndServe(":80", http.HandlerFunc(redirectHTTP)))
 }

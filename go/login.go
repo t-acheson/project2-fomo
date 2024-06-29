@@ -45,6 +45,19 @@ func connectToPostgres() *sql.DB {
 
   fmt.Println("Succesfully connected to Postgres")
 
+  // Create necessary tables if not exists
+  _, err := db.Exec( // Note that the SRID of 4326 declares a geographic spatial reference system.
+    `CREATE TABLE IF NOT EXISTS comments (
+      id SERIAL PRIMARY KEY,
+      timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      text TEXT NOT NULL,
+      location GEOGRAPHY(POINT, 4326) NOT NULL 
+    );`
+  )
+  if err!= nil {
+    fmt.Println("Error creating table comments", err)
+  }
+
   // Return database object
   return db
 }

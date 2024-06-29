@@ -6,7 +6,6 @@ import (
   "fmt"
   "io"
   "time"
-  "net/http"
   //"encoding/json"
 )
 
@@ -78,12 +77,4 @@ func (s *Server) broadcast(b []byte) {
       }
     }(ws)
   }
-}
-
-func chat() {
-  server := NewServer()
-  http.Handle("/ws", websocket.Handler(server.handleWebSocket))
-  //http.HandleFunc("/comments", handleGetComments)
-  http.ListenAndServe(":3000", nil)
-}
-
+}  

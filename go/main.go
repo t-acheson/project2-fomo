@@ -6,6 +6,7 @@ import (
 	"net/http" //HTTP server
 	"time" //Used for time.Sleep
 	"os" //Pass in environment vars
+	"golang.org/x/net/websocket"
 
 	"github.com/gorilla/sessions" //Session management
 )
@@ -56,10 +57,9 @@ func main() {
 	}()
 
 	//Starting websocket chat on port 3000
-	go func() {
-		log.Printf("Starting websocket chat")
-		chat()
-	}()
+	log.Printf("Starting websocket chat")
+	server := NewServer()
+	http.Handle("/ws", websocket.Handler(server.handleWebSocket))
 
 	//Start HTTP listener on port 80
 	log.Printf("Starting HTTP listener")

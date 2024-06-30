@@ -9,6 +9,7 @@ import (
 	"golang.org/x/net/websocket"
 
 	"github.com/gorilla/sessions" //Session management
+	"database/sql"
 )
 
 // Struct to hold user session data
@@ -18,6 +19,9 @@ type User struct {
 
 // Define a global session store
 var store = sessions.NewCookieStore([]byte("sampleKey"))
+
+// Define a connection the the Postgres db
+var db *sql.DB
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	//Writes a response to a HTTP request to the HTTP response writer, w.
@@ -40,7 +44,7 @@ func main() {
 	time.Sleep(5 * time.Second)
 
 	//Connects to Postgres/PostGIS db
-	db := connectToPostgres()
+	db = connectToPostgres()
 	defer db.Close()
 
 	//Set up HTTP handler at root URL
@@ -56,7 +60,7 @@ func main() {
 		}
 	}()
 
-	//Starting websocket chat on port 3000
+	//Starting websocket chat at /ws
 	log.Printf("Starting websocket chat")
 	server := NewServer()
 	http.Handle("/ws", websocket.Handler(server.handleWebSocket))

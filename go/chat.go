@@ -2,26 +2,24 @@ package main
 
 import (
   "golang.org/x/net/websocket"
-  "sync"
+  //"sync"
   "fmt"
   "io"
   "time"
-  //"encoding/json"
+  "encoding/json"
 )
 
 type Server struct {
   conns map[*websocket.Conn]bool
-  mu sync.Mutex
+  //mu sync.Mutex
 }
 
 type Comment struct {
-  Timestamp int64 `json:"timestamp"`
-  Text string `json:"test"`
+  Timestamp time.Time `json:"timestamp"`
+  Text string `json:"text"`
   Lat float64 `json:"lat"`
   Lng float64 `json:"lng"`
 }
-
-var comments []Comment
 
 func NewServer() *Server {
   return &Server {
@@ -30,16 +28,16 @@ func NewServer() *Server {
 }
 
 func (s *Server) handleWebSocket(ws *websocket.Conn) {
-  s.mu.Lock()
-  defer s.mu.Unlock()
+  //s.mu.Lock()
+  //defer s.mu.Unlock()
 
   fmt.Println("New incoming connection from client:", ws.RemoteAddr())
 
   s.conns[ws] = true
   
-  s.mu.Unlock()
+  //s.mu.Unlock()
   s.readLoop(ws)
-  s.mu.Lock()
+  //s.mu.Lock()
 
   fmt.Println("Client disconnected at", ws.RemoteAddr())
   delete(s.conns, ws)
@@ -57,22 +55,44 @@ func (s *Server) readLoop(ws *websocket.Conn) {
       continue
     }
     msg := buf[:n] //Only read out the bytes of the buffer that were used
-   
-    comment := Comment{Timestamp: time.Now().UnixNano(), Text: string(msg)}
-    s.broadcast(msg) // Broadcast the message to all clients
+    var comment Comment
+    if err := json.Unmarshal(msg, &comment); err != nil {
+      fmt.Println("Error unmarshalling json:", err)
+      continue //Likely the users fault so we want the application to continue
+    } 
 
-    s.mu.Lock()
-    comments = append(comments, comment)
-    s.mu.Unlock()
+    comment.Timestamp = time.Now().UTC()
+
+    _, err = db.Exec(`
+      INSERT INTO comments (timestamp, text, location) VALUES
+      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326))`,
+      comment.Timestamp, comment.Text, comment.Lat, comment.Lng,
+    )
+    if err != nil {
+      fmt.Println("Error writing to table comments:", err)
+      continue // Same reason as continue above
+    }
+
+    //comment := Comment{Timestamp: time.Now().UnixNano(), Text: string(msg)}
+    s.broadcast(comment) // Broadcast the message to all clients
+
+    //s.mu.Lock()
+    //comments = append(comments, comment)
+    //s.mu.Unlock()
 
     // Then, place the comment in the database
   }
 }
 
-func (s *Server) broadcast(b []byte) {
+func (s *Server) broadcast(comment Comment) {
   for ws := range s.conns {
     go func(ws *websocket.Conn) {
-      if _, err := ws.Write(b); err != nil {
+      message, err := json.Marshal(comment)
+      if err != nil {
+        fmt.Println("Error marshalling comment:", err)
+        return
+      }
+      if _, err := ws.Write(message); err != nil {
         fmt.Println("Write error:", err)
       }
     }(ws)

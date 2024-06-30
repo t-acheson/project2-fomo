@@ -21,43 +21,65 @@ boroughs = [
 ]
 
 #! Uncomment different neighbourhoods for each new API call to ensure we're getting different and varied results
+#! Scraped all below neighbourhoods, need to add more to the list to scrape more
 # Manhattan neighborhoods
 manhattan = [
-    "Battery Park City", #"Carnegie Hill", "East Harlem", #"Financial District", "Gramercy", "Hamilton Heights",
-    #"Inwood", "Lenox Hill", "Manhattan Valley", "NoHo", "Roosevelt Island", "SoHo",
-    #"Times Square", "Union Square", "Wall Street", "Yorkville", "Beekman Place",
-    #"Chelsea", "East Village", "Flatiron", "Greenwich Village"
+    #"Battery Park City", 
+    #"Carnegie Hill", "East Harlem", 
+    #"Financial District", "Gramercy", "Hamilton Heights",
+    #"Inwood", "Lenox Hill", "Manhattan Valley", 
+    #"NoHo", "Roosevelt Island", "SoHo", 
+    #"Times Square", "Union Square", "Wall Street",
+    #"Yorkville", "Beekman Place", "Chelsea",
+    "East Village", "Flatiron", "Greenwich Village"
 ]
 
 # Bronx neighborhoods
 bronx = [
-    "Allerton", #"Bathgate", "Castle Hill", "East Tremont", "Fieldston", #"High Bridge",
-    #"Kingsbridge", "Longwood", "Marble Hill", "North Riverdale", "Olinville", "Parkchester",
-    #"Riverdale", "Schuylerville", "Throgs Neck", "Unionport", "Van Nest", "Wakefield",
-    #"Baychester", "City Island"
+    #"Allerton", 
+    #"Bathgate", "Castle Hill", 
+    #"East Tremont", "Fieldston", "High Bridge",
+    #"Kingsbridge", "Longwood", "Marble Hill", 
+    #"North Riverdale", "Olinville", "Parkchester",
+    #"Riverdale", "Schuylerville", "Throgs Neck", 
+    #"Unionport", "Van Nest", "Wakefield",
+    "Baychester", "City Island", "Eastchester"
 ]
 
 # Staten Island neighborhoods
 statenIsland = [
-    "Annadale", #"Bay Terrace", "Castleton Corners", "Dongan Hills", "Egbertville", "Fox Hills", #"Graniteville",
-    #"Heartland Village", "Lighthouse Hill", "Manor Heights", "New Brighton", "Oakwood", "Park Hill", "Randall Manor",
-    #"Sandy Ground", "Todt Hill", "Ward Hill", "Arden Heights", "Bloomfield", "Charleston"
+    #"Annadale", 
+    #"Bay Terrace", "Castleton Corners", "Dongan Hills", 
+    #"Egbertville", "Fox Hills", "Graniteville", "Heartland Village", 
+    #"Lighthouse Hill", "Manor Heights", "New Brighton", 
+    #"Oakwood", "Park Hill", "Randall Manor", 
+    #"Sandy Ground", "Todt Hill", "Ward Hill", 
+    #"Arden Heights", "Bloomfield", "Charleston",
+    "Elm Park", "Grant City", "Howland Hook"
 ]
 
 # Brooklyn neighborhoods
 brooklyn = [
-    "Bath Beach", #"Canarsie", "Ditmas Park", "East Flatbush", "Farragut",
-    #"Georgetown", "Highland Park", "Kensington", "Manhattan Beach", #"Navy Yard",
-    #"Ocean Hill", "Paerdegat Basin", "Red Hook", "Sea Gate", "Tompkins Park North", "Vinegar Hill",
-    #"Weeksville", "Bay Ridge", "Carroll Gardens", "Downtown", "East New York", "Flatbush"
+    #"Bath Beach", 
+    #"Canarsie", "Ditmas Park", "East Flatbush", 
+    #"Farragut", "Georgetown", "Highland Park", "Kensington", 
+    #"Manhattan Beach", "Navy Yard", "Ocean Hill", 
+    #"Paerdegat Basin", "Red Hook", "Sea Gate", 
+    #"Tompkins Park North", "Vinegar Hill", "Weeksville", 
+    #"Bay Ridge", "Carroll Gardens", "Downtown", 
+    "East New York", "Flatbush", "Gerritsen Beach"
 ]
 
 # Queens neighborhoods
 queens = [
-    "Arverne", #"Bay Terrace", "Cambria Heights", "Douglaston", "East Elmhurst", "Far Rockaway",
-    #"Glen Oaks", "Hammels", "Jackson Heights", "Kew Gardens", "Laurelton", #"Malba", "Neponsit",
-    #"Oakland Gardens", "Pomonok", "Queens Village", "Ravenswood", "Seaside", "Utopia",
-    #"Whitestone", "Astoria", "Bayside", "Clearview"
+    #"Arverne", 
+    #"Bay Terrace", "Cambria Heights", "Douglaston", "East Elmhurst", 
+    #"Far Rockaway", "Glen Oaks", "Hammels", "Jackson Heights", "Kew Gardens", 
+    #"Laurelton", "Malba", "Neponsit", 
+    #"Oakland Gardens", "Pomonok", "Queens Village", 
+    #"Ravenswood", "Seaside", "Utopia", 
+    #"Whitestone", "Astoria", "Bayside", 
+    "Clearview", "Dutch Kills", "Edgemere"
 ]
 
 # 6 categories to stay under 30,000
@@ -106,7 +128,7 @@ connection = psycopg2.connect(
     host= Postgres_CONFIG['host'],
     user= Postgres_CONFIG['user'],
     password= Postgres_CONFIG['password'],
-    dbname="summer"
+    dbname= Postgres_CONFIG['dbname']
 )
 
 #create cursor object - with above database connection
@@ -118,7 +140,7 @@ cursor = connection.cursor()
 
 # Create table for New York weather data
 sql = """
-CREATE TABLE IF NOT EXISTS Comments (
+CREATE TABLE IF NOT EXISTS comments_fs (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255),
     address VARCHAR(255),
@@ -149,7 +171,7 @@ def comments_to_db(name, address, comment, created_at, latitude, longitude):
         
     vals = (name, address, comment, created_at, latitude, longitude)
     # Insert into table - list name, address etc. again to specify the column heading of table to insert vals into
-    cursor.execute("INSERT INTO Comments (name, address, comment, created_at, latitude, longitude) VALUES (%s, %s, %s, %s, %s, %s)", vals)
+    cursor.execute("INSERT INTO comments_fs (name, address, comment, created_at, latitude, longitude) VALUES (%s, %s, %s, %s, %s, %s)", vals)
     connection.commit()
 # end : function to commit Comments to database
                         
@@ -175,54 +197,54 @@ for borough in boroughs:
             #Initialise for loop to iterate through categories
             for category in categories:
                 # use string to insert each iterable of category and m into the url
-                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={m}%2CNY&limit=1"
+                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={m}%2CNY&limit=50"
                 responsem = requests.get(url, headers=headers)
                 data1 = responsem.json()
                 # Add API response data (stored in variable data1) to responses list
                 responses.append(data1)
                 print("Please wait... retrieving data for Manhattan neighborhoods")
-                time.sleep(delay)  # Wait before the next API call
+                #time.sleep(delay)  # Wait before the next API call
                 
     # what follows is the same as above for each of the remaining boroughs and their associated neighbourhoods            
     elif borough == "bronx":
         for br in bronx:
             for category in categories:
-                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={br}%2CNY&limit=1"
+                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={br}%2CNY&limit=50"
                 responsebr = requests.get(url, headers=headers)
                 data2 = responsebr.json()
                 responses.append(data2)
                 print("Please wait... retrieving data for Bronx neighborhoods")
-                time.sleep(delay)
+                #time.sleep(delay)
     
     elif borough == "statenIsland":
         for s in statenIsland:
             for category in categories:
-                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={s}%2CNY&limit=1"
+                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={s}%2CNY&limit=50"
                 responsebr = requests.get(url, headers=headers)
                 data3 = responsebr.json()
                 responses.append(data3)
                 print("Please wait... retrieving data for Staten Island neighborhoods")
-                time.sleep(delay)
+                #time.sleep(delay)
     
     elif borough == "brooklyn":
         for b in brooklyn:
             for category in categories:
-                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={b}%2CNY&limit=1"
+                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={b}%2CNY&limit=50"
                 responsebr = requests.get(url, headers=headers)
                 data4 = responsebr.json()
                 responses.append(data4)
                 print("Please wait... retrieving data for Brooklyn neighborhoods")
-                time.sleep(delay)
+                #time.sleep(delay)
     
     elif borough == "queens":
         for q in queens:
             for category in categories:
-                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={q}%2CNY&limit=1"
+                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={q}%2CNY&limit=50"
                 responsebr = requests.get(url, headers=headers)
                 data5 = responsebr.json()
                 responses.append(data5)
                 print("Please wait... retrieving data for Queens neighborhoods")
-                time.sleep(delay)
+                #time.sleep(delay)
 
 # uncomment below to visualise code response
 #print(responsem.text, responsebr.text)

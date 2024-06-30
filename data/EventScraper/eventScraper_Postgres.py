@@ -4,6 +4,7 @@
 #* Total 612 pages with 20 results per page
 #* 5,000 limit per day - should only need to run this scraper 3 times to get all 12,233 events available
 
+#! attempted to scrape - website says only supports retrieving up to the 1000th item
 
 import requests
 import psycopg2
@@ -41,7 +42,7 @@ def connect_to_db():
             host=Postgres_CONFIG['host'],
             user=Postgres_CONFIG['user'],
             password=Postgres_CONFIG['password'],
-            dbname="summer"
+            dbname=Postgres_CONFIG['dbname']
         )
         return connection
     except Exception as e:
@@ -170,8 +171,8 @@ def main():
     country_code = 'US'
 
     # Define start and end pages for the event search
-    start_page = 0
-    end_page = 1
+    start_page = 50
+    end_page = 51
 
     print("Retrieving events")
     events_data = fetch_events(city, country_code, API_KEY, start_page, end_page)

@@ -32,10 +32,15 @@ jobs:
           cd go
           docker build --file Dockerfile --tag summerproject-go .
 
+      - name: Display Directory Structure
+        run: |
+            cd go
+            ls -R
+  
       - name: Run tests
         run: |
-          cd go
-          go test -v
+            cd go
+            go test -v ./...
     
       - name: Debug Memory Usage
         if: failure()

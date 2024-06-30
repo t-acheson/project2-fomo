@@ -1,0 +1,96 @@
+name: Build Docker & Test Go
+
+on:
+  pull_request:
+    branches:
+      - DEV
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: DEV
+          fetch-depth: 0
+    
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+        
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: |
+          cd go
+          docker build --file Dockerfile --tag summerproject-go .
+
+      - name: Run tests
+        run: |
+          cd go
+          go test -v
+    
+      - name: Debug Memory Usage
+        if: failure()
+        run: |
+          free -m
+          df -h
+          docker stats --no-stream
+    
+      - name: Remove Docker container
+        if: always()
+        run: |
+          docker stop go-test-container || true
+          docker rm go-test-container || true
+          docker rmi summerproject-go || true
+
+
+
+
+
+
+
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+
+# jobs:
+
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Clear Go test cache
+#         run: go clean -testcache
+#       - uses: actions/checkout@v4
+#         with:
+#           ref: DEV
+#           fetch-depth: 0 
+
+#       - name: Set up Go
+#         uses: actions/setup-go@v4
+#         with:
+#           go-version: '1.22'
+
+
+#       - name: Change directory to Go project
+#         run: |
+#           cd go
+#           ls
+#           go mod tidy
+          
+#       - name: Build
+#         run: |
+#           cd go
+#           go build -v
+  
+#       - name: Test
+#         run: |
+#           cd go
+#           go test -v .

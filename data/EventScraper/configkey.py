@@ -1,0 +1,4 @@
+
+TMAPIKey_M = 'ToCm0yQrbKnIWjyOWvT8zO7w9UAbGSCW'
+
+TMAPIKey_K = 'v6sN3JoEQ2v4sACGv22tpX78R9gCrWQa'

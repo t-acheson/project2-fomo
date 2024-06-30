@@ -13,5 +13,4 @@ Postgres_CONFIG = {
     'host': 'localhost',
     'user': 'muireannoconnor',
     'password': "Summer2024",
-    'dbname': 'postgres'
 }

@@ -2,6 +2,7 @@
 
 #TODO timezone for Datetime; in code converts to NY timezone, prints out correctly and populates mySQL correctly
 #TODO contd: Datetime does not retain conversion when pulled into Postgres - I don't know why
+#* Now inserts correctly in Postgres but entered as string, unsure if that is acceptable
 
 #! This code creates a database called summer and a table called weather_NY
 #! This may need to be removed when putting on server
@@ -60,10 +61,13 @@ connection = psycopg2.connect(
 #! Create cursor object - with above database connection
 cursor = connection.cursor()
 
+# Set the time zone to New York for the PostgreSQL session
+cursor.execute("SET TIMEZONE='America/New_York';")
+
 # Create table for New York weather data
 sql = """
 CREATE TABLE IF NOT EXISTS weather_NY(
-dt TIMESTAMPTZ NOT NULL,
+dt TEXT NOT NULL,
 weather VARCHAR(256),
 temperature FLOAT,
 feels_like FLOAT,
@@ -80,6 +84,8 @@ PRIMARY KEY (dt)
 )
 """
 
+#dt TIMESTAMPTZ NOT NULL,
+
 try:
     # Create new table - with above commented out, new table only created if doesn't exist
     cursor.execute(sql)
@@ -93,10 +99,13 @@ except Exception as e:
 def weather_to_db(text):
     weather = json.loads(text)
     
-    #TODO
-    # Need to get datetime in New York - just datetime = Irish time
+    # Extract the datetime from the weather API and convert it to the New York timezone
+    utc_time = datetime.datetime.utcfromtimestamp(weather['dt']).replace(tzinfo=pytz.utc)
+    #now = datetime.datetime.utcfromtimestamp(weather['dt']).replace(tzinfo=pytz.utc)
+
     ny_tz = pytz.timezone('America/New_York')  # Looking for New York timezone
-    now = datetime.datetime.now(ny_tz)
+    now = utc_time.astimezone(ny_tz)
+    now_str = now.strftime('%Y-%m-%d %H:%M:%S %Z')
     
     weather_main = str(weather['weather'][0]['main'])
     
@@ -148,9 +157,9 @@ def main():
         except:
             print(traceback.format_exc())  # Prints errors
         
-        # Wait for 5 minutes before fetching data again
+        # Wait for 15 minutes before fetching data again
         # time.sleep(5*60) #every 5 mins
-        time.sleep(1*60)  # for testing
+        time.sleep(1*900)  # for testing make smaller
     return
 # end : main function
 

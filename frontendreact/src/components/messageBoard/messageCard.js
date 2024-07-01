@@ -1,3 +1,5 @@
+// ! currently not in use. replaced by comments component 
+// * not deleted for back up, once comments componets work. this file can be deleted
 //Imports
 import Card from 'react-bootstrap/Card';
 import LikeButton from './likeButton';

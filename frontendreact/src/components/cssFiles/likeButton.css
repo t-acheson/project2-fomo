@@ -6,6 +6,8 @@ body {
   
   .likeButton {
     position: relative;
+    display: flex;
+    align-items: center;
   }
   
   .likeButton .heartIcon {

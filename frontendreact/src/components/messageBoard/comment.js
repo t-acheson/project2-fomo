@@ -4,6 +4,8 @@ import { ReactComponent as UpArrow } from "../../assets/up-arrow.svg";
 import Action from "./commentAction";
 import LikeButton from "./likeButton";
 
+//Start Comment function
+//Handles comments display and nesting comments. Also allowing users to add comments and reply to them individually. replys can be toggled to display or to be hidden.
 const Comment = ({
     handleInsertNode,
     comment,
@@ -12,12 +14,14 @@ const Comment = ({
     const [showInput, setShowInput] = useState(false);
     const [expand, setExpand] = useState(false);
     const inputRef = useRef(null);
-  
+
+    //Function for handling display of new comments 
     const handleNewComment = () => {
       setExpand(!expand);
       setShowInput(true);
     };
-  
+
+    // Function for adding comments
     const onAddComment = () => {
         if (input.trim() !== "") {
             handleInsertNode(comment.id, input);
@@ -25,7 +29,6 @@ const Comment = ({
             setShowInput(false);
             setInput("");
           } else {
-            // Optionally, you can show an error message here
             alert("Comment cannot be empty");
           }
         };
@@ -115,3 +118,5 @@ const Comment = ({
   };
   
   export default Comment;
+  // End of Comment function
+  //Returns a components that handles comments display and nesting comments. Also allowing users to add comments and reply to them individually. replys can be toggled to display or to be hidden.

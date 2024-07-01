@@ -9,18 +9,15 @@ import useNode from '../../hooks/useNode.js';
 import Comment from './comment.js';
 import { useState } from 'react';
 
-//TODO: 
-//Start Recommendation function
-//creates a componet that combines the LocationIDCard, Rating componets with a heart componet to display recommendations. 
-
 
 //For storing comments
 const comments = {
     id: 1,
     items: [] // Empty by default. Will include list of nested comments when added
   };
-  
-
+ 
+//Start MessageBoard function
+//creates a componet that combines the comments componets with the filters and check box components. 
 function MessageBoard() {
     const [commentsData, setCommentsData] = useState(comments);
 
@@ -75,5 +72,5 @@ function MessageBoard() {
 
 export default MessageBoard;
 
-//End of Ratings function.
-//Returns the componet with 5 stars for rating
+//End of MessageBoard function.
+//Returns the componet with a title of feed, 2 check boxes, a filter componts and a comment box. comments will display when added

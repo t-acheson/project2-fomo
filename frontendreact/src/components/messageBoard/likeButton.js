@@ -3,9 +3,11 @@ import '../cssFiles/likeButton.css'
 
 const LikeButton = () => {
     const [liked, setLiked] = useState(false);
+    const [likesCount, setLikesCount] = useState(0);
   
     const handleLike = () => {
       setLiked(!liked);
+      setLikesCount(liked ? likesCount - 1 : likesCount + 1);
     };
   
     return (
@@ -13,7 +15,7 @@ const LikeButton = () => {
         <div className="heartBg">
           <div className={`heartIcon ${liked ? 'liked' : ''}`}></div>
         </div>
-        <span className="likesStatus">{liked ? 1 : 0}</span>
+        <span className="likesStatus">{likesCount}</span>
       </div>
     );
   };

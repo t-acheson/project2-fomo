@@ -11,7 +11,7 @@ body {
   .likeButton .heartIcon {
     height: 100px;
     width: 100px;
-    background: url('../../Assets/heart.png'); 
+    background: url('../../assets/heart.png'); 
     background-position: left;
     cursor: pointer;
     position: absolute;

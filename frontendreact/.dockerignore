@@ -1,0 +1,26 @@
+# Node modules
+node_modules
+
+# Build output
+build
+
+# Local environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Log files
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Docker-related files
+Dockerfile
+.dockerignore
+
+# Miscellaneous
+.DS_Store
+.vscode/
+*.swp

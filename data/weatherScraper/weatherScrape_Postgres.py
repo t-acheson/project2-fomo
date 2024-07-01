@@ -159,7 +159,7 @@ def main():
         
         # Wait for 15 minutes before fetching data again
         # time.sleep(5*60) #every 5 mins
-        time.sleep(1*900)  # for testing make smaller
+        #time.sleep(1*900)  # for testing make smaller
     return
 # end : main function
 

@@ -144,7 +144,7 @@ def weather_to_db(text):
 
 
 # start : Defining main function to call weather API and weather_to_db function
-def main():
+def main(scrape_continuously=False):
     while True:  # Start infinite loop
         try:
             # Retrieve current weather data from weather API - store in variable
@@ -157,11 +157,15 @@ def main():
         except:
             print(traceback.format_exc())  # Prints errors
         
+        if not scrape_continuously:
+            break
+        
         # Wait for 15 minutes before fetching data again
         # time.sleep(5*60) #every 5 mins
-        #time.sleep(1*900)  # for testing make smaller
+        #time.sleep(15*60)  # for testing make smaller
     return
 # end : main function
 
 
-main()
+if __name__ == "__main__":
+    main(scrape_continuously=False)

@@ -7,21 +7,24 @@ import FeedPage from './pages/FeedPage';
 import NotificationPage from './pages/NotificationPage';
 import Header from './components/header';
 import Footer from './components/footer';
+import { LocationProvider } from './context/LocationContext';
 import './App.css'
 
 function App() {
   return (
-    <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/map" element={<MapPage />} />
-        <Route path="/feed" element={<FeedPage />} />
-        <Route path="/notification" element={<NotificationPage />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-      <Footer />
-    </Router>
+    <LocationProvider>
+      <Router>
+        <Header />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/feed" element={<FeedPage />} />
+          <Route path="/notification" element={<NotificationPage />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+        <Footer />
+      </Router>
+    </LocationProvider>
   );
 }
 

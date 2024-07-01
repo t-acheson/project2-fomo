@@ -1,5 +1,7 @@
 import React from 'react';
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import GetLocationButton from '../components/getLocationButton';
+
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const mapContainerStyle = {
@@ -27,6 +29,7 @@ function MapPage() {
           </LoadScript>
         </div>
       </main>
+      <GetLocationButton />
     </div>
   );
 }

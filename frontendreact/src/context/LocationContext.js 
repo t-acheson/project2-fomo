@@ -1,0 +1,32 @@
+import React, { createContext, useState, useContext, useEffect } from 'react';
+
+const LocationContext = createContext();
+
+export const useLocation = () => useContext(LocationContext);
+
+export const LocationProvider = ({ children }) => {
+    const [location, setLocation] = useState({ latitude: null, longitude: null });
+
+    useEffect(() => {
+        const watchId = navigator.geolocation.watchPosition(
+            (position) => {
+                setLocation({
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                });
+            },
+            (error) => {
+                console.error('Error watching location:', error);
+            },
+            { enableHighAccuracy: true }
+        );
+
+        return () => navigator.geolocation.clearWatch(watchId);
+    }, []);
+
+    return (
+        <LocationContext.Provider value={location}>
+            {children}
+        </LocationContext.Provider>
+    );
+};

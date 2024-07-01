@@ -36,7 +36,10 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
   s.conns[ws] = true
 
   // Retreive historical messages
+  start := time.Now()
   s.retrieve(ws)
+  duration :=time.Since(start)
+  fmt.Println("Retreived historical messages for client in time:", duration)
   
   //s.mu.Unlock()
   s.readLoop(ws)

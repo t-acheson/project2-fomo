@@ -1,25 +1,25 @@
 //Import bootstrap components
 import Carousel from 'react-bootstrap/Carousel';
-import '../Assets/testHeroImage.png';
+import '../assets/testHeroImage.png';
 import './cssFiles/hero.css'
 
 // Data used for the dynamic carousel component for the hero
 var heroData = [
     {
         id: 1,
-        image: require('../Assets/testHeroImage.png'),
+        image: require('../assets/testHeroImage.png'),
         title: 'The perfect Location for your pop-up',
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab suscipit dicta nulla. Consequuntur obcaecati officiis, labore doloribus non tempore impedit consequatur ab dolor. Explicabo quam repellendus vero omnis, nisi odio!',
       },
       {
         id: 2,
-        image: require('../Assets/testHeroImage.png'),
+        image: require('../assets/testHeroImage.png'),
         title: 'Start Comparing loctions',
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab suscipit dicta nulla. Consequuntur obcaecati officiis, labore doloribus non tempore impedit consequatur ab dolor. Explicabo quam repellendus vero omnis, nisi odio!',
       },
       {
         id: 3,
-        image: require('../Assets/testHeroImage.png'),
+        image: require('../assets/testHeroImage.png'),
         title: 'Enjoy the Difference',
         description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab suscipit dicta nulla. Consequuntur obcaecati officiis, labore doloribus non tempore impedit consequatur ab dolor. Explicabo quam repellendus vero omnis, nisi odio!',
       }

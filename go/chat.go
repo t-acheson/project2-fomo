@@ -36,12 +36,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
   s.conns[ws] = true
 
   // Retreive historical messages
-  comments, err := s.retrieve(ws)
-  if err != nil {
-    fmt.Println("Error retrieving historical comments")
-  } else {
-
-  }
+  s.retrieve(ws)
   
   //s.mu.Unlock()
   s.readLoop(ws)
@@ -53,7 +48,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
 
 // Select applicable historical comments and iteratively send them to the new client
 func (s *Server) retrieve(ws *websocket.Conn) {
-  rows, err = db.Query(`
+  rows, err := db.Query(`
     SELECT timestamp, text, ST_Y(location) as lat, ST_X(location) as lng
     FROM comments
     `) // WHERE ...
@@ -74,9 +69,9 @@ func (s *Server) retrieve(ws *websocket.Conn) {
       fmt.Println("Write error:", err)
     }
   }
-  //if err = rows.Err(); err != nil {
-  //  fmt.Println("Error rows.Err():", err)
-  //}
+  if err = rows.Err(); err != nil {
+    fmt.Println("Error rows.Err():", err)
+  }
 }
 
 func (s *Server) readLoop(ws *websocket.Conn) {

@@ -49,7 +49,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
 // Select applicable historical comments and iteratively send them to the new client
 func (s *Server) retrieve(ws *websocket.Conn) {
   rows, err := db.Query(`
-    SELECT timestamp, text, ST_Y(location) as lat, ST_X(location) as lng
+  SELECT timestamp, text, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng
     FROM comments
     `) // WHERE ...
   defer rows.Close()
@@ -60,9 +60,9 @@ func (s *Server) retrieve(ws *websocket.Conn) {
       fmt.Println("Error retrieving comment from database:", err)
       continue
     }
-    //comments = append(comments, comment)
-    if message, err := json.Marshall(comment); err != nil {
-      fmt.Println("Error mashalling comment:", err)
+    message, err := json.Marshal(comment)
+    if err != nil {
+      fmt.Println("Error mashaling comment:", err)
       continue
     }
     if _, err := ws.Write(message); err != nil {
@@ -109,14 +109,13 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 func (s *Server) insertComment(comment Comment) {
     comment.Timestamp = time.Now().UTC()
 
-    _, err = db.Exec(`
+    _, err := db.Exec(`
       INSERT INTO comments (timestamp, text, location) VALUES
       ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326))`,
       comment.Timestamp, comment.Text, comment.Lat, comment.Lng,
     )
     if err != nil {
       fmt.Println("Error writing to table comments:", err)
-      continue // Same reason as continue above
     }
 
 }

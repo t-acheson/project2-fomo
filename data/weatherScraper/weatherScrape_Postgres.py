@@ -30,32 +30,32 @@ else:
     print(f"Error {response.status_code}: {response.json()}")
 
 # Connect to the relevant PostgreSQL database
-connection = psycopg2.connect(
-    host= Postgres_CONFIG['host'],
-    user= Postgres_CONFIG['user'], 
-    password= Postgres_CONFIG['password'],
-    dbname= Postgres_CONFIG['dbname'] 
-)
+#connection = psycopg2.connect(
+ #   host= Postgres_CONFIG['host'],
+  #  user= Postgres_CONFIG['user'], 
+   # password= Postgres_CONFIG['password'],
+    #dbname= Postgres_CONFIG['dbname'] 
+#)
 
 # Create cursor object - with previous connection
-cursor = connection.cursor()
+#cursor = connection.cursor()
 
 #! Create new database/schema named "summer" - if it doesn't already exist
-cursor.execute("SELECT 1 FROM pg_catalog.pg_database WHERE datname = 'summer'")
-exists = cursor.fetchone()
-if not exists:
-    cursor.execute("CREATE DATABASE summer")
+#cursor.execute("SELECT 1 FROM pg_catalog.pg_database WHERE datname = 'summer'")
+#exists = cursor.fetchone()
+#if not exists:
+    #cursor.execute("CREATE DATABASE summer")
 
 # Close the cursor and connection
-cursor.close()
-connection.close()
+#cursor.close()
+#connection.close()
 
 # Connect to the new database "summer"
 connection = psycopg2.connect(
     host= Postgres_CONFIG['host'],
     user= Postgres_CONFIG['user'], 
     password= Postgres_CONFIG['password'],
-    dbname="summer"
+    dbname= Postgres_CONFIG['dbname'] 
 )
 
 #! Create cursor object - with above database connection

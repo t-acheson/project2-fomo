@@ -5,40 +5,33 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import LikeButton from './likeButton';
-
-
-const postData = [
-    {
-        id: 1,
-        post: "simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-      },
-      {
-        id: 2,
-        post: 'Tips for UI Design',
-      },
-      {
-        id: 3,
-        post: 'Beautiful Day',
-      },
-      {
-        id: 4,
-        post: 'Beautiful Day',
-      },
-      {
-        id: 5,
-        post: 'Beautiful Day',
-      },
-      {
-        id: 6,
-        post: 'Beautiful Day',
-      }
-]
+import useNode from '../../hooks/useNode.js';
+import Comment from './comment.js';
+import { useState } from 'react';
 
 //TODO: 
 //Start Recommendation function
 //creates a componet that combines the LocationIDCard, Rating componets with a heart componet to display recommendations. 
 
+
+//For storing comments
+const comments = {
+    id: 1,
+    items: [] // Empty by default. Will include list of nested comments when added
+  };
+  
+
 function MessageBoard() {
+    const [commentsData, setCommentsData] = useState(comments);
+
+    const {insertNode} = useNode();
+  
+    const handleInsertNode = (folderId, item) => {
+      const finalStructure = insertNode(commentsData,folderId, item);
+      console.log("Updated Structure:", finalStructure);
+      setCommentsData(finalStructure);
+    };
+
     return (
         <section id='post' className='recommendBlock'>
              <Container fluid>
@@ -72,27 +65,10 @@ function MessageBoard() {
                         </Form.Select>
                     </Form.Group>
                 </Form>
-                <Row>
-                    {postData.map(post => {
-                        return (
-                            <Col sm={10} key={post.id}>
-                                <div className='holder'>
-                                    <Card>
-                                        <Card.Body>
-                                            <Card.Body>{post.post}</Card.Body>
-                                            <Container fluid>
-                                            <Row>
-                                                <Col><LikeButton /></Col>
-                                            </Row>
-                                            </Container>
-                                        </Card.Body>
-                                    </Card>
-                                </div>
-                            </Col>
-                        );     
-                    })}
-                </Row>
             </Container>
+                <div className='Feed'>
+                    <Comment handleInsertNode={handleInsertNode} comment={commentsData}/>
+                </div>
         </section>
     );
 }

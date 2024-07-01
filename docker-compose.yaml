@@ -7,9 +7,13 @@ services:
       - grpc
     ports:
       - 80:80
+      - 443:443
     environment:
       POSTGRES_USER: ${PG_USERNAME}
       POSTGRES_PASSWORD: ${PG_PASSWORD}
+      DOMAIN_NAME: ${DOMAIN}
+    volumes:
+      - /etc/letsencrypt/:/etc/letsencrypt
 
   # gRPC server
   grpc:
@@ -28,3 +32,16 @@ services:
       POSTGRES_DB: ${PG_DATABASE}
     ports:
       - 5432:5432
+
+  # React frontend
+  react-app:
+    container_name: react_app
+    build:
+      context: .
+      dockerfile: frontendreact/.
+    ports:
+      - 3000:3000
+    depends_on:
+      - go-server
+    environment:
+      - NODE_ENV=production

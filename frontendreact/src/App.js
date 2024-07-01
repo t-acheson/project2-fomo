@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import MapPage from './pages/MapPage';
@@ -9,6 +9,15 @@ import Header from './components/header';
 import Footer from './components/footer';
 
 function App() {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:8000/items')
+    .then(Response => Response.json())
+    .then(data => setItems(data));
+  },[]);
+
+
   return (
     <Router>
       <Header />

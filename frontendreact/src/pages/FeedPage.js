@@ -4,7 +4,6 @@ import MessageBoard from '../components/messageBoard/messageBoard.js';
 import '../components/cssFiles/nestedComments.css'
 
 
-
 function FeedPage() {
   return (
     <div>

@@ -1,10 +1,12 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
-import { useLocation } from '../context/LocationContext'; 
+// import { useLocation } from '../context/LocationContext'; 
 
 const GetLocationButton = () => {
-    const [location, setLocation] = useLocation(); 
-    const handleGetLocation = () => {
+    
+    // const [location, setLocation] = useLocation(); 
+        const [location, setLocation] = React.useState(null);
+        const handleGetLocation = () => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 setLocation({
@@ -17,6 +19,7 @@ const GetLocationButton = () => {
             },
             { enableHighAccuracy: true }
         );
+        console.log(location);
     };
 
     return (

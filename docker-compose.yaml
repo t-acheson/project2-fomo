@@ -9,6 +9,7 @@ services:
     ports:
       - 80:80
       - 443:443
+      - 9876:5432 # 9876 is a random port I picked. Can be anything
     environment:
       POSTGRES_USER: ${PG_USERNAME}
       POSTGRES_PASSWORD: ${PG_PASSWORD}

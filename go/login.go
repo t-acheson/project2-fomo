@@ -4,6 +4,10 @@ import (
   "os"
   "database/sql"
   "fmt"
+  "github.com/elliotchance/sshtunnel"
+  "golang.org/x/crypto/ssh"
+  "log"
+  "time"
 
   _ "github.com/lib/pq"
 )
@@ -15,6 +19,9 @@ type dbStruct struct {
   user string
   password string
   dbname string
+  sshUser string
+  sshPassword string
+  serverIP string
 }
 
 // Function to establish a connection to the postgres database and return a database object
@@ -26,13 +33,30 @@ func connectToPostgres() *sql.DB {
     user: os.Getenv("POSTGRES_USER"),
     password: os.Getenv("POSTGRES_PASSWORD"),
     dbname: "main",
+    sshUser: os.Getenv("SSH_USER"),
+    sshPassword: os.Getenv("SSH_PASSWORD"),
+    serverIP: os.Getenv("SERVER_IP"),
   }
 
-  // Create login input
-  pgInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", dbLogin.host, dbLogin.port, dbLogin.user, dbLogin.password, dbLogin.dbname)  
+  // Setup the ssh tunnel
+  tunnel, err := sshtunnel.NewSSHTunnel(
+    fmt.Sprintf("%s@%s", dbLogin.sshUser, dbLogin.serverIP),
+    ssh.Password(dbLogin.sshPassword),
+    fmt.Sprintf("%s:5432", dbLogin.serverIP),
+    "5432",
+  )
+
+  // Create a log for the ssh tunnel
+  tunnel.Log = log.New(os.Stdout, "", log.Ldate | log.Lmicroseconds)
+
+  // Start the ssh tunnel so we can login (This is only useful when port 5432 is blocked and 22 is open as in our case)
+  go tunnel.Start()
+  time.Sleep(100 * time.Millisecond)
+
+  conn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", dbLogin.host, tunnel.Local.Port, dbLogin.user, dbLogin.password, dbLogin.dbname) 
  
   // Attempt to establish a database connection. Panic on error
-  db, err := sql.Open("postgres", pgInfo)
+  db, err := sql.Open("postgres", conn)
   if err != nil {
     panic(err)
   }

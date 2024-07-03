@@ -6,12 +6,14 @@ body {
   
   .likeButton {
     position: relative;
+    display: flex;
+    align-items: center;
   }
   
   .likeButton .heartIcon {
     height: 100px;
     width: 100px;
-    background: url('../../Assets/heart.png'); 
+    background: url('../../assets/heart.png'); 
     background-position: left;
     cursor: pointer;
     position: absolute;

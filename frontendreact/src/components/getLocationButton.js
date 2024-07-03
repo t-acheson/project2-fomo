@@ -1,10 +1,7 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
-// import { useLocation } from '../context/LocationContext'; 
 
 const GetLocationButton = () => {
-    
-    // const [location, setLocation] = useLocation(); 
         const [location, setLocation] = React.useState(null);
         const handleGetLocation = () => {
         navigator.geolocation.getCurrentPosition(

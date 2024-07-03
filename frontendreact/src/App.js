@@ -7,7 +7,6 @@ import FeedPage from './pages/FeedPage';
 import NotificationPage from './pages/NotificationPage';
 import Header from './components/header';
 import Footer from './components/footer';
-// import { LocationProvider } from './context/LocationContext';
 import './App.css'
 
 function App() {

@@ -39,7 +39,7 @@ function HomeHero() {
                         <Carousel.Item key={hero.id}>
                             <img
                                 className="d-block w-100"
-                                src={hero.image}s
+                                src={hero.image}
                                 alt={"Slide" + hero.id}
                             />
                             <Carousel.Caption>

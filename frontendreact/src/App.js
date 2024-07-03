@@ -12,7 +12,6 @@ import './App.css'
 
 export const LocationContext = createContext(null);
 
-
 function App() {
   const [location, setLocation] = useState(null);
 

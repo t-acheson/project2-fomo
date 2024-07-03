@@ -1,6 +1,5 @@
 import React from 'react';
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
-import GetLocationButton from '../components/getLocationButton';
 import TestLocationButton from '../components/TestLocationButton'; 
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
@@ -33,7 +32,6 @@ function MapPage() {
           </LoadScript>
         </div>
       </main>
-      {/* <GetLocationButton /> */}
       <TestLocationButton />
     </div>
   );

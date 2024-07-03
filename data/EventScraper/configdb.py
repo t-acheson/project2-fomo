@@ -16,8 +16,8 @@ MySQL_CONFIG = {
 # Currently only for local Postgres
 #TODO Adjust for our Postgres server
 Postgres_CONFIG = {
-    'host': '18.201.99.236',
-    'user': 'FOMO',
-    'password': "summerprojectgroup13password2",
+    'host': '137.43.49.31',
+    'user': 'student',
+    'password': "summerprojectgroup13",
     'dbname': "main"
 }

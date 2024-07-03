@@ -171,8 +171,8 @@ def main():
     country_code = 'US'
 
     # Define start and end pages for the event search
-    start_page = 50
-    end_page = 51
+    start_page = 0
+    end_page = 49
 
     print("Retrieving events")
     events_data = fetch_events(city, country_code, API_KEY, start_page, end_page)

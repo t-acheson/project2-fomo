@@ -31,7 +31,7 @@ var heroData = [
 //Takes heroData as input
 function HomeHero() {
     return (
-        <section id='home' className='heroBlock'>
+        <section id='home' className='heroBlock' data-testid="home-hero">
         <Carousel>
             {
                 heroData.map(hero => {

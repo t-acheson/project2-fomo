@@ -72,7 +72,7 @@ func (s *Server) addConnection(ws *websocket.Conn, uuid uuid.UUID) {
   _, err := db.Exec(`
     INSERT INTO users (uuid, location) VALUES
     ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326))`,
-    uuid.String(), rangeIn(1,5), rangeIn(1,5), // ! Temporary random numbers
+    uuid, rangeIn(1,5), rangeIn(1,5), // ! Temporary random numbers
   )
   if err != nil {
     fmt.Println("Error writing user to users table:", err)
@@ -83,7 +83,7 @@ func (s *Server) removeConnection(ws *websocket.Conn, uuid uuid.UUID) {
   _, err := db.Exec(`
     DELETE FROM users 
     WHERE uuid = $1`,
-    uuid.String(),
+    uuid,
   )
   if err != nil {
     fmt.Println("Error removing user from users table:", err)

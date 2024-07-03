@@ -85,7 +85,7 @@ func connectToPostgres() *sql.DB {
 
   _, err = db.Exec(`
     CREATE TABLE IF NOT EXISTS users (
-      uuid TEXT PRIMARY KEY,
+      uuid UUID PRIMARY KEY,
       location GEOGRAPHY(POINT, 4326) NOT NULL
     );
   `)

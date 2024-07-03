@@ -1,6 +1,8 @@
 import React from 'react';
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import TestLocationButton from '../components/TestLocationButton'; 
+import { LocationContext } from '../App';  
+
 
 const apiKey = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 const mapContainerStyle = {
@@ -16,6 +18,7 @@ const mapOptions = {
 };
 
 function MapPage() {
+  const userCurrenLocation = useContext(LocationContext);
   return (
     <div>
       <main>

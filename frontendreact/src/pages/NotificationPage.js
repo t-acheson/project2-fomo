@@ -7,7 +7,6 @@ function NotificationPage() {
       <main>      
         <h1>Notification Page</h1>
         <p>This is the notification page</p>
-        <TestLocationButton />
       </main>
     </div>
   );

@@ -95,7 +95,9 @@ func (s *Server) retrieve(ws *websocket.Conn) {
   rows, err := db.Query(`
   SELECT timestamp, text, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng
     FROM comments
-    `) // WHERE ...
+    WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
+  rangeIn(1,3), rangeIn(1,3), // CHANGE TO ACTUAL USER LOCATION AFTER FRONTEND INTEGRATION
+  )
   defer rows.Close()
   
   for rows.Next() {

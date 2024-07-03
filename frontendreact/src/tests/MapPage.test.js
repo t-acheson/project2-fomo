@@ -6,22 +6,24 @@ import { LoadScript, GoogleMap } from '@react-google-maps/api';
 
 // Mock the LoadScript and GoogleMap components
 jest.mock('@react-google-maps/api', () => ({
-  LoadScript: ({ children }) => <div>{children}</div>,
+  LoadScript: ({ children }) => <div>{children}</div>, // Mocked LoadScript component
   GoogleMap: ({ mapContainerStyle }) => (
-    <div data-testid="google-map" style={mapContainerStyle}></div>
+    <div data-testid="google-map" style={mapContainerStyle}></div> // Mocked GoogleMap component
   )
 }));
 
 describe('MapPage', () => {
   beforeEach(() => {
-    render(<MapPage />);
+    render(<MapPage />); // Render the MapPage component before each test
   });
 
-  it('renders without crashing', () => {});
+  it('renders without crashing', () => {
+    // Test case to check if the MapPage component renders without crashing
+  });
 
   it('renders the Google Map', () => {
-    const googleMapElement = screen.getByTestId('google-map');
-    expect(googleMapElement).toBeInTheDocument();
+    const googleMapElement = screen.getByTestId('google-map'); // Get the GoogleMap element by its test id
+    expect(googleMapElement).toBeInTheDocument(); // Assert that the GoogleMap element is in the document
   });
 });
 

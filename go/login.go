@@ -80,7 +80,25 @@ func connectToPostgres() *sql.DB {
     );
   `)
   if err != nil {
-    fmt.Println("Error creating table comments", err)
+    fmt.Println("Error creating table comments:", err)
+  }
+
+  _, err = db.Exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      uuid TEXT PRIMARY KEY,
+      location GEOGRAPHY(POINT, 4326) NOT NULL
+    );
+  `)
+  if err != nil {
+    fmt.Println("Error creating table users:", err)
+  }
+
+  // Ensure the users table has been wiped
+  _, err = db.Exec(`
+    DELETE FROM users;
+  `)
+  if err != nil {
+    fmt.Println("Error wiping the users table:", err)
   }
 
   // Return database object

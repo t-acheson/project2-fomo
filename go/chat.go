@@ -7,6 +7,8 @@ import (
   "io"
   "time"
   "encoding/json"
+  "github.com/google/uuid"
+  "math/rand"
 )
 
 type Server struct {
@@ -33,12 +35,19 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
 
   fmt.Println("New incoming connection from client:", ws.RemoteAddr())
 
+  uuid := uuid.New()
+
+  start := time.Now()
+  s.addConnection(ws, uuid)
+  duration := time.Since(start)
+  fmt.Println("Added connection to users table in time:", duration)
+
   s.conns[ws] = true
 
   // Retreive historical messages
-  start := time.Now()
+  start = time.Now()
   s.retrieve(ws)
-  duration :=time.Since(start)
+  duration = time.Since(start)
   fmt.Println("Retreived historical messages for client in time:", duration)
   
   //s.mu.Unlock()
@@ -46,7 +55,39 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
   //s.mu.Lock()
 
   fmt.Println("Client disconnected at", ws.RemoteAddr())
+  start = time.Now()
+  s.removeConnection(ws, uuid)
   delete(s.conns, ws)
+  duration = time.Since(start)
+  fmt.Println("Removed connection for users table in time:", duration)
+}
+
+// ! For temporary use until lat/lng can be passed to backend
+func rangeIn(low, hi int) int {
+    return low + rand.Intn(hi-low)
+}
+
+// ! Pass in location from frontend as argument
+func (s *Server) addConnection(ws *websocket.Conn, uuid uuid.UUID) {
+  _, err := db.Exec(`
+    INSERT INTO users (uuid, location) VALUES
+    ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326))`,
+    uuid.String(), rangeIn(1,5), rangeIn(1,5), // ! Temporary random numbers
+  )
+  if err != nil {
+    fmt.Println("Error writing user to users table:", err)
+  }
+}
+
+func (s *Server) removeConnection(ws *websocket.Conn, uuid uuid.UUID) {
+  _, err := db.Exec(`
+    DELETE FROM users 
+    WHERE uuid = $1`,
+    uuid.String(),
+  )
+  if err != nil {
+    fmt.Println("Error removing user from users table:", err)
+  }
 }
 
 // Select applicable historical comments and iteratively send them to the new client

@@ -26,6 +26,23 @@ jest.mock('../webSocket', () => {
     };
   });
   
+  let originalConsoleError;
+
+  beforeEach(() => {
+    // Save the original console.error function
+    originalConsoleError = console.error;
+  
+    // Replace console.error with a Jest mock function
+    console.error = jest.fn();
+  
+    jest.clearAllMocks();
+  });
+  
+  afterEach(() => {
+    // Restore the original console.error after each test
+    console.error = originalConsoleError;
+  });
+  
 // Mock the global alert function
 global.alert = jest.fn();
 

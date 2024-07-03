@@ -12,7 +12,7 @@ import (
 )
 
 type Server struct {
-  conns map[*websocket.Conn]bool
+  conns map[uuid.UUID]*websocket.Conn
   //mu sync.Mutex
 }
 
@@ -25,7 +25,7 @@ type Comment struct {
 
 func NewServer() *Server {
   return &Server {
-    conns: make(map[*websocket.Conn]bool),
+    conns: make(map[uuid.UUID]*websocket.Conn),
   }
 }
 
@@ -38,11 +38,11 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
   uuid := uuid.New()
 
   start := time.Now()
-  s.addConnection(ws, uuid)
+  s.addConnection(uuid)
   duration := time.Since(start)
   fmt.Println("Added connection to users table in time:", duration)
 
-  s.conns[ws] = true
+  s.conns[uuid] = ws
 
   // Retreive historical messages
   start = time.Now()
@@ -56,8 +56,8 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
 
   fmt.Println("Client disconnected at", ws.RemoteAddr())
   start = time.Now()
-  s.removeConnection(ws, uuid)
-  delete(s.conns, ws)
+  s.removeConnection(uuid)
+  delete(s.conns, uuid)
   duration = time.Since(start)
   fmt.Println("Removed connection for users table in time:", duration)
 }
@@ -68,18 +68,18 @@ func rangeIn(low, hi int) int {
 }
 
 // ! Pass in location from frontend as argument
-func (s *Server) addConnection(ws *websocket.Conn, uuid uuid.UUID) {
+func (s *Server) addConnection(uuid uuid.UUID) {
   _, err := db.Exec(`
     INSERT INTO users (uuid, location) VALUES
     ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326))`,
-    uuid, rangeIn(1,5), rangeIn(1,5), // ! Temporary random numbers
+    uuid, rangeIn(1,3), rangeIn(1,3), // ! Temporary random numbers
   )
   if err != nil {
     fmt.Println("Error writing user to users table:", err)
   }
 }
 
-func (s *Server) removeConnection(ws *websocket.Conn, uuid uuid.UUID) {
+func (s *Server) removeConnection(uuid uuid.UUID) {
   _, err := db.Exec(`
     DELETE FROM users 
     WHERE uuid = $1`,
@@ -155,7 +155,7 @@ func (s *Server) insertComment(comment Comment) {
 
     _, err := db.Exec(`
       INSERT INTO comments (timestamp, text, location) VALUES
-      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326))`,
+      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326));`,
       comment.Timestamp, comment.Text, comment.Lat, comment.Lng,
     )
     if err != nil {
@@ -164,17 +164,53 @@ func (s *Server) insertComment(comment Comment) {
 
 }
 
+func (s *Server) findClose(comment Comment) ([]uuid.UUID, error) {
+
+  rows, err := db.Query(`
+    SELECT uuid
+    FROM users
+    WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
+    comment.Lat, comment.Lng,
+  ) //5000 = 5km radius
+  if err != nil {
+    fmt.Println("Error retrieving close users:", err)
+    return nil, err
+  }
+  defer rows.Close()
+
+  var uuids []uuid.UUID
+
+  for rows.Next() {
+    var uuid uuid.UUID
+    if err := rows.Scan(&uuid); err != nil {
+      return nil, err
+    }
+    uuids = append(uuids, uuid)
+  }
+
+  return uuids, nil
+}
+
 func (s *Server) broadcast(comment Comment) {
-  for ws := range s.conns {
-    go func(ws *websocket.Conn) {
-      message, err := json.Marshal(comment)
-      if err != nil {
-        fmt.Println("Error marshalling comment:", err)
-        return
-      }
-      if _, err := ws.Write(message); err != nil {
-        fmt.Println("Write error:", err)
-      }
-    }(ws)
+
+  closeUUIDs, err := s.findClose(comment)
+  if err != nil {
+    fmt.Println("Unable to broadcast. Error retrieving close users: ", err)
+    return
+  }
+
+  for _, uuid := range closeUUIDs {
+    if ws, ok := s.conns[uuid]; ok {
+      go func(ws *websocket.Conn) {
+        message, err := json.Marshal(comment)
+        if err != nil {
+          fmt.Println("Error marshalling comment:", err)
+          return
+        }
+        if _, err := ws.Write(message); err != nil {
+          fmt.Println("Write error:", err)
+        }
+      }(ws)
+    }
   }
 }  

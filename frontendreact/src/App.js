@@ -9,15 +9,17 @@ import NotificationPage from './pages/NotificationPage';
 import Header from './components/header';
 import Footer from './components/footer';
 import './App.css'
-
+// create a context for the location state
 export const LocationContext = createContext(null);
 
 function App() {
+ // create a location state
   const [location, setLocation] = useState(null);
-
+// use the `useEffect` hook to get the user's location
   useEffect(() => {
     const getLocation = () => {
       if (navigator.geolocation) {
+        // get the user's location using the Geolocation API
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const userLocation = {
@@ -33,6 +35,7 @@ function App() {
         );
       }
     };
+    // call the `getLocation` function when the component mounts
     getLocation();  
   }, []);
 

@@ -3,7 +3,7 @@
 import React, { useContext } from 'react';
 
 //make sure to import the `LocationContext` context 
-import { LocationContext } from '../App';  
+import { LocationContext } from '../../App';  
 
 function TestLocationButton() {
   //use the `useContext` hook to access the location state from the `LocationContext` context

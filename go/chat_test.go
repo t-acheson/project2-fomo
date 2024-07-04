@@ -67,6 +67,7 @@ func (s *ServerTest) handleWebSocket(_ *MockWebSocketConn) {
 	// Simulate adding connection
 	s.addConnection(uuid)
 
+	//TODO retrive and read loop testing 
 	// Simulate retrieving historical messages
 	// (Assuming s.retrieve() method is implemented and tested separately)
 	// Simulate reading loop
@@ -118,8 +119,7 @@ func TestHandleWebSocket_ErrorHandling(t *testing.T) {
 	// Call the method being tested
 	server.handleWebSocket(mockWS)
 
-	// Assert specific error handling behavior
-	// For example, check logs or expected outcomes based on the error scenario
+	//TODO Assert specific error handling behavior here 
 }
 
 func TestAddAndRemoveConnection(t *testing.T) {

@@ -39,3 +39,16 @@ services:
     volumes:
       - ~/PG_DATA:/var/lib/postgresql/data
     restart: always
+    
+  # React frontend
+  react-app:
+    container_name: react_app
+    build:
+      context: .
+      dockerfile: frontendreact/.
+    ports:
+      - 3000:3000
+    depends_on:
+      - go-server
+    environment:
+      - NODE_ENV=production

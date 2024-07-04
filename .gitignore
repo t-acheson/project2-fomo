@@ -21,5 +21,6 @@
 go.work
 go.work.sum
 
-# node modules
-node_modules/
+
+# node_modules
+node_modules

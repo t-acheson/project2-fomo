@@ -13,7 +13,7 @@ const DislikeButton = () => {
   return (
     <div className='dislikeContainer' onClick={handleDislike}>
     <div className="btnContainer">
-        <button className= {'btn ${activeBtn === "dislike" ? "dislikeActive" : ""}'}>
+        <button className= {'dislikeBtn ${activeBtn === "dislike" ? "dislikeActive" : ""}'}>
         <span class="material-symbols-outlined">
             heart_broken
         </span>

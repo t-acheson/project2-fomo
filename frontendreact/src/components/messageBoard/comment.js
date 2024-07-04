@@ -4,6 +4,8 @@ import { ReactComponent as UpArrow } from "../../assets/up-arrow.svg";
 import Action from "./commentAction";
 import LikeButton from "./likeButton";
 import socket from "../../webSocket";
+// import React, { useContext } from 'react';
+// import { LocationContext } from '../../App';  
 
 //Start Comment function
 //Handles comments display and nesting comments. Also allowing users to add comments and reply to them individually. replys can be toggled to display or to be hidden.
@@ -43,7 +45,13 @@ const Comment = ({
         }
       };
 
- 
+  // Effect to handle incoming messages
+  useEffect(() => {
+    socket.addEventListener('message', function (event) {
+      const message = JSON.parse(event.data);
+      handleInsertNode(comment.id, message.text); // Update state with the new comment
+    });
+  }, [comment.id, handleInsertNode]);
 
   return (
     <div>

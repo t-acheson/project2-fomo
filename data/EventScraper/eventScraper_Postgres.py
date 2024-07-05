@@ -13,11 +13,32 @@ import time
 import json
 import pytz
 from datetime import datetime, timedelta
-from configdb import Postgres_CONFIG
-import configkey
+from sshtunnel import SSHTunnelForwarder
+#from configdb import Postgres_CONFIG
+#import configkey
+from dotenv import load_dotenv
+import os
+
+#! Before the following script can run a .env file needs to be created by each user with server details and API key
+# Load environment variables from .env file
+load_dotenv()
 
 # API key
-API_KEY = configkey.TMAPIKey_M
+#API_KEY = configkey.TMAPIKey_M
+API_KEY = os.getenv('TMAPIKey_M')
+
+# Get variables from environment
+SSH_HOST = os.getenv('SSH_HOST')
+SSH_PORT = int(os.getenv('SSH_PORT'))
+SSH_USER = os.getenv('SSH_USER')
+SSH_PASSWORD = os.getenv('SSH_PASSWORD')
+
+POSTGRES_HOST = os.getenv('POSTGRES_HOST')
+POSTGRES_USER = os.getenv('POSTGRES_USER')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+POSTGRES_DB = os.getenv('POSTGRES_DB')
+POSTGRES_PORT = int(os.getenv('POSTGRES_PORT'))
+
 BASE_URL = 'https://app.ticketmaster.com/discovery/v2/events.json'
 params = {
     'apikey': API_KEY,
@@ -38,16 +59,35 @@ last_request_time = time.time()
 # Connect to PostgreSQL database
 def connect_to_db():
     try:
-        connection = psycopg2.connect(
-            host=Postgres_CONFIG['host'],
-            user=Postgres_CONFIG['user'],
-            password=Postgres_CONFIG['password'],
-            dbname=Postgres_CONFIG['dbname']
+        tunnel = SSHTunnelForwarder(
+            (SSH_HOST, SSH_PORT),
+            ssh_username=SSH_USER,
+            ssh_password=SSH_PASSWORD,
+            remote_bind_address=(POSTGRES_HOST, POSTGRES_PORT),
+            local_bind_address=('127.0.0.1', 5433)
         )
-        return connection
+        tunnel.start()
+        
+        connection = psycopg2.connect(
+            database=POSTGRES_DB,
+            user=POSTGRES_USER,
+            password=POSTGRES_PASSWORD,
+            host='127.0.0.1',
+            port=tunnel.local_bind_port
+        )
+        return connection, tunnel
+        
+        #connection = psycopg2.connect(
+            #host=Postgres_CONFIG['host'],
+            #port=Postgres_CONFIG['port'],
+            #user=Postgres_CONFIG['user'],
+            #password=Postgres_CONFIG['password'],
+            #dbname=Postgres_CONFIG['dbname']
+        #)
+        #return connection
     except Exception as e:
         print(f"Error connecting to database: {e}")
-        return None
+        return None, None
 
 # Create events table if not already existing
 def create_table(cursor):
@@ -182,13 +222,14 @@ def main():
         events = parse_events(events_data)
 
         print("Connecting to database")
-        conn = connect_to_db()
+        conn, tunnel = connect_to_db()
         if conn:
             cursor = conn.cursor()
             create_table(cursor)
             print("Inserting events into database")
             insert_events_to_db(events, conn)
             conn.close()
+            tunnel.stop()
         else:
             print("Failed to connect to the database.")
     else:

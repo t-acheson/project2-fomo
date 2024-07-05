@@ -7,8 +7,9 @@ import (
 	"time" //Used for time.Sleep
 	"os" //Pass in environment vars
 	"golang.org/x/net/websocket"
+	"path/filepath"
 
-	"github.com/gorilla/sessions" //Session management
+	//"github.com/gorilla/sessions" //Session management
 	"database/sql"
 )
 
@@ -18,7 +19,7 @@ type User struct {
 }
 
 // Define a global session store
-var store = sessions.NewCookieStore([]byte("sampleKey"))
+//var store = sessions.NewCookieStore([]byte("sampleKey"))
 
 // Define a connection the the Postgres db
 var db *sql.DB
@@ -31,6 +32,17 @@ func handler(w http.ResponseWriter, r *http.Request) {
 //Redirect HTTP request to HTTPS
 func redirectHTTP(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
+}
+
+func serveReact(path string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		filePath := filepath.Join(path, r.URL.Path)
+		if _, err := os.Stat(filePath); os.IsNotExist(err) { //If file doesnt exist, default to index.html
+			http.ServeFile(w, r, filepath.Join(path, "index.html"))
+			return
+	}
+	http.FileServer(http.Dir(path)).ServeHTTP(w, r)
+	})
 }
 
 func main() {
@@ -48,7 +60,12 @@ func main() {
 	defer db.Close()
 
 	//Set up HTTP handler at root URL
-	http.HandleFunc("/", handler)
+	//http.HandleFunc("/", handler)
+
+	// Start HTTP request multiplexer
+	mux := http.NewServeMux()
+
+	mux.Handle("/", serveReact("/frontendreact/build"))
 
 	//Start TLS listener on port 443
 	go func() {

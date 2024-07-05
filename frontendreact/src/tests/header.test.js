@@ -1,7 +1,7 @@
 // Imports
 import React from 'react';
 import { render, screen } from '@testing-library/react'; // Import render and screen from testing-library/react
-import '@testing-library/jest-dom/extend-expect';// for the additional matchers
+import '@testing-library/jest-dom';
 import Header from '../components/header';
 
 

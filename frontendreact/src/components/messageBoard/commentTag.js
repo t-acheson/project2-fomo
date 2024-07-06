@@ -1,22 +1,24 @@
 import React, { useState } from 'react';
-import { Form } from 'react-bootstrap';
+import { Button, ButtonGroup } from 'react-bootstrap';
+import '../cssFiles/commentTag.css';
 
-const CommentTag = ({ onSelectTag }) => {
-    const [tag, setTag] = useState('');
 
-    const handleTagChange = (event) => {
-        setTag(event.target.value);
-        onSelectTag(event.target.value);
+const CommentTag = () => {
+    const [active, setActive] = useState('#Hang-out');
+
+    const handleSelect = (tag) => {
+        setActive(tag);
     };
 
     return (
-        <Form.Select aria-label="Select tag" value={tag} onChange={handleTagChange}>
-            <option value="">Choose a tag...</option>
-            <option value="Important">Important</option>
-            <option value="Personal">Personal</option>
-            <option value="Work">Work</option>
-        </Form.Select>
+        <ButtonGroup className="button-group" aria-label="Basic example">
+            <Button variant={active === 'Hang-out' ? 'primary' : 'secondary'} onClick={() => handleSelect('Hang-out')}>Hang-out</Button>
+            <Button variant={active === 'Event' ? 'primary' : 'secondary'} onClick={() => handleSelect('Event')}>Event</Button>
+            <Button variant={active === 'Chit Chat' ? 'primary' : 'secondary'} onClick={() => handleSelect('Chit Chat')}>Chit Chat</Button>
+        </ButtonGroup>
+
     );
 };
 
 export default CommentTag;
+

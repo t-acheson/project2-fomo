@@ -31,6 +31,7 @@ const CommentInput = () => {
                 value={text}
                 onChange={handleInputChange}
             />
+            {/* Submit button to send the message */}
             <Button variant="primary" onClick={handleSubmit}> 
                 Submit
             </Button>

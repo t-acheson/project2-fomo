@@ -13,11 +13,30 @@ import time
 import traceback
 import datetime
 import pytz
-from configdb import Postgres_CONFIG
-import configkey
+#from configdb import Postgres_CONFIG
+#import configkey
+from sshtunnel import SSHTunnelForwarder
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Get variables from environment
+SSH_HOST = os.getenv('SSH_HOST')
+SSH_PORT = int(os.getenv('SSH_PORT'))
+SSH_USER = os.getenv('SSH_USER')
+SSH_PASSWORD = os.getenv('SSH_PASSWORD')
+
+POSTGRES_HOST = os.getenv('POSTGRES_HOST')
+POSTGRES_USER = os.getenv('POSTGRES_USER')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+POSTGRES_DB = os.getenv('POSTGRES_DB')
+POSTGRES_PORT = int(os.getenv('POSTGRES_PORT'))
+
 
 # Define API keys and URLs for weather data
-currentAPIKey = configkey.currentAPIKey
+currentAPIKey = os.getenv('currentAPIKey')
 currentAPIURL = 'https://api.openweathermap.org/data/2.5/weather?'
 currentParams = {'id': 5128638, 'appid': currentAPIKey}  # For New York
 
@@ -51,11 +70,29 @@ else:
 #connection.close()
 
 # Connect to the new database "summer"
+#connection = psycopg2.connect(
+    #host= Postgres_CONFIG['host'],
+    #user= Postgres_CONFIG['user'], 
+    #password= Postgres_CONFIG['password'],
+    #dbname= Postgres_CONFIG['dbname'] 
+#)
+
+# Connect to PostgreSQL database via SSH tunnel
+tunnel = SSHTunnelForwarder(
+    (SSH_HOST, SSH_PORT),
+    ssh_username=SSH_USER,
+    ssh_password=SSH_PASSWORD,
+    remote_bind_address=(POSTGRES_HOST, POSTGRES_PORT),
+    local_bind_address=('127.0.0.1', 5433)
+)
+tunnel.start()
+
 connection = psycopg2.connect(
-    host= Postgres_CONFIG['host'],
-    user= Postgres_CONFIG['user'], 
-    password= Postgres_CONFIG['password'],
-    dbname= Postgres_CONFIG['dbname'] 
+    database=POSTGRES_DB,
+    user=POSTGRES_USER,
+    password=POSTGRES_PASSWORD,
+    host='127.0.0.1',
+    port=tunnel.local_bind_port
 )
 
 #! Create cursor object - with above database connection
@@ -169,3 +206,8 @@ def main(scrape_continuously=False):
 
 if __name__ == "__main__":
     main(scrape_continuously=False)
+
+# Close the cursor and connection
+cursor.close()
+connection.close()
+tunnel.stop()

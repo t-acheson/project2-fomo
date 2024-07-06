@@ -117,21 +117,59 @@ import time
 import traceback
 import datetime
 import pytz 
-from configdb import Postgres_CONFIG
-import configkey
+#from configdb import Postgres_CONFIG
+#import configkey
+from sshtunnel import SSHTunnelForwarder
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Get variables from environment
+SSH_HOST = os.getenv('SSH_HOST')
+SSH_PORT = int(os.getenv('SSH_PORT'))
+SSH_USER = os.getenv('SSH_USER')
+SSH_PASSWORD = os.getenv('SSH_PASSWORD')
+
+POSTGRES_HOST = os.getenv('POSTGRES_HOST')
+POSTGRES_USER = os.getenv('POSTGRES_USER')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+POSTGRES_DB = os.getenv('POSTGRES_DB')
+POSTGRES_PORT = int(os.getenv('POSTGRES_PORT'))
 
 # Connect to the database server again
 # Now specifying "summer" schema
 # psycopg2
 # Connect to the relevant database server - currently local PostgreSQL
-connection = psycopg2.connect(
-    host= Postgres_CONFIG['host'],
-    user= Postgres_CONFIG['user'],
-    password= Postgres_CONFIG['password'],
-    dbname= Postgres_CONFIG['dbname']
-)
+#connection = psycopg2.connect(
+    #host= Postgres_CONFIG['host'],
+    #user= Postgres_CONFIG['user'],
+    #password= Postgres_CONFIG['password'],
+    #dbname= Postgres_CONFIG['dbname']
+#)
 
 #create cursor object - with above database connection
+#cursor = connection.cursor()
+
+# Connect to PostgreSQL database via SSH tunnel
+tunnel = SSHTunnelForwarder(
+    (SSH_HOST, SSH_PORT),
+    ssh_username=SSH_USER,
+    ssh_password=SSH_PASSWORD,
+    remote_bind_address=(POSTGRES_HOST, POSTGRES_PORT),
+    local_bind_address=('127.0.0.1', 5433)
+)
+tunnel.start()
+
+connection = psycopg2.connect(
+    database=POSTGRES_DB,
+    user=POSTGRES_USER,
+    password=POSTGRES_PASSWORD,
+    host='127.0.0.1',
+    port=tunnel.local_bind_port
+)
+
 cursor = connection.cursor()
 
 # Can close the cursor and connection with below commands
@@ -178,7 +216,7 @@ def comments_to_db(name, address, comment, created_at, latitude, longitude):
 # Define parameters for API i.e. API key
 headers = {
     "accept": "application/json",
-    "Authorization": configkey.FoursquareAPIKey
+    "Authorization": os.getenv('FoursquareAPIKey')
 }
 
 # Initialise empty list for data responses from each borough

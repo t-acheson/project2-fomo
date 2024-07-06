@@ -7,7 +7,7 @@ import (
 	"time" //Used for time.Sleep
 	"os" //Pass in environment vars
 	"golang.org/x/net/websocket"
-	"path/filepath"
+	"regexp"
 
 	//"github.com/gorilla/sessions" //Session management
 	"database/sql"
@@ -34,17 +34,6 @@ func redirectHTTP(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
 }
 
-func serveReact(path string) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		filePath := filepath.Join(path, r.URL.Path)
-		if _, err := os.Stat(filePath); os.IsNotExist(err) { //If file doesnt exist, default to index.html
-			http.ServeFile(w, r, filepath.Join(path, "index.html"))
-			return
-	}
-	http.FileServer(http.Dir(path)).ServeHTTP(w, r)
-	})
-}
-
 func main() {
 	// Give the gRPC server a second to open
 	time.Sleep(1 * time.Second)
@@ -59,13 +48,20 @@ func main() {
 	db = connectToPostgres()
 	defer db.Close()
 
-	//Set up HTTP handler at root URL
-	//http.HandleFunc("/", handler)
+	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Define the file server for static files
+		fs := http.FileServer(http.Dir("frontendreact/build"))
+		// Define the regex pattern to match file extensions
+		fileMatcher := regexp.MustCompile(`\.[a-zA-Z]*$`)
+		if !fileMatcher.MatchString(r.URL.Path) {
+			http.ServeFile(w, r, "frontendreact/build/index.html")
+		} else {
+			fs.ServeHTTP(w, r)
+		}
+	}))
 
-	// Start HTTP request multiplexer
-	mux := http.NewServeMux()
-
-	mux.Handle("/", serveReact("/frontendreact/build"))
+	server := NewServer()
+	http.Handle("/ws", websocket.Handler(server.handleWebSocket))
 
 	//Start TLS listener on port 443
 	go func() {
@@ -76,11 +72,6 @@ func main() {
 			log.Fatalf("HTTPS server failed to start: %v", err)
 		}
 	}()
-
-	//Starting websocket chat at /ws
-	log.Printf("Starting websocket chat")
-	server := NewServer()
-	http.Handle("/ws", websocket.Handler(server.handleWebSocket))
 
 	//Start HTTP listener on port 80
 	log.Printf("Starting HTTP listener")

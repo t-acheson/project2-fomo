@@ -33,7 +33,7 @@ function MapPage() {
               zoom={10}
               options={mapOptions}
             >
-              // pass the `userPosition` variable to the `UserLocationMarker` component and render a marker at the user's location
+           {/* pass the `userPosition` variable to the `UserLocationMarker` component and render a marker at the user's location */}
               <UserLocationMarker position={userPosition} />
             </GoogleMap>
           </LoadScript>

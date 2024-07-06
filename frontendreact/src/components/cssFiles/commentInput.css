@@ -1,31 +1,31 @@
 /* Styles for the whole input group */
 .input-group {
-    display: flex; /* Ensures the input and button are inline */
-    align-items: center; /* Vertically aligns elements in the input group */
-    margin: 20px; /* Adds bottom margin for spacing */
+    display: flex; 
+    align-items: center; 
+    margin: 20px; 
 }
 
 /* Specific styles for the input box */
 .input-box {
-    flex-grow: 1; /* Makes the input box grow to fill the space */
-    border-radius: 5px; /* Rounds the corners of the input box */
-    padding: 10px; /* Adds padding inside the input box */
-    height: 100px; /* Sets a fixed height for the input box */
-    border: 2px solid #ccc; /* Adds a subtle border */
-    margin-right: 10px; /* Adds spacing between the input box and the button */
+    flex-grow: 1; 
+    border-radius: 5px; 
+    padding: 10px; 
+    height: 100px; 
+    border: 2px solid #ccc; 
+    margin-right: 10px; 
 }
 
 /* Styles for the submit button */
 .button {
-    padding: 10px 20px; /* Adds padding to make the button larger */
-    background-color: #007bff; /* Primary color for the button */
-    color: white; /* Text color for the button */
-    border: none; /* No border for a modern look */
+    padding: 10px 20px; 
+    background-color: #007bff; 
+    color: white; 
+    border: none; 
 }
 
-/* Styles for the character count text */
+
 .text-muted {
     margin: 5px;
-    font-size: 0.5rem; /* Smaller font size for subtlety */
-    color: #6c757d; /* Muted text color */
+    font-size: 0.5rem; 
+    color: #6c757d; 
 }

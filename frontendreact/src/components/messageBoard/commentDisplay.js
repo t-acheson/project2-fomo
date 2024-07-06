@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
-import '../cssFiles/commentDisplay.css';
 
 const CommentDisplay = ({ comments }) => {
     return (

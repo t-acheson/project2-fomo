@@ -1,25 +1,33 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import HomePage from '../pages/HomePage';
+import HomeHero from '../components/homeHero';
+import About from '../components/aboutUs';
 
-import React from 'react'; 
-import { render, screen } from '@testing-library/react'; 
-import '@testing-library/jest-dom'; 
-import HomePage from '../pages/HomePage'; 
-
+// Mock the HomeHero and About components if necessary
+jest.mock('../components/homeHero', () => () => <div data-testid="home-hero">Welcome to the Home Page</div>);
+jest.mock('../components/aboutUs', () => () => <div data-testid="about-us">This is the about section</div>);
 
 describe('HomePage', () => {
-    // beforeEach hook runs before each test in this suite, rendering the HomePage component
-    beforeEach(() => {
-        render(<HomePage />);
-    });
+  beforeEach(() => {
+    render(<HomePage />);
+  });
 
-    // Test case to verify that the HomePage component renders without crashing
-    it('renders without crashing', () => {
-        const mainElement = screen.getByRole('main'); // Queries for an element with the role 'main'
-        expect(mainElement).toBeInTheDocument(); // Asserts that the queried element is present in the document
-    });
+  it('renders without crashing', () => {
+    const mainElement = screen.getByRole('main');
+    expect(mainElement).toBeInTheDocument();
+  });
 
-    // Test case to check if the HomePage contains a specific welcome message
-    it('contains welcome message', () => {
-        const welcomeMessage = screen.getByText(/This is the home page/i); // Queries for text matching the regex pattern
-        expect(welcomeMessage).toBeInTheDocument(); // Asserts that the welcome message is present in the document
-    });
+  it('renders the HomeHero component', () => {
+    const homeHeroElement = screen.getByTestId('home-hero');
+    expect(homeHeroElement).toBeInTheDocument();
+    expect(homeHeroElement).toHaveTextContent(/Welcome to the Home Page/i);
+  });
+
+  it('renders the About component', () => {
+    const aboutElement = screen.getByTestId('about-us');
+    expect(aboutElement).toBeInTheDocument();
+    expect(aboutElement).toHaveTextContent(/This is the about section/i);
+  });
 });

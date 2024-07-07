@@ -1,5 +1,4 @@
 import React from 'react';
-import TestLocationButton from '../components/TestLocationButton'; 
 
 function NotificationPage() {
   return (

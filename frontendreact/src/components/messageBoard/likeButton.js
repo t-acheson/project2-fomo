@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import '../cssFiles/likeButton.css'
-import socket from '../../webSocket';
+// import socket from '../../webSocket';
+import { sendMessage } from '../../webSocket';
 
-const LikeButton = () => {
+const LikeButton = ({messageId, updateLikeCount}) => {
     const [liked, setLiked] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
   
     const handleLike = () => {
       setLiked(!liked);
-      setLikesCount(liked ? likesCount - 1 : likesCount + 1);
-    
-      // to send likesCount to WebSocket server
-      socket.send(JSON.stringify({ likesCount }));
+      const newLikesCount = liked ? likesCount - 1 : likesCount + 1;
+      setLikesCount(newLikesCount);
+      updateLikeCount(messageId, newLikesCount);
+  
+      // Send the likesCount to WebSocket server
+      sendMessage({ messageId, likesCount: newLikesCount });
     };
     
     return (

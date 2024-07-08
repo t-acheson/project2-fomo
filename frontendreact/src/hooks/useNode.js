@@ -19,18 +19,18 @@ const useNode = () => {
       return { ...tree, items: latestNode };
     };
 
-    const updateLikeCount = (tree, itemId, likesCount) => {
-      if (tree.id === itemId) {
-        tree.likesCount = likesCount;
-        return tree;
-      }
-  
-      let latestNode = [];
-      latestNode = tree.items.map((ob) => {
-        return updateLikeCount(ob, itemId, likesCount);
-      });
-  
-      return { ...tree, items: latestNode };
+    const updateLikeCount = (tree, itemId, newLikesCount) => {
+      const updateNode = (nodes) => {
+        return nodes.map((node) => {
+          if (node.id === itemId) {
+            return { ...node, likesCount: newLikesCount };
+          } else if (node.items) {
+            return { ...node, items: updateNode(node.items) };
+          }
+          return node;
+        });
+      };
+      return { ...tree, items: updateNode(tree.items) };
     };
   
     return { insertNode, updateLikeCount };

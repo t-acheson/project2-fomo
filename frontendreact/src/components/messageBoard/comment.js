@@ -3,13 +3,15 @@ import { ReactComponent as DownArrow } from "../../assets/down-arrow.svg";
 import { ReactComponent as UpArrow } from "../../assets/up-arrow.svg";
 import Action from "./commentAction";
 import LikeButton from "./likeButton";
-import socket from "../../webSocket";
+// import socket from "../../webSocket";
+import { sendMessage } from '../../webSocket';
 
 //Start Comment function
 //Handles comments display and nesting comments. Also allowing users to add comments and reply to them individually. replys can be toggled to display or to be hidden.
 const Comment = ({
     handleInsertNode,
     comment,
+    updateLikeCount,
   }) => {
     const [input, setInput] = useState("");
     const [showInput, setShowInput] = useState(false);
@@ -31,17 +33,12 @@ const Comment = ({
             setShowInput(false);
             setInput("");
 
-        // Send the comment data via WebSocket
-          if (socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify(newComment));
-            console.log("Sent message to server:", newComment);
-          } else {
-            console.error("WebSocket is not open. Unable to send message:", newComment);
-          }
-        } else {
-          alert("Comment cannot be empty");
-        }
-      };
+      // Send the comment data via WebSocket
+      sendMessage(newComment);
+    } else {
+      alert("Comment cannot be empty");
+    }
+  };
 
  
 
@@ -88,8 +85,8 @@ const Comment = ({
                 }
                 handleClick={handleNewComment}
               />
-              <LikeButton />
-            </div>
+              <LikeButton messageId={comment.id} updateLikeCount={updateLikeCount} /> {/* Pass messageId and updateLikeCount to LikeButton */}
+              </div>
           </>
         )}
       </div>
@@ -120,6 +117,7 @@ const Comment = ({
               key={cmnt.id}
               handleInsertNode={handleInsertNode}
               comment={cmnt}
+              updateLikeCount={updateLikeCount}// Pass updateLikeCount to Comment
             />
           );
         })}

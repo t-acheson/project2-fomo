@@ -49,7 +49,7 @@
   display: flex;
   align-items: center;
   font-family: 'Roboto', sans-serif;
-  color: #ffffff;
+  color: #A6ACAF;
   font-weight: 800;
   font-size: 20px;
   margin-left: 6px;
@@ -71,25 +71,25 @@
 }
 
 .dislikeBtn {
-  color: #ffffff;
+  color: #A6ACAF;
   border-radius: 50%;
   height: 60px;
   width: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 10px;
   border: none;
   background: rgba(255, 192, 200, 0);
   display: flex;
   font-family: 'Roboto', sans-serif;
   font-weight: 800;
   font-size: 20px;
-  margin-left: 6px;
+  margin-left: px;
 }
 
 .dislikeActive {
-  color: #ffffff;
+  color: #A6ACAF;
   background-color: #4d5662;
 }
 
@@ -103,4 +103,5 @@
       'wght' 100,
       'GRAD' 0,
       'opsz' 24;
+      font-size: 40px;
 }

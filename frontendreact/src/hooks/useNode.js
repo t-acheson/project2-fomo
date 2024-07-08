@@ -5,6 +5,7 @@ const useNode = () => {
           id: new Date().getTime(),
           name: item,
           items: [],
+          likesCount: 0
         });
   
         return tree;
@@ -18,7 +19,21 @@ const useNode = () => {
       return { ...tree, items: latestNode };
     };
 
-    return { insertNode};
+    const updateLikeCount = (tree, itemId, likesCount) => {
+      if (tree.id === itemId) {
+        tree.likesCount = likesCount;
+        return tree;
+      }
+  
+      let latestNode = [];
+      latestNode = tree.items.map((ob) => {
+        return updateLikeCount(ob, itemId, likesCount);
+      });
+  
+      return { ...tree, items: latestNode };
+    };
+  
+    return { insertNode, updateLikeCount };
   };
   
   export default useNode;

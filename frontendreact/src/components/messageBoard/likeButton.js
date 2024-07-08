@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../cssFiles/likeButton.css'
+import socket from '../../webSocket';
 
 const LikeButton = () => {
     const [liked, setLiked] = useState(false);
@@ -8,7 +9,7 @@ const LikeButton = () => {
     const handleLike = () => {
       setLiked(!liked);
       setLikesCount(liked ? likesCount - 1 : likesCount + 1);
-    };
+    
       // to send likesCount to WebSocket server
       socket.send(JSON.stringify({ likesCount }));
     };

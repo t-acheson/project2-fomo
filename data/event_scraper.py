@@ -8,14 +8,14 @@ import time
 API_KEY = 'v6sN3JoEQ2v4sACGv22tpX78R9gCrWQa'
 BASE_URL = 'https://app.ticketmaster.com/discovery/v2/events.json'
 
-# Database connection
+
 DB_NAME = ''
 DB_USER = ''
 DB_PASS = ''
 DB_HOST = ''
 DB_PORT = '5432'
 
-# Rate limiting variables
+
 REQUESTS_PER_DAY = 4999
 REQUESTS_PER_MINUTE = 99
 SECONDS_PER_MINUTE = 60
@@ -30,14 +30,14 @@ def fetch_events(city, country_code, api_key):
     
     current_time = time.time()
     
-    # Calculate elapsed time since last request
+
     elapsed_time = current_time - last_request_time
     
-    # Reset the minute counter if a minute has passed
+    
     if elapsed_time > SECONDS_PER_MINUTE:
         minute_request_count = 0
     
-    # Wait if the rate limit per minute is reached
+    
     if minute_request_count >= REQUESTS_PER_MINUTE:
         time_to_wait = SECONDS_PER_MINUTE - elapsed_time
         print(f"Rate limit per minute reached. Waiting for {time_to_wait:.2f} seconds.")
@@ -45,7 +45,7 @@ def fetch_events(city, country_code, api_key):
         minute_request_count = 0
         last_request_time = time.time()
     
-    # Wait if the daily limit is reached
+    
     if daily_request_count >= REQUESTS_PER_DAY:
         print("Rate limit per day reached. Waiting until next day.")
         time_to_wait = SECONDS_PER_DAY - (current_time % SECONDS_PER_DAY)

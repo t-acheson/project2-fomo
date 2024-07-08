@@ -1,0 +1,31 @@
+/* Styles for the whole input group */
+.input-group {
+    display: flex; 
+    align-items: center; 
+    margin: 20px; 
+}
+
+/* Specific styles for the input box */
+.input-box {
+    flex-grow: 1; 
+    border-radius: 5px; 
+    padding: 10px; 
+    height: 100px; 
+    border: 2px solid #ccc; 
+    margin-right: 10px; 
+}
+
+/* Styles for the submit button */
+.button {
+    padding: 10px 20px; 
+    background-color: #007bff; 
+    color: white; 
+    border: none; 
+}
+
+
+.text-muted {
+    margin: 5px;
+    font-size: 0.5rem; 
+    color: #6c757d; 
+}

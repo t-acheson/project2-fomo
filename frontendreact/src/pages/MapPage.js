@@ -1,7 +1,7 @@
 import React from 'react';
 import BaseMap from '../components/map/BaseMap';
 import UserMarker from '../components/map/UserMarker';
-import GeoJSONLayer from '../components/map/GeoJSONLayer';
+// import GeoJSONLayer from '../components/map/GeoJSONLayer';
 import TestLocationButton from '../components/map/TestLocationButton';
 
 function MapPage() {
@@ -9,7 +9,7 @@ function MapPage() {
     <div style={{ height: '80vh', width: '100%' }}>
       <BaseMap>
         <UserMarker />
-        <GeoJSONLayer />
+        {/* <GeoJSONLayer /> */}
         {/* more layer or controller */}
       </BaseMap>
       <TestLocationButton />

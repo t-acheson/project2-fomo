@@ -9,7 +9,10 @@ const LikeButton = () => {
       setLiked(!liked);
       setLikesCount(liked ? likesCount - 1 : likesCount + 1);
     };
-  
+      // to send likesCount to WebSocket server
+      socket.send(JSON.stringify({ likesCount }));
+    };
+    
     return (
       <div className="likeButton" onClick={handleLike}>
         <div className="heartBg">

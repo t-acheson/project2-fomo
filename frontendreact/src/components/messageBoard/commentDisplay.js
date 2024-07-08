@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
+import LikeDislikeButton from './likeAndDislikeButton';
 
 const CommentDisplay = ({ comments }) => {
     return (
@@ -13,6 +14,7 @@ const CommentDisplay = ({ comments }) => {
                             <Card>
                                 <Card.Body>
                                     <Card.Text>{comment.text}</Card.Text>
+                                    <LikeDislikeButton />
                                     <Card.Subtitle className="mb-2 text-muted">
                                         Received at: {comment.timestamp}
                                     </Card.Subtitle>

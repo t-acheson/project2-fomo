@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
-import LikeButton from './likeButton';
+import LikeDislikeButton from './likeAndDislikeButton.js';
 import useNode from '../../hooks/useNode.js';
 import Comment from './comment.js';
 import { useState } from 'react';

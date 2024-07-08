@@ -2,8 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { ReactComponent as DownArrow } from "../../assets/down-arrow.svg";
 import { ReactComponent as UpArrow } from "../../assets/up-arrow.svg";
 import Action from "./commentAction";
-import LikeButton from "./likeButton";
-import DislikeButton from "./dislikeButton";
+import LikeDislikeButton from "./likeAndDislikeButton";
 import socket from "../../webSocket";
 
 //Start Comment function
@@ -89,8 +88,7 @@ const Comment = ({
                 }
                 handleClick={handleNewComment}
               />
-              <LikeButton />
-              <DislikeButton />
+              <LikeDislikeButton />
             </div>
           </>
         )}

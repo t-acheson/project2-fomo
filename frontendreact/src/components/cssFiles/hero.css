@@ -1,0 +1,65 @@
+.heroBlock {
+    margin: 0;
+  }
+  
+  .heroBlock .carousel-item:before {
+    content: '';
+    background: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0; 
+  }
+  
+  .heroBlock .carousel-item img {
+    width: 100%;
+  }
+  
+  .heroBlock .carousel-caption {
+    left: 25%;
+    right: 25%;
+    transform: translateY(50%);
+    -webkit-transform: translateY(50%);
+    bottom: 30%;
+  }
+  
+  .heroBlock p {
+    margin: 0 0 30px;
+  }
+  
+  .hero-block .carousel-caption {
+    left: 7%;
+    right: 7%;
+  }
+
+  .hero-block .carousel-control {
+    width: 5%;
+  }
+
+@media only screen and (max-width: 1023px) {
+  .heroBlock .carousel-caption {
+    left: 7%;
+    right: 7%;
+  }
+  
+  .heroBlock .carousel-control {
+    width: 5%;
+  }
+  
+  .heroBlock p {
+    margin: 0 0 25px;
+  }
+  
+}
+
+@media only screen and (max-width: 767px) {
+  .heroBlock .carousel-caption {
+    left: 4%;
+    right: 4%;
+  }
+  
+  .heroBlock .carousel-control {
+    width: 15%;
+  }
+}

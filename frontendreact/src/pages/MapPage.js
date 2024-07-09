@@ -24,12 +24,43 @@ function MapPage() {
               key={index}
               data={taxizone}
               pathOptions={{
-                // fillColor: '#FBD3C',
-                // fillOpacity: 0.1,
+                fillColor: '#FBD3C',
+                fillOpacity: 0.2,
                 weight: 1.5,
                 opacity: 1,
                 dashArray: 3,
-                color: 'black'
+                color: '#403A3A'
+              }}
+
+              eventHandlers={{
+                //For mouse hoover.
+                mouseover: (e) => {
+                  const layer = e.target;
+                  layer.setStyle({
+                    dashArray: "",
+                    fillColor: "#D35400",
+                    fillOpacity: 0.7,
+                    weight: 2,
+                    opacity: 1,
+                    color: '#6E2C00',
+                  })
+                },
+                //Revert geoJSON layer to previous state.
+                mouseout: (e) => {
+                  const layer = e.target;
+                  layer.setStyle({
+                    fillColor: '#FBD3C',
+                    fillOpacity: 0.2,
+                    weight: 1.5,
+                    opacity: 1,
+                    dashArray: 3,
+                    color: '#403A3A'
+                  });
+                },
+
+                click: (e) => {
+                
+                }
               }}
             />
           );

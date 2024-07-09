@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 
 const BaseMap = ({ children }) => {
   const center = { lat: 40.7128, lng: -74.0060 };
-  const zoom = 13;
+  const zoom = 10;
 
   return (
     <MapContainer center={center} zoom={zoom} style={{ height: '80vh', width: '100%' }}>

@@ -24,12 +24,12 @@ function MapPage() {
               key={index}
               data={taxizone}
               pathOptions={{
-                fillColor: '#FBD3C',
-                fillOpacity: 0.7,
-                weight: 2,
+                // fillColor: '#FBD3C',
+                // fillOpacity: 0.1,
+                weight: 1.5,
                 opacity: 1,
                 dashArray: 3,
-                color: 'white'
+                color: 'black'
               }}
             />
           );

@@ -1,7 +1,7 @@
 import React from 'react';
 import BaseMap from '../components/map/BaseMap';
 import UserMarker from '../components/map/UserMarker';
-import GeoJSONLayer from '../components/map/GeoJSONLayer';
+// import GeoJSONLayer from '../components/map/GeoJSONLayer';
 import TestLocationButton from '../components/map/TestLocationButton';
 import geoLocation from '../data/FOMOTaxiMap';
 import {GeoJSON} from 'react-leaflet'

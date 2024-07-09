@@ -14,7 +14,7 @@ const CommentDisplay = ({ comments }) => {
                             <Card>
                                 <Card.Body>
                                     <Card.Text>{comment.text}</Card.Text>
-                                    <LikeDislikeButton />
+                                    <LikeDislikeButton commentId={comment.id}/>
                                     <Card.Subtitle className="mb-2 text-muted">
                                         Received at: {comment.timestamp}
                                     </Card.Subtitle>

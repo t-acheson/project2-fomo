@@ -1,28 +1,41 @@
 import React, { useState } from 'react';
 import '../cssFiles/likeAndDislikeButton.css';
+import { sendMessage } from '../../hooks/webSocket';
 
-const LikeDislikeButton = () => {
+const LikeDislikeButton = ({ commentId }) => {
     const [liked, setLiked] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
     const [disliked, setDisliked] = useState(false);
     const [dislikeCount, setDislikeCount] = useState(0);
 
     const handleLike = () => {
-        setLiked(!liked);
-        setLikesCount(liked ? likesCount - 1 : likesCount + 1);
+        const newLikedState = !liked;
+        const newLikesCount = liked ? likesCount - 1 : likesCount + 1;
+        
+        setLiked(newLikedState);
+        setLikesCount(newLikesCount);
+        
         if (disliked) {
             setDisliked(false);
             setDislikeCount(dislikeCount - 1);
         }
+        
+        sendMessage({ type: 'like', commentId, likesCount: newLikesCount, dislikeCount });
     };
 
     const handleDislike = () => {
-        setDisliked(!disliked);
-        setDislikeCount(disliked ? dislikeCount - 1 : dislikeCount + 1);
+        const newDislikedState = !disliked;
+        const newDislikeCount = disliked ? dislikeCount - 1 : dislikeCount + 1;
+        
+        setDisliked(newDislikedState);
+        setDislikeCount(newDislikeCount);
+        
         if (liked) {
             setLiked(false);
             setLikesCount(likesCount - 1);
         }
+        
+        sendMessage({ type: 'dislike', commentId, likesCount, dislikeCount: newDislikeCount });
     };
 
     return (

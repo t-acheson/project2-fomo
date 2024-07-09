@@ -29,12 +29,14 @@ jobs:
 # this installs sshpass to allow passing the password non-interactively 
     - name: Install SSH client 
       run: sudo apt-get update && sudo apt-get install -y sshpass
-
+        
     - name: SSH and deploy
       env:
-        # SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
         SSH_IP_ADDRESS: ${{ secrets.SSH_IP_ADDRESS }}
+        PG_USERNAME: ${{ secrets.PG_USERNAME }}
+        PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+        PG_DATABASE: ${{ secrets.PG_DATABASE }}
         
       run: |
         # Use sshpass to SSH into the server, checkout & pull main, restart docker containers with new updated code
@@ -43,6 +45,9 @@ jobs:
           cd project2-fomo &&
           git checkout main &&
           git pull origin main &&
-          docker-compose down &&
-          docker-compose up --build -d
+          export PG_USERNAME=$PG_USERNAME &&
+          export PG_PASSWORD=$PG_PASSWORD &&
+          export PG_DATABASE=$PG_DATABASE &&
+          /usr/local/bin/docker-compose down &&
+          /usr/local/bin/docker-compose up --build -d
           "

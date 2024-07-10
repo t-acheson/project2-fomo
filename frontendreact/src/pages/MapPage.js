@@ -22,6 +22,7 @@ function MapPage() {
         {/* Placeholder for future components */}
         {/* <TaxiZoneInfoBox /> */}
         {/* <TaxiZonePopup /> */}
+
         <TestLocationButton />
       </BaseMap>
     </div>

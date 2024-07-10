@@ -21,6 +21,8 @@ type Comment struct {
   Text string `json:"text"`
   Lat float64 `json:"lat"`
   Lng float64 `json:"lng"`
+  Likes int64 `json:"likes"`
+  Dislikes int64 `json:"dislikes"`
 }
 
 func NewServer() *Server {
@@ -93,7 +95,7 @@ func (s *Server) removeConnection(uuid uuid.UUID) {
 // Select applicable historical comments and iteratively send them to the new client
 func (s *Server) retrieve(ws *websocket.Conn) {
   rows, err := db.Query(`
-  SELECT timestamp, text, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng
+  SELECT timestamp, text, likes, dislikes, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng
     FROM comments
     WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
   rangeIn(1,3), rangeIn(1,3), // CHANGE TO ACTUAL USER LOCATION AFTER FRONTEND INTEGRATION
@@ -156,7 +158,7 @@ func (s *Server) insertComment(comment Comment) {
     comment.Timestamp = time.Now().UTC()
 
     _, err := db.Exec(`
-      INSERT INTO comments (timestamp, text, location) VALUES
+      INSERT INTO comments (timestamp, text, likes, dislikes, location) VALUES
       ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326));`,
       comment.Timestamp, comment.Text, comment.Lat, comment.Lng,
     )
@@ -164,6 +166,15 @@ func (s *Server) insertComment(comment Comment) {
       fmt.Println("Error writing to table comments:", err)
     }
 
+}
+
+func (s *Server) interact(id int, column string, value int) {
+  _, err := db.Exec(`
+  SELECT update_like_dislikes($1, $2, $3);`,
+  id, column, value)
+  if err != nul {
+    fmt.Println("Error interacting with comment:", err)
+  }
 }
 
 func (s *Server) findClose(comment Comment) ([]uuid.UUID, error) {

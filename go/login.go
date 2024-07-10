@@ -79,12 +79,35 @@ func connectToPostgres() *sql.DB {
       text TEXT NOT NULL,
       location GEOGRAPHY(POINT, 4326) NOT NULL,
       likes INT DEFAULT 0,
+      dislikes INT DEFAULT 0,
       FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
     );
   `)
   if err != nil {
     fmt.Println("Error creating table comments:", err)
   }
+
+  // Function for adding/subtracting likes/dislikes
+  _, err = db.Exec(`
+    CREATE OR REPLACE FUNCTION update_likes_dislikes(comment_id integer, column_name text, value integer)
+    RETURNS void AS $$
+    BEGIN
+      IF column_name = 'likes' THEN
+        UPDATE comments
+        SET likes = likes + value
+        WHERE id = comment_id AND likes + value >= 0;
+      ELSIF column_name = 'dislikes' THEN
+        UPDATE comments
+        SET dislikes = dislikes + value
+        WHERE id = comment_id AND dislikes + value >= 0;
+      END IF;
+    END;
+    $$ LANGUAGE plpgsql;
+  `)
+  if err != nil {
+    fmt.Println("Error adding the like/dislike function:", err)
+  }
+
 
   _, err = db.Exec(`
     CREATE TABLE IF NOT EXISTS users (

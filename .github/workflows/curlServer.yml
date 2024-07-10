@@ -1,0 +1,18 @@
+name: Curl External Server Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-server:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Test HTTPS endpoint with curl
+        run: |
+          curl -vk https://137.43.49.31/

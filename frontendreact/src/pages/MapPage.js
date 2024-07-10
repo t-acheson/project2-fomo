@@ -39,6 +39,7 @@ function MapPage() {
           <GeoJSON
             key={index}
             data={taxizone}
+            pathOptions={defaultStyle}
             onEachFeature={(feature, layer) => {
               layer.on({
                 mouseover: (e) => {

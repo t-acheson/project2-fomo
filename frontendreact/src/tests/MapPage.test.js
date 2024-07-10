@@ -2,15 +2,13 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import MapPage from '../pages/MapPage';
-import { LoadScript, GoogleMap } from '@react-google-maps/api';
 
-// Mock the LoadScript and GoogleMap components
-jest.mock('@react-google-maps/api', () => ({
-  LoadScript: ({ children }) => <div>{children}</div>, // Mocked LoadScript component
-  GoogleMap: ({ mapContainerStyle }) => (
-    <div data-testid="google-map" style={mapContainerStyle}></div> // Mocked GoogleMap component
-  )
-}));
+// Assuming BaseMap, UserMarker, and TestLocationButton are properly exported and can be mocked if needed
+jest.mock('../components/map/BaseMap', () => () => <div data-testid="base-map"></div>);
+jest.mock('../components/map/UserMarker', () => () => <div data-testid="user-marker"></div>);
+jest.mock('../components/map/TestLocationButton', () => () => <div data-testid="test-location-button"></div>);
+
+
 
 describe('MapPage', () => {
   beforeEach(() => {
@@ -18,12 +16,23 @@ describe('MapPage', () => {
   });
 
   it('renders without crashing', () => {
-    // Test case to check if the MapPage component renders without crashing
+    const baseMapElement = screen.getByTestId('base-map');
+    expect(baseMapElement).toBeInTheDocument();
   });
 
-  it('renders the Google Map', () => {
-    const googleMapElement = screen.getByTestId('google-map'); // Get the GoogleMap element by its test id
-    expect(googleMapElement).toBeInTheDocument(); // Assert that the GoogleMap element is in the document
+  it('renders the BaseMap component', () => {
+    const baseMapElement = screen.getByTestId('base-map');
+    expect(baseMapElement).toBeInTheDocument();
   });
+
+  // it('renders the UserMarker component', () => {
+  //   const userMarkerElement = screen.getByTestId('user-marker');
+  //   expect(userMarkerElement).toBeInTheDocument();
+  // });
+
+  // it('renders the TestLocationButton component', () => {
+  //   const testLocationButtonElement = screen.getByTestId('test-location-button');
+  //   expect(testLocationButtonElement).toBeInTheDocument();
+  // });
 });
 

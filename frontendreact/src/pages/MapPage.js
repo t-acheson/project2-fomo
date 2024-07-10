@@ -16,7 +16,7 @@ function MapPage() {
   return (
     <div style={{ height: '80vh', width: '100%' }}>
       <BaseMap>
-        <UserMarker />
+        <UserMarker data-testid="user-marker"/>
         {geoLocation.features.map((taxizone, index) => {
           const coordinates = taxizone.geometry.coordinates;
           return (

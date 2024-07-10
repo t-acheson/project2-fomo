@@ -13,58 +13,55 @@ function MapPage() {
     return <div>Loading...</div>;
   }
 
+  const defaultStyle = {
+    fillColor: '#FBD3C',
+    fillOpacity: 0.2,
+    weight: 1.5,
+    opacity: 1,
+    dashArray: '3',
+    color: '#4033AA'
+  };
+
+  const highlightStyle = {
+    dashArray: '',
+    fillColor: '#BD0026',
+    fillOpacity: 0.7,
+    weight: 2,
+    opacity: 1,
+    color: '#E6E200'
+  };
+
   return (
     <div style={{ height: '80vh', width: '100%' }}>
       <BaseMap>
         <UserMarker />
-        {geoLocation.features.map((taxizone, index) => {
-          const coordinates = taxizone.geometry.coordinates;
-          return (
-            <GeoJSON
-              key={index}
-              data={taxizone}
-              pathOptions={{
-                fillColor: '#FBD3C',
-                fillOpacity: 0.2,
-                weight: 1.5,
-                opacity: 1,
-                dashArray: 3,
-                color: '#403A3A'
-              }}
-
-              eventHandlers={{
-                //For mouse hoover.
+        {geoLocation.features.map((taxizone, index) => (
+          <GeoJSON
+            key={index}
+            data={taxizone}
+            onEachFeature={(feature, layer) => {
+              layer.on({
                 mouseover: (e) => {
-                  const layer = e.target;
-                  layer.setStyle({
-                    dashArray: "",
-                    fillColor: "#D35400",
-                    fillOpacity: 0.7,
-                    weight: 2,
-                    opacity: 1,
-                    color: '#6E2C00',
-                  })
+                  const targetLayer = e.target;
+                  targetLayer.setStyle(highlightStyle);
                 },
-                //Revert geoJSON layer to previous state.
                 mouseout: (e) => {
-                  const layer = e.target;
-                  layer.setStyle({
-                    fillColor: '#FBD3C',
-                    fillOpacity: 0.2,
-                    weight: 1.5,
-                    opacity: 1,
-                    dashArray: 3,
-                    color: '#403A3A'
-                  });
+                  const targetLayer = e.target;
+                  targetLayer.setStyle(defaultStyle);
                 },
-
                 click: (e) => {
-                
+                  const targetLayer = e.target;
+                  if (feature && feature.properties) {
+                    const { location_id } = feature.properties;
+                    console.log('Clicked location_id:', location_id);
+                  } else {
+                    console.error('Feature or properties not defined:', feature);
+                  }
                 }
-              }}
-            />
-          );
-        })}
+              });
+            }}
+          />
+        ))}
         <TestLocationButton />
       </BaseMap>
     </div>

@@ -16,6 +16,7 @@ services:
       DOMAIN_NAME: ${DOMAIN}
     volumes:
       - /etc/letsencrypt/:/etc/letsencrypt
+      - frontend-build:/app/frontendreact/build
     restart: always
 
   # gRPC server
@@ -39,16 +40,19 @@ services:
     volumes:
       - ~/PG_DATA:/var/lib/postgresql/data
     restart: always
-    
+
   # React frontend
   react-app:
     container_name: react_app
-    build:
-      context: .
-      dockerfile: frontendreact/.
+    build: frontendreact/.
     ports:
       - 3000:3000
     depends_on:
       - go-server
     environment:
       - NODE_ENV=production
+    volumes:
+      - frontend-build:/app/frontendreact/build
+
+volumes:
+  frontend-build:

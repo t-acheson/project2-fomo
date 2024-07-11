@@ -5,6 +5,7 @@ import TestLocationButton from '../components/map/TestLocationButton';
 import TaxiZoneGeoJSON from '../components/map/TaxiZoneGeoJSON';
 import geoLocation from '../data/FOMOTaxiMap';
 import TaxiZoneInfoBox from '../components/map/TaxiZoneInfoBox';
+import LegendControl from '../components/map/BusynessLegend'; 
 // if needed, import style from stylefile here
 // import { ... } from '../components/mapStyles';
 
@@ -26,7 +27,7 @@ function MapPage() {
         {/* Placeholder for future components */}
         <TaxiZoneInfoBox hoverInfo={hoverInfo}/>
         {/* <TaxiZonePopup /> */}
-
+        <LegendControl />
         <TestLocationButton />
       </BaseMap>
     </div>

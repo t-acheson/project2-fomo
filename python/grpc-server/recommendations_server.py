@@ -5,12 +5,13 @@ from concurrent import futures
 import grpc
 import recommendations_pb2
 import recommendations_pb2_grpc
+import grpc_model
 
 def get_recommendation(request):
-    """Calculate recommended locations based on inputs"""
-    if request.category == "categ1" and request.datetime == "date":  # I.e. if request == expected sample request outlined in recommendations.go
-        return "Success" 
-    return
+    """Estimate busyness based on locationid"""
+    if not isinstance(request.locationid, int):
+        return None
+    return grpc_model.predict_busyness(request.locationid)
 
 class RecommendationsServicer(recommendations_pb2_grpc.RecommendationServicer):
     """Provides methods that implement functionality of recommendations server"""
@@ -19,11 +20,12 @@ class RecommendationsServicer(recommendations_pb2_grpc.RecommendationServicer):
         """Method to send recommendation response back to client based on response"""
         print("Receieved recommendation request. Sending reply.")
         recommendation = get_recommendation(request)
+        print(request)
         if recommendation is None: # Invalid request recieved
             #Send default/empty reply
-            return recommendations_pb2.RecommendationReply(name="", id=0, lat=0, lng=0) #ADD INPUTS LATER
+            return recommendations_pb2.RecommendationReply(busyness="Invalid input") #ADD INPUTS LATER
         else:
-            return recommendations_pb2.RecommendationReply(name="SUCCESS", id=100, lat=1.23, lng=4.56)
+            return recommendations_pb2.RecommendationReply(busyness=recommendation)
 
 def serve():
     """Configures and starts the gRPC server"""

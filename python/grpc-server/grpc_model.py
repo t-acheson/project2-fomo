@@ -62,8 +62,3 @@ def predict_busyness(locationid):
 #locationid = 6
 #predicted_busyness = predict_busyness(location_id)
 #print(f"Predicted busyness at location {location_id} 1 hour from now in New York: {predicted_busyness}")
-
-if __name__ == "__main__":
-    # Input by user
-    locationid = input()
-    print(predict_busyness(locationid))

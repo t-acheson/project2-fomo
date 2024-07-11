@@ -5,21 +5,13 @@ from typing import ClassVar as _ClassVar, Optional as _Optional
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class RecommendationRequest(_message.Message):
-    __slots__ = ("datetime", "category")
-    DATETIME_FIELD_NUMBER: _ClassVar[int]
-    CATEGORY_FIELD_NUMBER: _ClassVar[int]
-    datetime: str
-    category: str
-    def __init__(self, datetime: _Optional[str] = ..., category: _Optional[str] = ...) -> None: ...
+    __slots__ = ("locationid",)
+    LOCATIONID_FIELD_NUMBER: _ClassVar[int]
+    locationid: int
+    def __init__(self, locationid: _Optional[int] = ...) -> None: ...
 
 class RecommendationReply(_message.Message):
-    __slots__ = ("name", "id", "lat", "lng")
-    NAME_FIELD_NUMBER: _ClassVar[int]
-    ID_FIELD_NUMBER: _ClassVar[int]
-    LAT_FIELD_NUMBER: _ClassVar[int]
-    LNG_FIELD_NUMBER: _ClassVar[int]
-    name: str
-    id: int
-    lat: float
-    lng: float
-    def __init__(self, name: _Optional[str] = ..., id: _Optional[int] = ..., lat: _Optional[float] = ..., lng: _Optional[float] = ...) -> None: ...
+    __slots__ = ("busyness",)
+    BUSYNESS_FIELD_NUMBER: _ClassVar[int]
+    busyness: str
+    def __init__(self, busyness: _Optional[str] = ...) -> None: ...

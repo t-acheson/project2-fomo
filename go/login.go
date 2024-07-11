@@ -28,7 +28,7 @@ type dbStruct struct {
 func connectToPostgres() *sql.DB {
   // Create an instance of dbStruct
   dbLogin := dbStruct{
-    host: "postgres",
+    host: "postgres-container",
     port: 5432,
     user: os.Getenv("POSTGRES_USER"),
     password: os.Getenv("POSTGRES_PASSWORD"),

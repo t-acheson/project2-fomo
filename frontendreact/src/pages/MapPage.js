@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import BaseMap from '../components/map/BaseMap';
 import UserMarker from '../components/map/UserMarker';
-// import GeoJSONLayer from '../components/map/GeoJSONLayer';
 import TestLocationButton from '../components/map/TestLocationButton';
+import TaxiZoneGeoJSON from '../components/map/TaxiZoneGeoJSON';
 import geoLocation from '../data/FOMOTaxiMap';
-import {GeoJSON} from 'react-leaflet'
+import TaxiZoneInfoBox from '../components/map/TaxiZoneInfoBox';
+import LegendControl from '../components/map/BusynessLegend'; 
+// if needed, import style from stylefile here
+// import { ... } from '../components/mapStyles';
 
-console.log('geoLocation:', geoLocation);
+
 
 function MapPage() {
+  const [hoverInfo, setHoverInfo] = useState(null);
+
   if (!geoLocation || !geoLocation.features) {
     return <div>Loading...</div>;
   }
@@ -16,55 +21,13 @@ function MapPage() {
   return (
     <div style={{ height: '80vh', width: '100%' }}>
       <BaseMap>
-        <UserMarker data-testid="user-marker"/>
-        {geoLocation.features.map((taxizone, index) => {
-          const coordinates = taxizone.geometry.coordinates;
-          return (
-            <GeoJSON
-              key={index}
-              data={taxizone}
-              pathOptions={{
-                fillColor: '#FBD3C',
-                fillOpacity: 0.2,
-                weight: 1.5,
-                opacity: 1,
-                dashArray: 3,
-                color: '#403A3A'
-              }}
-
-              eventHandlers={{
-                //For mouse hoover.
-                mouseover: (e) => {
-                  const layer = e.target;
-                  layer.setStyle({
-                    dashArray: "",
-                    fillColor: "#D35400",
-                    fillOpacity: 0.7,
-                    weight: 2,
-                    opacity: 1,
-                    color: '#6E2C00',
-                  })
-                },
-                //Revert geoJSON layer to previous state.
-                mouseout: (e) => {
-                  const layer = e.target;
-                  layer.setStyle({
-                    fillColor: '#FBD3C',
-                    fillOpacity: 0.2,
-                    weight: 1.5,
-                    opacity: 1,
-                    dashArray: 3,
-                    color: '#403A3A'
-                  });
-                },
-
-                click: (e) => {
-                
-                }
-              }}
-            />
-          );
-        })}
+        <UserMarker />
+        <TaxiZoneGeoJSON features={geoLocation.features} 
+        onFeatureHover={(info) => setHoverInfo(info)}/>
+        {/* Placeholder for future components */}
+        <TaxiZoneInfoBox hoverInfo={hoverInfo}/>
+        {/* <TaxiZonePopup /> */}
+        <LegendControl />
         <TestLocationButton />
       </BaseMap>
     </div>

@@ -17,14 +17,14 @@ type Server struct {
 }
 
 type Comment struct {
-  ID int 'json:"id"'
-  ParentID *int 'json:"parentid,omitempty"' //Pointer and omitempty to handle the parentid case.
+  ID int `json:"id"`
+  ParentID *int `json:"parentid,omitempty"` //Pointer and omitempty to handle the parentid case.
   Text string `json:"text"`
   //Lat float32 `json:"lat"`  //Still necessary?
   //Lng float32 `json:"lng"`
   Likes int `json:"likes"`
   Dislikes int `json:"dislikes"`
-  Timestamp time.Time 'json:"timestamp"'
+  Timestamp time.Time `json:"timestamp"`
 }
 
 type WebsocketMessage struct {
@@ -40,7 +40,9 @@ type WebsocketMessage struct {
 
 type WebsocketReply struct {
   Type string `json:"type"`
-  Comment *Comment `json:"commit,omitempty"`
+  Comment *Comment `json:"comment,omitempty"`
+  CommentID int `json:"commentid,omitempty"`
+  ParentID *int `json:"parentid,omitempty"`
   Likes int `json:"likes,omitempty`
   Dislikes int `json:"dislikes, omitempty`
 }
@@ -115,7 +117,7 @@ func (s *Server) removeConnection(uuid uuid.UUID) {
 // Select applicable historical comments and iteratively send them to the new client
 func (s *Server) retrieve(ws *websocket.Conn) {
   rows, err := db.Query(`
-  SELECT timestamp, text, likes, dislikes, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng
+  SELECT id, parent_id, timestamp, text, likes, dislikes
     FROM comments
     WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
   rangeIn(1,3), rangeIn(1,3), // CHANGE TO ACTUAL USER LOCATION AFTER FRONTEND INTEGRATION
@@ -124,13 +126,13 @@ func (s *Server) retrieve(ws *websocket.Conn) {
   
   for rows.Next() {
     var comment Comment
-    if err := rows.Scan(&comment.Timestamp, &comment.Text, &comment.Lat, &comment.Lng); err != nil {
+    if err := rows.Scan(&comment.ID, &comment.ParentID, &comment.Timestamp, &comment.Text, &comment.Likes, &comment.Dislikes); err != nil {
       fmt.Println("Error retrieving comment from database:", err)
       continue
     }
     message, err := json.Marshal(comment)
     if err != nil {
-      fmt.Println("Error mashaling comment:", err)
+      fmt.Println("Error marshaling comment:", err)
       continue
     }
     if _, err := ws.Write(message); err != nil {
@@ -234,11 +236,11 @@ func (s *Server) insertComment(parentID *int, text string, lat float64, lng floa
       Text: text,
       Likes: 0,
       Dislikes: 0,
-      Timestamp: timestamp
+      Timestamp: timestamp,
     }, nil
 }
 
-func (s *Server) insertReply(parentID *int, text String) (Comment, error) {
+func (s *Server) insertReply(parentID *int, text string) (Comment, error) {
   var id int
   var timestamp time.Time
 
@@ -257,11 +259,11 @@ func (s *Server) insertReply(parentID *int, text String) (Comment, error) {
     Text: text,
     Likes: 0,
     Dislikes: 0,
-    Timestamp: timestamp
+    Timestamp: timestamp,
   }, nil
 }
 
-func (s *Server) interact(id int, column string, value int) {
+func (s *Server) interact(id int, column string, value int) (error) {
   query := fmt.Sprintf("UPDATE comments SET &s = $1 WHERE id = $2", column)
   _, err := db.Exec(query, value, id)
   if err != nil {

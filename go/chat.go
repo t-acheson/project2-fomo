@@ -42,9 +42,9 @@ type WebsocketReply struct {
   Type string `json:"type"`
   Comment *Comment `json:"comment,omitempty"`
   CommentID int `json:"commentid,omitempty"`
-  ParentID *int `json:"parentid,omitempty"`
-  Likes int `json:"likes,omitempty`
-  Dislikes int `json:"dislikes, omitempty`
+  //ParentID *int `json:"parentid,omitempty"`
+  Likes int `json:"likes,omitempty"`
+  Dislikes int `json:"dislikes,omitempty"`
 }
 
 func NewServer() *Server {
@@ -211,7 +211,7 @@ func (s *Server) handleMessage(message WebsocketMessage) {
     }
     s.broadcast(WebsocketReply{
       Type: "reply_update",
-      ParentID: message.ParentID,
+      //ParentID: message.ParentID,
       Comment: &comment, //Change this to a unique reply field?
     }, message.Latitude, message.Longitude)
   }
@@ -223,7 +223,8 @@ func (s *Server) insertComment(parentID *int, text string, lat float64, lng floa
 
     err := db.QueryRow(`
       INSERT INTO comments (parent_id, text, location, timestamp) VALUES
-      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $4);`,
+      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5)
+      RETURNING id, timestamp;`,
       parentID, text, lat, lng, time.Now()).Scan(&id, &timestamp)
     if err != nil {
       fmt.Println("Error writing to table comments:", err)
@@ -246,7 +247,8 @@ func (s *Server) insertReply(parentID *int, text string) (Comment, error) {
 
   err := db.QueryRow(`
     INSERT INTO comments (parent_id, text, location, timestamp) VALUES
-    ($1, $2 (SELECT location FROM comments WHERE id = $1), $3);`,
+    ($1, $2, (SELECT location FROM comments WHERE id = $1), $3)
+    RETURNING id, timestamp;`,
     parentID, text, time.Now()).Scan(&id, &timestamp)
   if err != nil {
     fmt.Println("Error writing reply to table comments:", err)
@@ -264,7 +266,7 @@ func (s *Server) insertReply(parentID *int, text string) (Comment, error) {
 }
 
 func (s *Server) interact(id int, column string, value int) (error) {
-  query := fmt.Sprintf("UPDATE comments SET &s = $1 WHERE id = $2", column)
+  query := fmt.Sprintf("UPDATE comments SET %s = $1 WHERE id = $2", column)
   _, err := db.Exec(query, value, id)
   if err != nil {
     fmt.Println("Error updating the likes/dislikes of comment:", err)
@@ -284,7 +286,7 @@ func (s *Server) findClose(lat float64, lng float64) ([]uuid.UUID, error) {
   if err != nil {
     fmt.Println("Error retrieving close users:", err)
     return nil, err
-  }
+    }
   defer rows.Close()
 
   var uuids []uuid.UUID

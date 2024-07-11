@@ -1,0 +1,15 @@
+
+.comment-container {
+    width: 100%; 
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px ; 
+    border: 1px solid #ccc;
+}
+
+.loading-message {
+    font-size: 1.5rem; 
+    color: #666; 
+}

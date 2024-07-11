@@ -7,7 +7,7 @@ import pytz
 try:
     with open('RF_m1.pkl', 'rb') as file:
         model = pickle.load(file)
-    print("Model loaded successfully.")
+    #print("Model loaded successfully.")
 except Exception as e:
     print(f"Error loading model: {e}")
 
@@ -59,6 +59,11 @@ def predict_busyness(locationid):
     return predicted_label
 
 # Test the prediction function
-location_id = 6
-predicted_busyness = predict_busyness(location_id)
-print(f"Predicted busyness at location {location_id} 1 hour from now in New York: {predicted_busyness}")
+#locationid = 6
+#predicted_busyness = predict_busyness(location_id)
+#print(f"Predicted busyness at location {location_id} 1 hour from now in New York: {predicted_busyness}")
+
+if __name__ == "__main__":
+    # Input by user
+    locationid = input()
+    print(predict_busyness(locationid))

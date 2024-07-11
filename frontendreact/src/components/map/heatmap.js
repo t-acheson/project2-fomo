@@ -17,13 +17,17 @@ export const getHeatmapColor = (busyness) => {
       return map;
     }, {});
   
-    return features.map((feature) => ({
-      ...feature,
-      properties: {
-        ...feature.properties,
-        fillColor: getHeatmapColor(busynessMap[feature.properties.location_id] || 0),
-      }
-    }));
+    return features.map((feature) => {
+      const busyness = busynessMap[feature.properties.location_id] || 0;
+      return {
+        ...feature,
+        properties: {
+          ...feature.properties,
+          busyness,
+          fillColor: getHeatmapColor(busyness),
+        },
+      };
+    });
   };
   
   export { prepareHeatmapData };

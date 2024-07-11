@@ -7,8 +7,9 @@ import (
 	"time" //Used for time.Sleep
 	"os" //Pass in environment vars
 	"golang.org/x/net/websocket"
+	"regexp"
 
-	"github.com/gorilla/sessions" //Session management
+	//"github.com/gorilla/sessions" //Session management
 	"database/sql"
 )
 
@@ -18,7 +19,7 @@ type User struct {
 }
 
 // Define a global session store
-var store = sessions.NewCookieStore([]byte("sampleKey"))
+//var store = sessions.NewCookieStore([]byte("sampleKey"))
 
 // Define a connection the the Postgres db
 var db *sql.DB
@@ -47,8 +48,20 @@ func main() {
 	db = connectToPostgres()
 	defer db.Close()
 
-	//Set up HTTP handler at root URL
-	http.HandleFunc("/", handler)
+	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Define the file server for static files
+		fs := http.FileServer(http.Dir("frontendreact/build"))
+		// Define the regex pattern to match file extensions
+		fileMatcher := regexp.MustCompile(`\.[a-zA-Z]*$`)
+		if !fileMatcher.MatchString(r.URL.Path) {
+			http.ServeFile(w, r, "frontendreact/build/index.html")
+		} else {
+			fs.ServeHTTP(w, r)
+		}
+	}))
+
+	server := NewServer()
+	http.Handle("/ws", websocket.Handler(server.handleWebSocket))
 
 	//Start TLS listener on port 443
 	go func() {
@@ -59,11 +72,6 @@ func main() {
 			log.Fatalf("HTTPS server failed to start: %v", err)
 		}
 	}()
-
-	//Starting websocket chat at /ws
-	log.Printf("Starting websocket chat")
-	server := NewServer()
-	http.Handle("/ws", websocket.Handler(server.handleWebSocket))
 
 	//Start HTTP listener on port 80
 	log.Printf("Starting HTTP listener")

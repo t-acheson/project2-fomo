@@ -29,6 +29,8 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
           },
           click: (e) => {
             console.log('Clicked location_id:', feature.properties.location_id);
+            const comment = "Top comment for this zone.";
+            layer.bindPopup(comment).openPopup();
           }
         });
       }}

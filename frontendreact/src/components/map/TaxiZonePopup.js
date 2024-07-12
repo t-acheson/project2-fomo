@@ -3,7 +3,7 @@ import React from 'react';
 const TaxiZonePopup = ({ info, onClose }) => {
   const handleSendLocationId = async () => {
     try {
-      const response = await fetch('http://localhost:8080/location', {
+      const response = await fetch('/location', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -106,5 +106,5 @@ func main() {
 
 	//Start HTTP listener on port 80
 	log.Printf("Starting HTTP listener")
-	log.Fatal(http.ListenAndServe(":8080", http.HandlerFunc(redirectHTTP)))
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

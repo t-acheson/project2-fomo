@@ -38,7 +38,7 @@ func redirectHTTP(w http.ResponseWriter, r *http.Request) {
 type LocationRequest struct {
 	LocationID int `json:"location_id"`
 }
-
+ 
 func locationHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received request at /location endpoint")
 	var loqReq LocationRequest

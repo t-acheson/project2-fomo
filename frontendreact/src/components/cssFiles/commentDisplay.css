@@ -2,14 +2,32 @@
 .comment-container {
     width: 100%; 
     min-height: 300px;
-    display: flex;
     align-items: center;
     justify-content: center;
-    margin: 20px ; 
-    border: 1px solid #767373;
 }
 
 .loading-message {
     font-size: 1.5rem; 
     color: #666; 
+}
+
+
+/* Remove border and padding for the ListGroup */
+.list-group {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Remove border and padding for the ListGroupItem */
+.list-group-item {
+    border: none;
+    padding: 2.5px;
+    margin: 5px 150px 0px 20px;
+    border-bottom: none;
+}
+
+/* Adjust padding for the CardBody */
+.card-body {
+    padding: 20px; /* Add some padding inside the card */
 }

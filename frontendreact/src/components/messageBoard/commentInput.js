@@ -18,9 +18,7 @@ const CommentInput = () => {
     };
 
     const handleSubmit = () => { 
-        const message = {text, lat, lng };
-        console.log('Formating message:', message);
-        sendMessage(message);
+        sendMessage({type: 'new_comment', text: text, lat:lat, lng:lng });
         setText('');
     };
 

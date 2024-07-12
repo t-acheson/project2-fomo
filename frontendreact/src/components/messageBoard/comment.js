@@ -1,13 +1,14 @@
 import React from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
 import LikeDislikeButton from './likeAndDislikeButton';
+import '../cssFiles/commentDisplay.css'
 
 const Comment = ({ comment }) => {
     return (
         <ListGroup.Item key={comment.id}>
             <Card>
                 <Card.Body>
-                    <Card.Text>{comment.text}</Card.Text>
+                    <Card.Text><h4>{comment.text}</h4></Card.Text>
                     <LikeDislikeButton 
                         commentId={comment.id} 
                         likesCounts={comment.likes} 

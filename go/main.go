@@ -59,23 +59,39 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Log the location ID received from the request
 	log.Printf("Location ID: %d\n", loqReq.LocationID)
 
-	// Set the response header to indicate that the response is JSON
 	w.Header().Set("Content-Type", "application/json")
 
-	// Create a map with the location ID
-	response := map[string]int{"location_id": loqReq.LocationID}
+	// Construct the command to call the Python script
+	// Replace "your_script.py" with the actual path to your Python script
+	cmd := exec.Command("python", "grpc_model.py", fmt.Sprintf("%d", loqReq.LocationID))
 
-	// Encode the response as JSON and write it to the response writer
-	err = json.NewEncoder(w).Encode(response)
+	// Execute the command and capture the output
+	output, err := cmd.Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Convert the output to a string
+	responseStr := string(output)
+
+	// Decode the response string into a map (assuming JSON format)
+	var responseMap map[string]interface{}
+	err = json.Unmarshal([]byte(responseStr), &responseMap)
+	if err != nil {
+		log.Println("Error decoding response:", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	// Encode the response map as JSON and write it to the response writer
+	err = json.NewEncoder(w).Encode(responseMap)
 	if err != nil {
 		log.Println("Error encoding response:", err)
 	}
 
-	// Log the response that was sent
-	log.Println("Response sent:", response)
+	log.Println("Response sent:", responseMap)
 }
 
 

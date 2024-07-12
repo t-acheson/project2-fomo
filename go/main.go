@@ -4,8 +4,8 @@ import (
 	"fmt"      //Formatted I/O
 	"log"      //Logging errors
 	"net/http" //HTTP server
-	// "os"
-	// "os/exec"
+	"os"
+	"os/exec"
 	"time" //Used for time.Sleep
 
 	// "os" //Pass in environment vars
@@ -47,59 +47,55 @@ type LocationRequest struct {
 // It decodes the request body, calls a Python script with the location ID,
 // and encodes the response as JSON.
 func locationHandler(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"status": "success"})
+	// Log that a request has been received at the "/location" endpoint
+	log.Println("Received request at /location endpoint")
+
+	// Decode the request body into a LocationRequest struct
+	var loqReq LocationRequest
+	err := json.NewDecoder(r.Body).Decode(&loqReq)
+	if err != nil {
+		// If there is an error decoding the request body, return a bad request error
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Println("Error decoding request body:", err)
+		return
 	}
 
-	// Log that a request has been received at the "/location" endpoint
-// 	log.Println("Received request at /location endpoint")
+	log.Printf("Location ID: %d\n", loqReq.LocationID)
 
-// 	// Decode the request body into a LocationRequest struct
-// 	var loqReq LocationRequest
-// 	err := json.NewDecoder(r.Body).Decode(&loqReq)
-// 	if err != nil {
-// 		// If there is an error decoding the request body, return a bad request error
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		log.Println("Error decoding request body:", err)
-// 		return
-// 	}
+	w.Header().Set("Content-Type", "application/json")
 
-// 	log.Printf("Location ID: %d\n", loqReq.LocationID)
+	// Construct the command to call the Python script
+	// Replace "your_script.py" with the actual path to your Python script
+	cmd := exec.Command("python", "grpc_model.py", fmt.Sprintf("%d", loqReq.LocationID))
+	cmd.Stdout = os.Stdout // Redirect stdout to capture the Python script's output
+	cmd.Stderr = os.Stderr // Redirect stderr to capture errors
 
-// 	w.Header().Set("Content-Type", "application/json")
+	// Execute the command and capture the output
+	output, err := cmd.Output()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// 	// Construct the command to call the Python script
-// 	// Replace "your_script.py" with the actual path to your Python script
-// 	cmd := exec.Command("python", "grpc_model.py", fmt.Sprintf("%d", loqReq.LocationID))
-// 	cmd.Stdout = os.Stdout // Redirect stdout to capture the Python script's output
-// 	cmd.Stderr = os.Stderr // Redirect stderr to capture errors
+	// Convert the output to a string
+	responseStr := string(output)
 
-// 	// Execute the command and capture the output
-// 	output, err := cmd.Output()
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+	// Decode the response string into a map (assuming JSON format)
+	var responseMap map[string]interface{}
+	err = json.Unmarshal([]byte(responseStr), &responseMap)
+	if err != nil {
+		log.Println("Error decoding response:", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
 
-// 	// Convert the output to a string
-// 	responseStr := string(output)
+	// Encode the response map as JSON and write it to the response writer
+	err = json.NewEncoder(w).Encode(responseMap)
+	if err != nil {
+		log.Println("Error encoding response:", err)
+	}
 
-// 	// Decode the response string into a map (assuming JSON format)
-// 	var responseMap map[string]interface{}
-// 	err = json.Unmarshal([]byte(responseStr), &responseMap)
-// 	if err != nil {
-// 		log.Println("Error decoding response:", err)
-// 		http.Error(w, "Internal server error", http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	// Encode the response map as JSON and write it to the response writer
-// 	err = json.NewEncoder(w).Encode(responseMap)
-// 	if err != nil {
-// 		log.Println("Error encoding response:", err)
-// 	}
-
-// 	log.Println("Response sent:", responseMap)
-// }
+	log.Println("Response sent:", responseMap)
+}
 
 
 

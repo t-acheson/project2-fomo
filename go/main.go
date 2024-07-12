@@ -4,11 +4,14 @@ import (
 	"fmt"      //Formatted I/O
 	"log"      //Logging errors
 	"net/http" //HTTP server
+	"os/exec"
 	"time" //Used for time.Sleep
+
 	// "os" //Pass in environment vars
 	// "golang.org/x/net/websocket"
-	"regexp"
 	"encoding/json"
+	"regexp"
+
 	//"github.com/gorilla/sessions" //Session management
 	"database/sql"
 )
@@ -51,16 +54,31 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Location ID: %d\n", loqReq.LocationID)
 
 	// TODO: use the location ID to query the pickle file here
+	// Call the Python script
+    cmd := exec.Command("python3", "predict_busyness.py", fmt.Sprintf("%d", loqReq.LocationID))
+    out, err := cmd.Output()
+    if err != nil {
+        http.Error(w, "Error running Python script", http.StatusInternalServerError)
+        log.Println("Error running Python script:", err)
+        return
+    }
 
-	// Just for now, send response back
-	response := map[string]string{"status": "received"}
-	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(response)
-	if err != nil {
-		log.Println("Error encoding response:", err)
-	}
-	log.Println("Response sent")
+    var response map[string]string
+    err = json.Unmarshal(out, &response)
+    if err != nil {
+        http.Error(w, "Error parsing Python script output", http.StatusInternalServerError)
+        log.Println("Error parsing Python script output:", err)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    err = json.NewEncoder(w).Encode(response)
+    if err != nil {
+        log.Println("Error encoding response:", err)
+    }
+    log.Println("Response sent:", response)
 }
+
 
 
 

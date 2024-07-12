@@ -11,6 +11,7 @@ const FeedPage = () => {
     useEffect(() => {
         // Function to handle incoming messages
         const handleMessage = (message) => {
+            console.log('New message received:', message);
             setComments(prevComments => [...prevComments, message]);  // 更新状态，添加新评论
         };
 

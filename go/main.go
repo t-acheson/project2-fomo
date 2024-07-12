@@ -4,6 +4,7 @@ import (
 	"fmt"      //Formatted I/O
 	"log"      //Logging errors
 	"net/http" //HTTP server
+	"os"
 	"os/exec"
 	"time" //Used for time.Sleep
 
@@ -66,6 +67,8 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 	// Construct the command to call the Python script
 	// Replace "your_script.py" with the actual path to your Python script
 	cmd := exec.Command("python", "grpc_model.py", fmt.Sprintf("%d", loqReq.LocationID))
+	cmd.Stdout = os.Stdout // Redirect stdout to capture the Python script's output
+	cmd.Stderr = os.Stderr // Redirect stderr to capture errors
 
 	// Execute the command and capture the output
 	output, err := cmd.Output()

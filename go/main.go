@@ -93,14 +93,14 @@ func main() {
 	// http.Handle("/ws", websocket.Handler(server.handleWebSocket))
 
 	//Start TLS listener on port 443
-	go func() {
-		log.Printf("Starting HTTPS listener")
-		domain := os.Getenv("DOMAIN_NAME")
-		err := http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/"+domain+"/fullchain.pem", "/etc/letsencrypt/live/"+domain+"/privkey.pem", nil)
-		if err != nil {
-			log.Fatalf("HTTPS server failed to start: %v", err)
-		}
-	}()
+	// go func() {
+	// 	log.Printf("Starting HTTPS listener")
+	// 	domain := os.Getenv("DOMAIN_NAME")
+	// 	err := http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/"+domain+"/fullchain.pem", "/etc/letsencrypt/live/"+domain+"/privkey.pem", nil)
+	// 	if err != nil {
+	// 		log.Fatalf("HTTPS server failed to start: %v", err)
+	// 	}
+	// }()
 
 	//Start HTTP listener on port 80
 	log.Printf("Starting HTTP listener")

@@ -8,7 +8,7 @@ import (
 	"os" //Pass in environment vars
 	"golang.org/x/net/websocket"
 	"regexp"
-
+	"encoding/json"
 	//"github.com/gorilla/sessions" //Session management
 	"database/sql"
 )
@@ -33,6 +33,31 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func redirectHTTP(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
 }
+
+// LocationRequest represents the structure of the incoming request with location ID
+type LocationRequest struct {
+	LocationID int `json:"location_id"`
+}
+
+func locationHandler(w http.ResponseWriter, r *http.Request){
+	var loqReq LocationRequest
+	err := json.NewDecoder(r.Body).Decode(&loqReq)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	fmt.Printf("Location ID: %d\n", loqReq.LocationID)
+
+	//TODO use the location ID to query the pickle file here 
+
+	//just for now, send response back 
+	response := map[string]string{"status": "received"}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
+
+
 
 func main() {
 	// Give the gRPC server a second to open
@@ -59,6 +84,10 @@ func main() {
 			fs.ServeHTTP(w, r)
 		}
 	}))
+
+	// location handler
+	http.HandleFunc("/location", locationHandler)
+
 
 	server := NewServer()
 	http.Handle("/ws", websocket.Handler(server.handleWebSocket))

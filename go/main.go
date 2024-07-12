@@ -62,29 +62,11 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 	// Log the location ID received from the request
 	log.Printf("Location ID: %d\n", loqReq.LocationID)
 
-	// TODO: use the location ID to query the pickle file here
-	// Call the Python script
-	cmd := exec.Command("python3", "grpc_model.py", fmt.Sprintf("%d", loqReq.LocationID))
-	out, err := cmd.Output()
-	if err != nil {
-		// If there is an error running the Python script, return an internal server error
-		http.Error(w, "Error running Python script", http.StatusInternalServerError)
-		log.Println("Error running Python script:", err)
-		return
-	}
-
-	// Parse the output of the Python script into a map
-	var response map[string]string
-	err = json.Unmarshal(out, &response)
-	if err != nil {
-		// If there is an error parsing the Python script output, return an internal server error
-		http.Error(w, "Error parsing Python script output", http.StatusInternalServerError)
-		log.Println("Error parsing Python script output:", err)
-		return
-	}
-
 	// Set the response header to indicate that the response is JSON
 	w.Header().Set("Content-Type", "application/json")
+
+	// Create a map with the location ID
+	response := map[string]int{"location_id": loqReq.LocationID}
 
 	// Encode the response as JSON and write it to the response writer
 	err = json.NewEncoder(w).Encode(response)
@@ -95,6 +77,7 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 	// Log the response that was sent
 	log.Println("Response sent:", response)
 }
+
 
 
 

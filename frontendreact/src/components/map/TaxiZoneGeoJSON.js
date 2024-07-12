@@ -6,6 +6,25 @@ import { prepareHeatmapData } from './heatmap';
 const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
   const preparedFeatures = prepareHeatmapData(features);
 
+  const handleClick = (location_id) => {
+    // HTTP POST request to send location_id to the Go server
+    fetch('/location', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ location_id }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Response from server:', data);
+        // Handle the response as needed
+      })
+      .catch(error => {
+        console.error('Error sending location_id to server:', error);
+      });
+  };
+
   return preparedFeatures.map((taxizone, index) => (
     <GeoJSON
       key={index}

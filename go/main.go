@@ -6,9 +6,12 @@ import (
 	"log"           //Logging errors
 	"net/http"      //HTTP server
 	"os"            //Pass in environment vars
+	"golang.org/x/net/websocket"
+	"regexp"
 	"time"          //Used for time.Sleep
 
-	"github.com/gorilla/sessions" //Session management
+	//"github.com/gorilla/sessions" //Session management
+	"database/sql"
 	"github.com/rs/cors"
 )
 
@@ -35,7 +38,10 @@ func getItems(w http.ResponseWriter, r *http.Request) {
 }
 
 // Define a global session store
-var store = sessions.NewCookieStore([]byte("sampleKey"))
+//var store = sessions.NewCookieStore([]byte("sampleKey"))
+
+// Define a connection the the Postgres db
+var db *sql.DB
 
 func handler(w http.ResponseWriter, _ *http.Request) {
 	//Writes a response to a HTTP request to the HTTP response writer, w.
@@ -76,11 +82,26 @@ func main() {
 	time.Sleep(5 * time.Second)
 
 	//Connects to Postgres/PostGIS db
-	db := connectToPostgres()
+	db = connectToPostgres()
 	defer db.Close()
 
+	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Define the file server for static files
+		fs := http.FileServer(http.Dir("frontendreact/build"))
+		// Define the regex pattern to match file extensions
+		fileMatcher := regexp.MustCompile(`\.[a-zA-Z]*$`)
+		if !fileMatcher.MatchString(r.URL.Path) {
+			http.ServeFile(w, r, "frontendreact/build/index.html")
+		} else {
+			fs.ServeHTTP(w, r)
+		}
+	}))
 
-// Perform a type assertion to convert handler to http.HandlerFunc
+	server := NewServer()
+	http.Handle("/ws", websocket.Handler(server.handleWebSocket))
+	// Perform a type assertion to convert handler to http.HandlerFunc
+
+	// Check if handler is an http.HandlerFunc old func caqrried through
 _, ok := handler.(http.HandlerFunc)
 if !ok {
 	// handler is not an http.HandlerFunc, handle the error

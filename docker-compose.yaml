@@ -5,15 +5,21 @@ services:
     build: go/.
     depends_on:
       - grpc
+    #  - postgres
     ports:
       - 80:80
       - 443:443
+      - 9876:5432 # 9876 is a random port I picked. Can be anything
     environment:
       POSTGRES_USER: ${PG_USERNAME}
       POSTGRES_PASSWORD: ${PG_PASSWORD}
       DOMAIN_NAME: ${DOMAIN}
     volumes:
       - /etc/letsencrypt/:/etc/letsencrypt
+      - frontend-build:/app/frontendreact/build
+    restart: always
+    networks:
+      - pg_network
 
   # gRPC server
   grpc:
@@ -21,14 +27,42 @@ services:
     build: python/grpc-server/.
     ports:
       - 50051:50051
+    restart: always
+    networks:
+      - pg_network
 
   # Postgres database using PostGIS 
-  postgres:
-    image: postgis/postgis
-    container_name: postgres-container
-    environment:
-      POSTGRES_PASSWORD: ${PG_PASSWORD}
-      POSTGRES_USER: ${PG_USERNAME}
-      POSTGRES_DB: ${PG_DATABASE}
+  #postgres:
+  #  image: postgis/postgis
+  #  container_name: postgres-container
+  #  environment:
+  #    POSTGRES_PASSWORD: ${PG_PASSWORD}
+  #    POSTGRES_USER: ${PG_USERNAME}
+  #    POSTGRES_DB: ${PG_DATABASE}
+  #  ports:
+  #    - 5432:5432
+  #  volumes:
+  #    - ~/PG_DATA:/var/lib/postgresql/data
+  #  restart: always
+
+  # React frontend
+  react-app:
+    container_name: react_app
+    build: frontendreact/.
     ports:
-      - 5432:5432
+      - 3000:3000
+    depends_on:
+      - go-server
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - frontend-build:/app/frontendreact/build
+    networks:
+      - pg_network
+
+volumes:
+  frontend-build:
+
+networks:
+  pg_network:
+    external: true

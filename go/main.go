@@ -67,7 +67,7 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Construct the command to call the Python script
 	// Replace "your_script.py" with the actual path to your Python script
-	cmd := exec.Command("/usr/bin/python3","-u", "../python/grpc-server/grpc_model.py", fmt.Sprintf("%d", loqReq.LocationID))
+	cmd := exec.Command("/usr/bin/python3", "../python/grpc-server/grpc_model.py", fmt.Sprintf("%d", loqReq.LocationID))
 	cmd.Stdout = os.Stdout // Redirect stdout to capture the Python script's output
 	cmd.Stderr = os.Stderr // Redirect stderr to capture errors
 

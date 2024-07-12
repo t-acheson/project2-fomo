@@ -6,7 +6,7 @@ import (
 	"net/http" //HTTP server
 	"time" //Used for time.Sleep
 	"os" //Pass in environment vars
-	"golang.org/x/net/websocket"
+	// "golang.org/x/net/websocket"
 	"regexp"
 	"encoding/json"
 	//"github.com/gorilla/sessions" //Session management
@@ -64,14 +64,14 @@ func main() {
 	time.Sleep(1 * time.Second)
 
 	//Test the gRPC server
-	testRecommend()
+	// testRecommend()
 
 	// Give postgres a few seconds to open
 	time.Sleep(5 * time.Second)
 
 	//Connects to Postgres/PostGIS db
-	db = connectToPostgres()
-	defer db.Close()
+	// db = connectToPostgres()
+	// defer db.Close()
 
 	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Define the file server for static files
@@ -89,8 +89,8 @@ func main() {
 	http.HandleFunc("/location", locationHandler)
 
 
-	server := NewServer()
-	http.Handle("/ws", websocket.Handler(server.handleWebSocket))
+	// server := NewServer()
+	// http.Handle("/ws", websocket.Handler(server.handleWebSocket))
 
 	//Start TLS listener on port 443
 	go func() {

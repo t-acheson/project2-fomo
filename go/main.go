@@ -96,7 +96,7 @@ func main() {
 	go func() {
 		log.Printf("Starting HTTPS listener")
 		domain := os.Getenv("DOMAIN_NAME")
-		err := http.ListenAndServeTLS(":443", "/etc/letsencrypt/live//"+domain+"/fullchain.pem", "/etc/letsencrypt/live/"+domain+"//privkey.pem", nil)
+		err := http.ListenAndServeTLS(":443", "/etc/letsencrypt/live"+domain+"/fullchain.pem", "/etc/letsencrypt/live"+domain+"/privkey.pem", nil)
 		if err != nil {
 			log.Fatalf("HTTPS server failed to start: %v", err)
 		}

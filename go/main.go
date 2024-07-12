@@ -6,7 +6,7 @@ import (
 	"net/http" //HTTP server
 	"time" //Used for time.Sleep
 	"os" //Pass in environment vars
-	"golang.org/x/net/websocket"
+	// "golang.org/x/net/websocket"
 	"regexp"
 	"encoding/json"
 	//"github.com/gorilla/sessions" //Session management

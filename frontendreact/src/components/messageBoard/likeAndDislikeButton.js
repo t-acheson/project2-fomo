@@ -20,7 +20,7 @@ const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts}) => {
             setDislikeCount(dislikeCount - 1);
         }
         
-        sendMessage({ type: 'like', commentId, likesCount: newLikesCount, dislikeCount });
+        sendMessage({ type: 'like_update', commentId, likesCount: newLikesCount});
     };
 
     const handleDislike = () => {
@@ -35,7 +35,7 @@ const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts}) => {
             setLikesCount(likesCount - 1);
         }
         
-        sendMessage({ type: 'dislike', commentId, likesCount, dislikeCount: newDislikeCount });
+        sendMessage({ type: 'dislike_update', commentId, dislikeCount: newDislikeCount });
     };
 
     return (

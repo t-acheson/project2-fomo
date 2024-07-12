@@ -13,6 +13,9 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 # Copy remaining files to server
 COPY *.py .
 
+# Copy the pickle file to server
+COPY *.pkl .
+
 # Expose gRPC server port
 EXPOSE 50051
 

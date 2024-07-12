@@ -1,3 +1,5 @@
 grpcio
 protobuf
 pytest
+pandas
+pytz

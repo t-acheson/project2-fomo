@@ -24,7 +24,7 @@ var (
 // printRecommendation -> test function
 func printRecommendation(client pb.RecommendationClient, request *pb.RecommendationRequest) {
   // Sends recommendation request to Python gRPC server and logs response
-  log.Printf("Receiving recommendation reply for: %s at %s", request.Category, request.Datetime)
+  log.Printf("Receiving recommendation reply for: %s at %s", request.Locationid)
   ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) // Create context with 10s timeout for request
   defer cancel()
   start := time.Now() // Record the start time
@@ -33,7 +33,7 @@ func printRecommendation(client pb.RecommendationClient, request *pb.Recommendat
   if err != nil {
     log.Fatalf("client.SendRecommendation failed: %v", err)
   }
-  log.Printf("Reply: %s, received in time: %s", reply.Name, duration)
+  log.Printf("Reply: %s, received in time: %s", reply.Busyness, duration)
 } 
 
 func testRecommend() {
@@ -61,5 +61,5 @@ func testRecommend() {
   client := pb.NewRecommendationClient(conn) // Create new gRPC client
 
   //test printRecommendation with a sample request
-  printRecommendation(client, &pb.RecommendationRequest{Category: "categ1", Datetime: "date"})
+  printRecommendation(client, &pb.RecommendationRequest{Locationid: 1})
 }

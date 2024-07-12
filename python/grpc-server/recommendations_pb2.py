@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15recommendations.proto\";\n\x15RecommendationRequest\x12\x10\n\x08\x64\x61tetime\x18\x01 \x01(\t\x12\x10\n\x08\x63\x61tegory\x18\x02 \x01(\t\"I\n\x13RecommendationReply\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\x05\x12\x0b\n\x03lat\x18\x03 \x01(\x02\x12\x0b\n\x03lng\x18\x04 \x01(\x02\x32V\n\x0eRecommendation\x12\x44\n\x12SendRecommendation\x12\x16.RecommendationRequest\x1a\x14.RecommendationReply\"\x00\x42\x03Z\x01.b\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15recommendations.proto\"+\n\x15RecommendationRequest\x12\x12\n\nlocationid\x18\x01 \x01(\x03\"\'\n\x13RecommendationReply\x12\x10\n\x08\x62usyness\x18\x01 \x01(\t2V\n\x0eRecommendation\x12\x44\n\x12SendRecommendation\x12\x16.RecommendationRequest\x1a\x14.RecommendationReply\"\x00\x42\x03Z\x01.b\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -23,9 +23,9 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'Z\001.'
   _globals['_RECOMMENDATIONREQUEST']._serialized_start=25
-  _globals['_RECOMMENDATIONREQUEST']._serialized_end=84
-  _globals['_RECOMMENDATIONREPLY']._serialized_start=86
-  _globals['_RECOMMENDATIONREPLY']._serialized_end=159
-  _globals['_RECOMMENDATION']._serialized_start=161
-  _globals['_RECOMMENDATION']._serialized_end=247
+  _globals['_RECOMMENDATIONREQUEST']._serialized_end=68
+  _globals['_RECOMMENDATIONREPLY']._serialized_start=70
+  _globals['_RECOMMENDATIONREPLY']._serialized_end=109
+  _globals['_RECOMMENDATION']._serialized_start=111
+  _globals['_RECOMMENDATION']._serialized_end=197
 # @@protoc_insertion_point(module_scope)

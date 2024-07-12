@@ -10,14 +10,10 @@ service Recommendation {
 
 // Request format for Python gRPC server
 message RecommendationRequest {
-	string datetime = 1; //Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must be from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z inclusive.
-	string category = 2;
+	int64 locationid = 1;
 }
 
 // Reply format from to Go stub/client
 message RecommendationReply {
-	string name = 1;
-	int32 id = 2;
-	float lat = 3;
-	float lng = 4;
+	string busyness = 1;
 }

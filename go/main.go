@@ -1,7 +1,8 @@
 package main
 
 import (
-	"fmt"      //Formatted I/O
+	"fmt" //Formatted I/O
+	"io/ioutil"
 	"log"      //Logging errors
 	"net/http" //HTTP server
 	"os"
@@ -70,31 +71,31 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 	cmd.Stdout = os.Stdout // Redirect stdout to capture the Python script's output
 	cmd.Stderr = os.Stderr // Redirect stderr to capture errors
 
-	// Execute the command and capture the output
-	output, err := cmd.Output()
-	if err != nil {
-		log.Fatal(err)
-	}
+	err = cmd.Run()
+    if err != nil {
+        log.Printf("Error running Python script: %v", err)
+        http.Error(w, "Failed to process request", http.StatusInternalServerError)
+        return
+    }
 
-	// Convert the output to a string
-	responseStr := string(output)
+    // Read the Python script's output
+    output, _ := ioutil.ReadAll(os.Stdout)
+    response := string(output)
 
-	// Decode the response string into a map (assuming JSON format)
-	var responseMap map[string]interface{}
-	err = json.Unmarshal([]byte(responseStr), &responseMap)
-	if err != nil {
-		log.Println("Error decoding response:", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
+    // Decode the response string into a map (assuming JSON format)
+    var responseMap map[string]interface{}
+    err = json.Unmarshal([]byte(response), &responseMap)
+    if err != nil {
+        log.Println("Error decoding response:", err)
+        http.Error(w, "Internal server error", http.StatusInternalServerError)
+        return
+    }
 
-	// Encode the response map as JSON and write it to the response writer
-	err = json.NewEncoder(w).Encode(responseMap)
-	if err != nil {
-		log.Println("Error encoding response:", err)
-	}
-
-	log.Println("Response sent:", responseMap)
+    // Encode the response map as JSON and write it to the response writer
+    err = json.NewEncoder(w).Encode(responseMap)
+    if err != nil {
+        log.Println("Error encoding response:", err)
+    }
 }
 
 

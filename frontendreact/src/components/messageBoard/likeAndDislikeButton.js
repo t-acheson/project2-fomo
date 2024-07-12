@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import '../cssFiles/likeAndDislikeButton.css';
 import { sendMessage } from '../../hooks/webSocket';
 
-const LikeDislikeButton = ({ commentId }) => {
+const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts}) => {
     const [liked, setLiked] = useState(false);
-    const [likesCount, setLikesCount] = useState(0);
+    const [likesCount, setLikesCount] = useState(likesCounts);
     const [disliked, setDisliked] = useState(false);
-    const [dislikeCount, setDislikeCount] = useState(0);
+    const [dislikeCount, setDislikeCount] = useState(dislikesCounts);
 
     const handleLike = () => {
         const newLikedState = !liked;

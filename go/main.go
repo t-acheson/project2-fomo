@@ -62,12 +62,13 @@ func locationHandler(w http.ResponseWriter, r *http.Request){
 func main() {
 	// Give the gRPC server a second to open
 	time.Sleep(1 * time.Second)
+	log.Println("Slept for 1 second for gRPC server")
 
 	//Test the gRPC server
 	// testRecommend()
 
 	// Give postgres a few seconds to open
-	time.Sleep(5 * time.Second)
+	// time.Sleep(5 * time.Second)
 
 	//Connects to Postgres/PostGIS db
 	// db = connectToPostgres()
@@ -87,6 +88,7 @@ func main() {
 
 	// location handler
 	http.HandleFunc("/location", locationHandler)
+	log.Println("Location handler is set up")
 
 
 	// server := NewServer()

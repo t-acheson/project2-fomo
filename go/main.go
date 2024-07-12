@@ -55,7 +55,7 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: use the location ID to query the pickle file here
 	// Call the Python script
-    cmd := exec.Command("python3", "predict_busyness.py", fmt.Sprintf("%d", loqReq.LocationID))
+    cmd := exec.Command("python3", "grpc_model.py", fmt.Sprintf("%d", loqReq.LocationID))
     out, err := cmd.Output()
     if err != nil {
         http.Error(w, "Error running Python script", http.StatusInternalServerError)

@@ -39,23 +39,28 @@ type LocationRequest struct {
 	LocationID int `json:"location_id"`
 }
 
-func locationHandler(w http.ResponseWriter, r *http.Request){
+func locationHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Received request at /location endpoint")
 	var loqReq LocationRequest
 	err := json.NewDecoder(r.Body).Decode(&loqReq)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Println("Error decoding request body:", err)
 		return
 	}
-	fmt.Printf("Location ID: %d\n", loqReq.LocationID)
+	log.Printf("Location ID: %d\n", loqReq.LocationID)
 
-	//TODO use the location ID to query the pickle file here 
+	// TODO: use the location ID to query the pickle file here
 
-	//just for now, send response back 
+	// Just for now, send response back
 	response := map[string]string{"status": "received"}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		log.Println("Error encoding response:", err)
+	}
+	log.Println("Response sent")
 }
-
 
 
 

@@ -5,12 +5,12 @@ import (
 	"log"      //Logging errors
 	"net/http" //HTTP server
 	"time" //Used for time.Sleep
-	"os" //Pass in environment vars
+	// "os" //Pass in environment vars
 	// "golang.org/x/net/websocket"
 	"regexp"
 	"encoding/json"
 	//"github.com/gorilla/sessions" //Session management
-	"database/sql"
+	// "database/sql"
 )
 
 // Struct to hold user session data
@@ -22,7 +22,7 @@ type User struct {
 //var store = sessions.NewCookieStore([]byte("sampleKey"))
 
 // Define a connection the the Postgres db
-var db *sql.DB
+// var db *sql.DB
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	//Writes a response to a HTTP request to the HTTP response writer, w.

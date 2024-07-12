@@ -8,7 +8,7 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
 
   const handleClick = (location_id) => {
     // HTTP POST request to send location_id to the Go server
-    fetch('/location', {
+    fetch('/http://localhost:8080/location', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

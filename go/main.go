@@ -42,41 +42,58 @@ type LocationRequest struct {
 	LocationID int `json:"location_id"`
 }
  
+// locationHandler handles the HTTP request at the "/location" endpoint.
+// It decodes the request body, calls a Python script with the location ID,
+// and encodes the response as JSON.
 func locationHandler(w http.ResponseWriter, r *http.Request) {
+	// Log that a request has been received at the "/location" endpoint
 	log.Println("Received request at /location endpoint")
+
+	// Decode the request body into a LocationRequest struct
 	var loqReq LocationRequest
 	err := json.NewDecoder(r.Body).Decode(&loqReq)
 	if err != nil {
+		// If there is an error decoding the request body, return a bad request error
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Println("Error decoding request body:", err)
 		return
 	}
+
+	// Log the location ID received from the request
 	log.Printf("Location ID: %d\n", loqReq.LocationID)
 
 	// TODO: use the location ID to query the pickle file here
 	// Call the Python script
-    cmd := exec.Command("python3", "grpc_model.py", fmt.Sprintf("%d", loqReq.LocationID))
-    out, err := cmd.Output()
-    if err != nil {
-        http.Error(w, "Error running Python script", http.StatusInternalServerError)
-        log.Println("Error running Python script:", err)
-        return
-    }
+	cmd := exec.Command("python3", "grpc_model.py", fmt.Sprintf("%d", loqReq.LocationID))
+	out, err := cmd.Output()
+	if err != nil {
+		// If there is an error running the Python script, return an internal server error
+		http.Error(w, "Error running Python script", http.StatusInternalServerError)
+		log.Println("Error running Python script:", err)
+		return
+	}
 
-    var response map[string]string
-    err = json.Unmarshal(out, &response)
-    if err != nil {
-        http.Error(w, "Error parsing Python script output", http.StatusInternalServerError)
-        log.Println("Error parsing Python script output:", err)
-        return
-    }
+	// Parse the output of the Python script into a map
+	var response map[string]string
+	err = json.Unmarshal(out, &response)
+	if err != nil {
+		// If there is an error parsing the Python script output, return an internal server error
+		http.Error(w, "Error parsing Python script output", http.StatusInternalServerError)
+		log.Println("Error parsing Python script output:", err)
+		return
+	}
 
-    w.Header().Set("Content-Type", "application/json")
-    err = json.NewEncoder(w).Encode(response)
-    if err != nil {
-        log.Println("Error encoding response:", err)
-    }
-    log.Println("Response sent:", response)
+	// Set the response header to indicate that the response is JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Encode the response as JSON and write it to the response writer
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		log.Println("Error encoding response:", err)
+	}
+
+	// Log the response that was sent
+	log.Println("Response sent:", response)
 }
 
 

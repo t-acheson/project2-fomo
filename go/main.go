@@ -9,6 +9,8 @@ import (
 	"regexp"
 	"database/sql"
 	pb "project2-fomo/go/go/busyness"
+	"google.golang.org/grpc"
+	"context"
 )
 
 // Struct to hold user session data
@@ -53,11 +55,32 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 
     log.Printf("Location ID: %d\n", locReq.LocationID)
 
+	// Connect to the gRPC server
+	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	if err != nil {
+		log.Println("Failed to connect to gRPC server:", err)
+		http.Error(w, "Failed to connect to gRPC server", http.StatusInternalServerError)
+		return
+	}
+	defer conn.Close()
+
+	client := pb.NewBusynessPredictorClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	resp, err := client.PredictBusyness(ctx, &pb.BusynessRequest{LocationId: int32(locReq.LocationID)})
+	if err != nil {
+		log.Println("Error calling gRPC service:", err)
+		http.Error(w, "Error calling gRPC service", http.StatusInternalServerError)
+		return
+	}
+
     // Prepare the response data
     responseData := map[string]interface{}{
-        "location_id": locReq.LocationID,
-        "message":     "API call successful",
-    }
+		"location_id": locReq.LocationID,
+		"busyness":    resp.Busyness,
+		"message":     "API call successful",
+	}
 
     // Set the response headers
     w.Header().Set("Content-Type", "application/json")

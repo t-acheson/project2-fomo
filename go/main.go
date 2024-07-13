@@ -38,6 +38,11 @@ func redirectHTTP(w http.ResponseWriter, r *http.Request) {
 type LocationRequest struct {
 	LocationID int `json:"location_id"`
 }
+
+// LocationResponse represents the structure of the response from the gRPC server
+type LocationResponse struct {
+    Busyness string `json:"busyness"`
+}
  
 func locationHandler(w http.ResponseWriter, r *http.Request) {
     // Log that a request has been received at the "/location" endpoint
@@ -56,6 +61,7 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
     log.Printf("Location ID: %d\n", locReq.LocationID)
 
 	// Connect to the gRPC server
+	//! probably need to change port number? 
 	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
 	if err != nil {
 		log.Println("Failed to connect to gRPC server:", err)

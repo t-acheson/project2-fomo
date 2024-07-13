@@ -2,20 +2,13 @@ package main
 
 import (
 	"fmt" //Formatted I/O
-	// "io/ioutil"
-	"log"      //Logging errors
+	"log" //Logging errors
 	"net/http" //HTTP server
-	// "os"
-	// "os/exec"
 	"time" //Used for time.Sleep
-
-	// "os" //Pass in environment vars
-	// "golang.org/x/net/websocket"
 	"encoding/json"
 	"regexp"
-
-	//"github.com/gorilla/sessions" //Session management
 	"database/sql"
+	pb "project2-fomo/go/go/busyness"
 )
 
 // Struct to hold user session data

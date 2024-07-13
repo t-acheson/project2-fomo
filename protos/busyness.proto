@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package busyness;
 
+option go_package = "../go/go/busyness";
+
 service BusynessPredictor {
   rpc PredictBusyness (BusynessRequest) returns (BusynessResponse);
 }

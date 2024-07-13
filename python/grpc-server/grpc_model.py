@@ -1,9 +1,11 @@
+import grpc
+from concurrent import futures
 import pickle
 import pandas as pd
 from datetime import datetime, timedelta
 import pytz
-import sys
-import json 
+import busyness_pb2
+import busyness_pb2_grpc
 
 # Load model
 try:
@@ -65,11 +67,18 @@ def predict_busyness(locationid):
 #predicted_busyness = predict_busyness(location_id)
 #print(f"Predicted busyness at location {location_id} 1 hour from now in New York: {predicted_busyness}")
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python predict_busyness.py <location_id>")
-        sys.exit(1)
+class BusynessPredictor(busyness_pb2_grpc.BusynessPredictorServicer):
+    def PredictBusyness(self, request, context):
+        location_id = request.location_id
+        busyness = predict_busyness(location_id)
+        return busyness_pb2.BusynessResponse(busyness=busyness)
 
-    location_id = int(sys.argv[1])
-    busyness = predict_busyness(location_id)
-    print(json.dumps({"busyness": busyness}))
+def serve():
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    busyness_pb2_grpc.add_BusynessPredictorServicer_to_server(BusynessPredictor(), server)
+    server.add_insecure_port('[::]:50051')
+    server.start()
+    server.wait_for_termination()
+
+if __name__ == "__main__":
+    serve()

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package busyness;
+
+service BusynessPredictor {
+  rpc PredictBusyness (BusynessRequest) returns (BusynessResponse);
+}
+
+message BusynessRequest {
+  int32 location_id = 1;
+}
+
+message BusynessResponse {
+  string busyness = 1;
+}

@@ -109,7 +109,7 @@ func (s *Server) removeConnection(uuid uuid.UUID) {
 }
 
 // Select applicable historical comments and iteratively send them to the new client
-func (s *Server) retrieve(ws *websocket.Conn, lat, lng) {
+func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
   rows, err := db.Query(`
   SELECT id, parent_id, timestamp, text, likes, dislikes
     FROM comments

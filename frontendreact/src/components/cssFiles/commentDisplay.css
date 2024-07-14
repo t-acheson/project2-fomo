@@ -1,9 +1,13 @@
 body {
-  background-color: #fff; /* Dark navy color */
+  background-color: #404959;
   color: #ffffff; /* Light text color for contrast */
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
+}
+
+.comment {
+  border-radius: 20px;
 }
 
 .comment-container {
@@ -25,103 +29,115 @@ body {
   margin: 0;
 }
 
-/* Remove border and padding for the ListGroupItem */
+
 .list-group-item {
-  border: none;
-  padding: 2.5px;
-  margin: 5px 150px 0px 20px;
-  border-bottom: none;
+  border: none !important; 
+  padding: 0; 
+  margin: 10px 20px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* commentDisplay.css */
 .reply-button, .toggle-replies-button {
-margin-left: 10px;
-background: #ff4d4d; /* Vibrant color for buttons */
-color: #f1f1f1;
-border: none;
-padding: 10px 20px; /* Add padding for larger buttons */
-border-radius: 20px; /* Make buttons more rounded */
-cursor: pointer;
-transition: background 0.3s ease;
+  margin-left: 10px;
+  background: #FFA64D;
+  color: #f1f1f1;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px; 
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 .reply-button:hover, .toggle-replies-button:hover {
-background: #ff1a1a; /* Darker shade on hover */
+  background: #D9534F;
 }
 
 .reply-input {
-display: flex;
-align-items: center;
-margin-top: 10px;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
 }
 
 .reply-input input {
-margin-right: 10px;
-padding: 5px;
-border: 1px solid #ccc;
-border-radius: 4px;
-width: 300px; /* Increase the width to make the input box longer */
+  margin-right: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 300px; 
 }
 
 .reply-input button {
-margin-left: 10px;
-background: #ff4d4d; /* Vibrant color for buttons */
-color: #f1f1f1;
-border: none;
-padding: 10px 20px; /* Add padding for larger buttons */
-border-radius: 20px; /* Make buttons more rounded */
-cursor: pointer;
-transition: background 0.3s ease;
+  margin-left: 10px;
+  background: #FFA64D; 
+  color: #f1f1f1;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px; 
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 .reply-input button:hover {
-background: #ff1a1a; /* Darker shade on hover */
+  background: #D9534F; 
+}
+
+.card {
+  border: none !important; /* Ensure card border is removed */
+  background-color: #fff; /* Eggshell white background color */
+  border-radius: 15px !important; 
 }
 
 .card-body {
-position: relative;
+  position: relative;
+  padding: 15px; /* Add some padding inside the card */
+  border: none !important; /* Ensure no border is applied */
+  border-radius: 15px !important; /* Ensure border-radius is applied */
 }
 
 .comment-text h4 {
-text-align: left;
-margin: 0;
+  text-align: left;
+  margin: 0;
+  color: #333; /* Ensure the comment text color is readable */
 }
 
 .comment-header {
-position: absolute;
-top: 0;
-right: 0;
+  position: absolute;
+  top: 10px; /* Adjusted to add some space from the top */
+  right: 10px; /* Adjusted to add some space from the right */
+  color: #666; /* Subtle color for metadata */
 }
 
 .comment-actions {
-display: flex;
-justify-content: space-between;
-align-items: flex-end;
-margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 10px;
 }
 
 .left-actions {
-display: flex;
-align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .right-actions {
-display: flex;
-align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .toggle-replies-button {
-background: none;
-border: none;
-cursor: pointer;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .arrow-icon {
-width: 20px; /* Adjust the width as needed */
-height: 20px; /* Adjust the height as needed */
+  width: 20px; /* Adjust the width as needed */
+  height: 20px; /* Adjust the height as needed */
 }
 
 .nested-comments {
-margin-left: 20px;
-margin-top: 10px;
+  margin-left: 20px;
+  margin-top: 10px;
 }

@@ -1,0 +1,43 @@
+.featuresBlock {
+    padding: 100px 0 30px 0;
+  }
+  
+  .featuresBlock .titleHolder {
+    text-align: center;
+    padding:10px 100px 10px 100px;
+    margin-bottom: 40px;
+  }
+  
+  .featuresBlock .titleHolder h1 {
+    margin-bottom: 30px;
+  }
+  
+  .featuresBlock .titleHolder h2 {
+    font-size: 20px;
+  }
+  
+  .featuresBlock .holder {
+    text-align: center;
+    margin: 30px 0;
+    padding: 10px 70px 10px 70px;
+  }
+  
+  .featuresBlock .holder h3 {
+    color: #fff;
+  }
+  
+  .featuresBlock .holder p {
+    color: #ffffff;
+  }
+  
+  .featuresBlock .imageHolder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  
+  .featuresBlock .imageHolder img {
+    width: 450px; /* Increase the width */
+    height: auto;
+  }

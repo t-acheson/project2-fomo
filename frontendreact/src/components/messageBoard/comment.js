@@ -27,10 +27,10 @@ const Comment = ({ comment }) => {
     };
   
     return (
-      <div>
+      <div className='comment'>
         <ListGroup.Item key={comment.id}>
           <Card>
-            <Card.Body>
+            <Card.Body className="card-body">
               <div className="comment-header">
                 <Card.Subtitle className="mb-2 text-muted">
                   Received at: {comment.timestamp}

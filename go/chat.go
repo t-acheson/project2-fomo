@@ -239,7 +239,7 @@ func (s *Server) insertReply(parentID *int, text string) (Comment, float64, floa
   err := db.QueryRow(`
     INSERT INTO comments (parent_id, text, location, timestamp) VALUES
     ($1, $2, (SELECT location FROM comments WHERE id = $1), $3)
-    RETURNING id, timestamp, ST_X(location), ST_Y(location);`,
+    RETURNING id, timestamp, ST_X(location::geometry), ST_Y(location::geometry);`,
     parentID, text, time.Now()).Scan(&id, &timestamp, &lat, &lng)
   if err != nil {
     fmt.Println("Error writing reply to table comments:", err)
@@ -258,7 +258,7 @@ func (s *Server) insertReply(parentID *int, text string) (Comment, float64, floa
 
 func (s *Server) interact(id int, column string, value int) (float64, float64, error) {
   var lat, lng float64
-  query := fmt.Sprintf("UPDATE comments SET %s = $1 WHERE id = $2 RETURNING ST_X(location), ST_Y(location);", column)
+  query := fmt.Sprintf("UPDATE comments SET %s = $1 WHERE id = $2 RETURNING ST_X(location::geometry), ST_Y(location::geometry);", column)
   err := db.QueryRow(query, value, id).Scan(&lat, &lng)
   if err != nil {
     fmt.Println("Error updating the likes/dislikes of comment:", err)

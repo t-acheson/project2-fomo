@@ -49,7 +49,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/feed" element={<FeedPage />} />
-          <Route path="/notification" element={<NotificationPage />} />
+          {/* <Route path="/notification" element={<NotificationPage />} /> */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
         <Footer />

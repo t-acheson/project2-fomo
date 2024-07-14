@@ -23,7 +23,7 @@ var (
 
 func contactgRPCServer(client pb.BusynessClient, request *pb.BusynessRequest) string {
   // Sends busyness request to Python gRPC server and logs response
-  log.Printf("Receiving busyness reply for location ID: %s", request.Locationid)
+  log.Printf("Receiving busyness reply for location ID: %d", request.Locationid)
   ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) // Create context with 10s timeout for request
   defer cancel()
   start := time.Now() // Record the start time

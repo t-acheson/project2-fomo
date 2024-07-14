@@ -4,7 +4,6 @@ import (
 	"fmt" //Formatted I/O
 	"log"      //Logging errors
 	"net/http" //HTTP server
-	"time" //Used for time.Sleep
 	"os" //Pass in environment vars
 	"golang.org/x/net/websocket"
 	"encoding/json"
@@ -84,7 +83,6 @@ func main() {
 	// location handler
 	http.HandleFunc("/location", locationHandler)
 	log.Println("Location handler is set up")
-
 
 	// Set up websocket server
 	server := NewServer()

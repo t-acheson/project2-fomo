@@ -1,5 +1,6 @@
-grpcio
+grpcio>=1.65.0
 protobuf
 pytest
 pandas
 pytz
+flake8

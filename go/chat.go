@@ -19,8 +19,6 @@ type Comment struct {
   ID int `json:"id"`
   ParentID *int `json:"parentid,omitempty"` //Pointer and omitempty to handle the parentid case.
   Text string `json:"text"`
-  Lat float32 `json:"lat,omitempty"`  //Still necessary?
-  Lng float32 `json:"lng,omitempty"`
   Likes int `json:"likes"`
   Dislikes int `json:"dislikes"`
   Timestamp time.Time `json:"timestamp"`
@@ -182,7 +180,7 @@ func (s *Server) handleMessage(message WebsocketMessage) {
       Type: "like_update",
       CommentID: message.CommentID,
       Likes: message.Likes,
-    }, likeLat, likeLng, message.Longitude)
+    }, likeLat, likeLng)
 
   case "dislike_update":
     dislikeLat, dislikeLng, err := s.interact(message.CommentID, "dislikes", message.Dislikes)
@@ -261,7 +259,7 @@ func (s *Server) insertReply(parentID *int, text string) (Comment, float64, floa
 func (s *Server) interact(id int, column string, value int) (float64, float64, error) {
   var lat, lng float64
   query := fmt.Sprintf("UPDATE comments SET %s = $1 WHERE id = $2 RETURNING ST_X(location), ST_Y(location)", column)
-  _, err := db.Exec(query, value, id).Scan(&lat, &lng)
+  _, err := db.QueryRow(query, value, id).Scan(&lat, &lng)
   if err != nil {
     fmt.Println("Error updating the likes/dislikes of comment:", err)
     return 0, 0, err

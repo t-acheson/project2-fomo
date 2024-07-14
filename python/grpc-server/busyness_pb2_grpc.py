@@ -3,9 +3,9 @@
 import grpc
 import warnings
 
-import recommendations_pb2 as recommendations__pb2
+import busyness_pb2 as busyness__pb2
 
-GRPC_GENERATED_VERSION = '1.65.0'
+GRPC_GENERATED_VERSION = '1.64.1'
 GRPC_VERSION = grpc.__version__
 EXPECTED_ERROR_RELEASE = '1.65.0'
 SCHEDULED_RELEASE_DATE = 'June 25, 2024'
@@ -20,7 +20,7 @@ except ImportError:
 if _version_not_supported:
     warnings.warn(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in recommendations_pb2_grpc.py depends on'
+        + f' but the generated code in busyness_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -30,7 +30,7 @@ if _version_not_supported:
     )
 
 
-class RecommendationStub(object):
+class BusynessStub(object):
     """The recommendation service definition
     """
 
@@ -40,46 +40,46 @@ class RecommendationStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.SendRecommendation = channel.unary_unary(
-                '/Recommendation/SendRecommendation',
-                request_serializer=recommendations__pb2.RecommendationRequest.SerializeToString,
-                response_deserializer=recommendations__pb2.RecommendationReply.FromString,
+        self.SendLocationID = channel.unary_unary(
+                '/Busyness/SendLocationID',
+                request_serializer=busyness__pb2.BusynessRequest.SerializeToString,
+                response_deserializer=busyness__pb2.BusynessReply.FromString,
                 _registered_method=True)
 
 
-class RecommendationServicer(object):
+class BusynessServicer(object):
     """The recommendation service definition
     """
 
-    def SendRecommendation(self, request, context):
-        """Calling send a calculates a recommendation
+    def SendLocationID(self, request, context):
+        """Calling calculates a Busyness at a given LocationID
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_RecommendationServicer_to_server(servicer, server):
+def add_BusynessServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'SendRecommendation': grpc.unary_unary_rpc_method_handler(
-                    servicer.SendRecommendation,
-                    request_deserializer=recommendations__pb2.RecommendationRequest.FromString,
-                    response_serializer=recommendations__pb2.RecommendationReply.SerializeToString,
+            'SendLocationID': grpc.unary_unary_rpc_method_handler(
+                    servicer.SendLocationID,
+                    request_deserializer=busyness__pb2.BusynessRequest.FromString,
+                    response_serializer=busyness__pb2.BusynessReply.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'Recommendation', rpc_method_handlers)
+            'Busyness', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('Recommendation', rpc_method_handlers)
+    server.add_registered_method_handlers('Busyness', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class Recommendation(object):
+class Busyness(object):
     """The recommendation service definition
     """
 
     @staticmethod
-    def SendRecommendation(request,
+    def SendLocationID(request,
             target,
             options=(),
             channel_credentials=None,
@@ -92,9 +92,9 @@ class Recommendation(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/Recommendation/SendRecommendation',
-            recommendations__pb2.RecommendationRequest.SerializeToString,
-            recommendations__pb2.RecommendationReply.FromString,
+            '/Busyness/SendLocationID',
+            busyness__pb2.BusynessRequest.SerializeToString,
+            busyness__pb2.BusynessReply.FromString,
             options,
             channel_credentials,
             insecure,

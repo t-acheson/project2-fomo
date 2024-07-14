@@ -3,17 +3,17 @@ syntax = "proto3";
 option go_package=".";
 
 // The recommendation service definition
-service Recommendation {
-	// Calling send a calculates a recommendation
-	rpc SendRecommendation (RecommendationRequest) returns (RecommendationReply) {}
+service Busyness {
+	// Calling calculates a Busyness at a given LocationID
+	rpc SendLocationID (BusynessRequest) returns (BusynessReply) {}
 }
 
 // Request format for Python gRPC server
-message RecommendationRequest {
+message BusynessRequest {
 	int64 locationid = 1;
 }
 
 // Reply format from to Go stub/client
-message RecommendationReply {
+message BusynessReply {
 	string busyness = 1;
 }

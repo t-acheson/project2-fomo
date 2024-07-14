@@ -89,18 +89,18 @@ func main() {
 
 	websocketHandler := func(ws *websocket.Conn) {
 		// Require an inital message declaring latitude and longitude
-		type initalMsg struct {
+		var initialMsg struct {
 			Lat float64 `json:"lat"`
 			Lng float64 `json:"lng"`
 		}
 
-		if err := websocket.JSON.Receive(ws, &initalMsg); err != nil {
+		if err := websocket.JSON.Receive(ws, &initialMsg); err != nil {
 			fmt.Println("Error receving inital message with lat/lng:",err)
 			return
 		}
 
 		// Call handleWebSocket with conn and lat/lng
-		server.handleWebSocket(ws, initalMsg.Lat, initalMsg.Lng)
+		server.handleWebSocket(ws, initialMsg.Lat, initialMsg.Lng)
 	}
 
 	http.Handle("/ws", websocket.Handler(websocketHandler))

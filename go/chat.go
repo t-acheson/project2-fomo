@@ -8,7 +8,6 @@ import (
   "time"
   "encoding/json"
   "github.com/google/uuid"
-  "math/rand"
 )
 
 type Server struct {

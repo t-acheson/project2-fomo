@@ -2,6 +2,8 @@ import pickle
 import pandas as pd
 from datetime import datetime, timedelta
 import pytz
+import sys
+import json 
 
 # Load model
 try:
@@ -62,3 +64,12 @@ def predict_busyness(locationid):
 #locationid = 6
 #predicted_busyness = predict_busyness(location_id)
 #print(f"Predicted busyness at location {location_id} 1 hour from now in New York: {predicted_busyness}")
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python predict_busyness.py <location_id>")
+        sys.exit(1)
+
+    location_id = int(sys.argv[1])
+    busyness = predict_busyness(location_id)
+    print(json.dumps({"busyness": busyness}))

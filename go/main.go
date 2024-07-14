@@ -2,11 +2,8 @@ package main
 
 import (
 	"fmt" //Formatted I/O
-	"io/ioutil"
 	"log"      //Logging errors
 	"net/http" //HTTP server
-	"os"
-	"os/exec"
 	"time" //Used for time.Sleep
 
 	// "os" //Pass in environment vars
@@ -65,37 +62,23 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	// Construct the command to call the Python script
-	// Replace "your_script.py" with the actual path to your Python script
-	cmd := exec.Command("python3", "../python/grpc-server/grpc_model.py", fmt.Sprintf("%d", loqReq.LocationID))
-	cmd.Stdout = os.Stdout // Redirect stdout to capture the Python script's output
-	cmd.Stderr = os.Stderr // Redirect stderr to capture errors
+	// Contact the grpc server to receieve busyness estimate for locationid
+	response := fmt.Sprintf(`{"busyness": "%s"}`, estimateBusyness(loqReq.LocationID))
 
-	err = cmd.Run()
-    if err != nil {
-        log.Printf("Error running Python script: %v", err)
-        http.Error(w, "Failed to process request", http.StatusInternalServerError)
-        return
-    }
+  // Decode the response string into a map (assuming JSON format)
+  var responseMap map[string]interface{}
+  err = json.Unmarshal([]byte(response), &responseMap)
+  if err != nil {
+  	log.Println("Error decoding response:", err)
+   	http.Error(w, "Internal server error", http.StatusInternalServerError)
+    return
+  }
 
-    // Read the Python script's output
-    output, _ := ioutil.ReadAll(os.Stdout)
-    response := string(output)
-
-    // Decode the response string into a map (assuming JSON format)
-    var responseMap map[string]interface{}
-    err = json.Unmarshal([]byte(response), &responseMap)
-    if err != nil {
-        log.Println("Error decoding response:", err)
-        http.Error(w, "Internal server error", http.StatusInternalServerError)
-        return
-    }
-
-    // Encode the response map as JSON and write it to the response writer
-    err = json.NewEncoder(w).Encode(responseMap)
-    if err != nil {
-        log.Println("Error encoding response:", err)
-    }
+  // Encode the response map as JSON and write it to the response writer
+  err = json.NewEncoder(w).Encode(responseMap)
+  if err != nil {
+  	log.Println("Error encoding response:", err)
+  }
 }
 
 
@@ -149,5 +132,5 @@ func main() {
 
 	//Start HTTP listener on port 80
 	log.Printf("Starting HTTP listener")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":80", nil))
 }

@@ -52,7 +52,7 @@ func NewServer() *Server {
   }
 }
 
-func (s *Server) handleWebSocket(ws *websocket.Conn) {
+func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
   //s.mu.Lock()
   //defer s.mu.Unlock()
 
@@ -61,7 +61,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
   uuid := uuid.New()
 
   start := time.Now()
-  s.addConnection(uuid)
+  s.addConnection(uuid, lat, lng)
   duration := time.Since(start)
   fmt.Println("Added connection to users table in time:", duration)
 
@@ -69,7 +69,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
 
   // Retreive historical messages
   start = time.Now()
-  s.retrieve(ws)
+  s.retrieve(ws, lat, lng)
   duration = time.Since(start)
   fmt.Println("Retreived historical messages for client in time:", duration)
   
@@ -85,17 +85,12 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
   fmt.Println("Removed connection for users table in time:", duration)
 }
 
-// ! For temporary use until lat/lng can be passed to backend
-func rangeIn(low, hi int) int {
-    return low + rand.Intn(hi-low)
-}
-
-// ! Pass in location from frontend as argument
-func (s *Server) addConnection(uuid uuid.UUID) {
+// Add websocket client to the users table using their lat/lng
+func (s *Server) addConnection(uuid uuid.UUID, lat float64, lng float64) {
   _, err := db.Exec(`
     INSERT INTO users (uuid, location) VALUES
     ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326))`,
-    uuid, rangeIn(1,3), rangeIn(1,3), // ! Temporary random numbers
+    uuid, lat, lng,
   )
   if err != nil {
     fmt.Println("Error writing user to users table:", err)
@@ -114,12 +109,12 @@ func (s *Server) removeConnection(uuid uuid.UUID) {
 }
 
 // Select applicable historical comments and iteratively send them to the new client
-func (s *Server) retrieve(ws *websocket.Conn) {
+func (s *Server) retrieve(ws *websocket.Conn, lat, lng) {
   rows, err := db.Query(`
   SELECT id, parent_id, timestamp, text, likes, dislikes
     FROM comments
     WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
-  rangeIn(1,3), rangeIn(1,3), // CHANGE TO ACTUAL USER LOCATION AFTER FRONTEND INTEGRATION
+  lat, lng, // CHANGE TO ACTUAL USER LOCATION AFTER FRONTEND INTEGRATION
   )
   defer rows.Close()
   

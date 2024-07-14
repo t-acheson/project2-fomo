@@ -4,3 +4,4 @@ pytest
 pandas
 pytz
 scikit-learn
+flake8

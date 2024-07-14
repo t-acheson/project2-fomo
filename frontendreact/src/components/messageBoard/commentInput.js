@@ -18,6 +18,10 @@ const CommentInput = () => {
     };
 
     const handleSubmit = () => { 
+        if (text.trim() === '') {
+            alert('Comment cannot be empty');
+            return;
+          }
         sendMessage({type: 'new_comment', text: text, lat:lat, lng:lng });
         setText('');
     };

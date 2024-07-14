@@ -1,68 +1,79 @@
 import React, { useState } from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
 import LikeDislikeButton from './likeAndDislikeButton';
+import ReplyInput from './replyInput';
 import '../cssFiles/commentDisplay.css';
+import upArrow from '../../assets/up-arrow.svg'; // Adjust the path as needed
+import downArrow from '../../assets/down-arrow.svg';
 
 const Comment = ({ comment }) => {
-  const [showReplyInput, setShowReplyInput] = useState(false);
-  const [replyText, setReplyText] = useState('');
-
-  const handleReplyClick = () => {
-    setShowReplyInput(!showReplyInput);
-  };
-
-  const handleReplyInputChange = (event) => {
-    setReplyText(event.target.value);
-  };
-
-  const handleReplySubmit = () => {
-    // *To add reply submission logic here
-    setShowReplyInput(false);
-    setReplyText('');
-  };
-
-  return (
-    <ListGroup.Item key={comment.id}>
-      <Card>
-        <Card.Body>
-          <Card.Text><h4>{comment.text}</h4></Card.Text>
-          <div className="button-group-right">
-            <LikeDislikeButton 
-              commentId={comment.id} 
-              likesCounts={comment.likes} 
-              dislikesCounts={comment.dislikes} 
-            />
-            <button className="reply-button" onClick={handleReplyClick}>Reply</button>
+    const [showReplyInput, setShowReplyInput] = useState(false);
+    const [showReplies, setShowReplies] = useState(false);
+  
+    const handleReplyClick = () => {
+      setShowReplyInput(!showReplyInput);
+    };
+  
+    const handleReplySubmit = (replyText, parentId) => {
+        setShowReplyInput(!showReplyInput);
+      };
+  
+    const handleCancelReply = () => {
+      setShowReplyInput(false);
+    };
+  
+    const toggleReplies = () => {
+      setShowReplies(!showReplies);
+    };
+  
+    return (
+      <div>
+        <ListGroup.Item key={comment.id}>
+          <Card>
+            <Card.Body>
+              <div className="comment-header">
+                <Card.Subtitle className="mb-2 text-muted">
+                  Received at: {comment.timestamp}
+                  <br/>
+                  test - id:{comment.id} parent:{comment.parentid}
+                </Card.Subtitle>
+              </div>
+              <Card.Text className="comment-text"><h4>{comment.text}</h4></Card.Text>
+              <div className="comment-actions">
+                <div className="left-actions">
+                  {comment.replies.length > 0 && (
+                    <button className="toggle-replies-button" onClick={toggleReplies}>
+                      <img src={showReplies ? upArrow : downArrow} alt={showReplies ? "Collapse" : "Expand"} className="arrow-icon" />
+                    </button>
+                  )}
+                </div>
+                <div className="right-actions">
+                  <LikeDislikeButton 
+                    commentId={comment.id} 
+                    likesCounts={comment.likes} 
+                    dislikesCounts={comment.dislikes} 
+                  />
+                  <button className="reply-button" onClick={handleReplyClick}>Reply</button>
+                </div>
+              </div>
+              {showReplyInput && (
+                <ReplyInput
+                parentId={comment.id}
+                onCancelReply={handleCancelReply}
+                />
+              )}
+            </Card.Body>
+          </Card>
+        </ListGroup.Item>
+        {showReplies && comment.replies.length > 0 && (
+          <div className="nested-comments">
+            {comment.replies.map(reply => (
+              <Comment key={reply.id} comment={reply} />
+            ))}
           </div>
-          <Card.Subtitle className="mb-2 text-muted">
-            Received at: {comment.timestamp}
-            <br/>
-            test - id:{comment.id} parent:{comment.parentid}
-          </Card.Subtitle>
-          {showReplyInput && (
-            <div className="reply-input">
-              <input
-                type="text"
-                value={replyText}
-                onChange={handleReplyInputChange}
-                placeholder="Enter your reply"
-              />
-              <button onClick={handleReplySubmit}>Submit Reply</button>
-            </div>
-          )}
-        </Card.Body>
-        {comment.replies.length > 0 && (
-          <Card.Body>
-            <ListGroup>
-              {comment.replies.map(reply => (
-                <Comment key={reply.id} comment={reply} />
-              ))}
-            </ListGroup>
-          </Card.Body>
         )}
-      </Card>
-    </ListGroup.Item>
-  );
-};
-
-export default Comment;
+      </div>
+    );
+  };
+  
+  export default Comment;

@@ -40,12 +40,7 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-<<<<<<< Updated upstream
 	log.Printf("Location ID: %d\n", loqReq.LocationID)
-=======
-	//Test the gRPC server
-	//	testRecommend()
->>>>>>> Stashed changes
 
 	w.Header().Set("Content-Type", "application/json")
 

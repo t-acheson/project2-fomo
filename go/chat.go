@@ -42,7 +42,6 @@ type WebsocketReply struct {
   Type string `json:"type"`
   Comment *Comment `json:"comment,omitempty"`
   CommentID int `json:"commentid,omitempty"`
-  //ParentID *int `json:"parentid,omitempty"`
   Likes int `json:"likes,omitempty"`
   Dislikes int `json:"dislikes,omitempty"`
 }

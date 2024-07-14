@@ -5,45 +5,28 @@ import (
 	"log"      //Logging errors
 	"net/http" //HTTP server
 	"time" //Used for time.Sleep
-
-	// "os" //Pass in environment vars
-	// "golang.org/x/net/websocket"
+	"os" //Pass in environment vars
+	"golang.org/x/net/websocket"
 	"encoding/json"
 	"regexp"
-
-	//"github.com/gorilla/sessions" //Session management
 	"database/sql"
 )
-
-// Struct to hold user session data
-type User struct {
-	UserID string
-}
-
-// Define a global session store
-//var store = sessions.NewCookieStore([]byte("sampleKey"))
 
 // Define a connection the the Postgres db
 var db *sql.DB
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	//Writes a response to a HTTP request to the HTTP response writer, w.
-	fmt.Fprintf(w, "Go server running")
+// Structure of the incoming request of location ID from frontend to be sent to grpc server
+type LocationRequest struct {
+	LocationID int `json:"location_id"`
 }
 
 //Redirect HTTP request to HTTPS
 func redirectHTTP(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
 }
-
-// LocationRequest represents the structure of the incoming request with location ID
-type LocationRequest struct {
-	LocationID int `json:"location_id"`
-}
  
-// locationHandler handles the HTTP request at the "/location" endpoint.
-// It decodes the request body, calls a Python script with the location ID,
-// and encodes the response as JSON.
+// Handles HTTP request at the "/location" endpoint.
+// Decodes the request body, calls the grpc server and encodes response as JSON
 func locationHandler(w http.ResponseWriter, r *http.Request) {
 	// Log that a request has been received at the "/location" endpoint
 	log.Println("Received request at /location endpoint")
@@ -81,24 +64,10 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
   }
 }
 
-
-
-
-
 func main() {
-	// Give the gRPC server a second to open
-	time.Sleep(1 * time.Second)
-	log.Println("Slept for 1 second for gRPC server")
-
-	//Test the gRPC server
-	// testRecommend()
-
-	// Give postgres a few seconds to open
-	// time.Sleep(5 * time.Second)
-
 	//Connects to Postgres/PostGIS db
-	// db = connectToPostgres()
-	// defer db.Close()
+	db = connectToPostgres()
+	defer db.Close()
 
 	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Define the file server for static files
@@ -117,14 +86,15 @@ func main() {
 	log.Println("Location handler is set up")
 
 
-	// server := NewServer()
-	// http.Handle("/ws", websocket.Handler(server.handleWebSocket))
+	// Set up websocket server
+	server := NewServer()
+	http.Handle("/ws", websocket.Handler(server.handleWebSocket))
 
 	//Start TLS listener on port 443
 	go func() {
 		log.Printf("Starting HTTPS listener")
-		// domain := os.Getenv("DOMAIN_NAME")
-		err := http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/nycfomo.com/fullchain.pem", "/etc/letsencrypt/live/nycfomo.com/privkey.pem", nil)
+		domain := os.Getenv("DOMAIN_NAME")
+		err := http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/"+domain+"/fullchain.pem", "/etc/letsencrypt/live/"+domain+"/privkey.pem", nil)
 		if err != nil {
 			log.Fatalf("HTTPS server failed to start: %v", err)
 		}
@@ -132,5 +102,5 @@ func main() {
 
 	//Start HTTP listener on port 80
 	log.Printf("Starting HTTP listener")
-	log.Fatal(http.ListenAndServe(":80", nil))
+	log.Fatal(http.ListenAndServe(":80", http.HandlerFunc(redirectHTTP)))
 }

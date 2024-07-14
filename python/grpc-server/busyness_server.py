@@ -9,7 +9,7 @@ import grpc_model
 
 def get_busyness(request):
     """Estimate busyness based on locationid"""
-    if not isinstance(request.locationid, int):
+    if not 1 <= request.locationid <= 263:
         return None
     return grpc_model.predict_busyness(request.locationid)
 

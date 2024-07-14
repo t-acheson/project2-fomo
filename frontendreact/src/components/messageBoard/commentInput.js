@@ -34,9 +34,6 @@ const CommentInput = () => {
             <Button variant="primary" onClick={handleSubmit} className="button">
                 Submit
             </Button>
-            <Form.Text className="text-muted">
-                {text.length}/{maxLength} characters
-            </Form.Text>
         </InputGroup>
     );
 };

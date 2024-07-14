@@ -4,7 +4,9 @@ import Comment from './comment';
 import { nestComments } from './nestedComments';
 
 const CommentDisplay = ({ comments }) => {
+    console.log('Comments received in CommentDisplay:', comments);
     const nestedComments = nestComments(comments);
+    
 
     return (
         <div className="comment-container">

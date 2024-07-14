@@ -12,14 +12,23 @@ const FeedPage = () => {
         // Function to handle incoming messages
         const handleMessage = (message) => {
             console.log('New message received:', message);
-            setComments(prevComments => [...prevComments, message]);  // 更新状态，添加新评论
+            // Check if the message has the necessary properties
+            if (message && message.id && message.text) {
+                setComments(prevComments => [...prevComments, message]);  // Update state with new comment
+            } else {
+                console.warn('Received malformed message:', message);
+            }
         };
 
-        listenForMessages(handleMessage);  // start listening for messages
+        // Start listening for messages
+        const cleanup = listenForMessages(handleMessage);
+        
         return () => {
-            // call a websocket close function 
+            // Call the cleanup function to close the WebSocket connection
+            if (cleanup) cleanup();
         };
-    }, []); // only run once when the component mounts
+    }, []); // Only run once when the component mounts
+    
     return (
         <Container>
             <CommentInput />

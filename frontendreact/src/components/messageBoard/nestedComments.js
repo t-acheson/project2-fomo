@@ -30,6 +30,8 @@ const nestComments = (comments) => {
         }
     });
 
+    console.log('Nested comments:', nestedComments); // Debugging lines
+
     return nestedComments;
 };
 

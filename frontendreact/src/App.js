@@ -10,6 +10,7 @@ import NotificationPage from './pages/NotificationPage';
 import Header from './components/header';
 import Footer from './components/footer';
 import './App.css'
+import { sendLocation } from './hooks/webSocket';
 // create a context for the location state
 export const LocationContext = createContext(null);
 
@@ -17,28 +18,44 @@ function App() {
  // create a location state
   const [location, setLocation] = useState(null);
 // use the `useEffect` hook to get the user's location
+//! to uncode for actual user location
+  // useEffect(() => {
+  //   const getLocation = () => {
+  //     if (navigator.geolocation) {
+  //       // get the user's location using the Geolocation API
+  //       navigator.geolocation.getCurrentPosition(
+  //         (position) => {
+  //           const userLocation = {
+  //             lat: position.coords.latitude,
+  //             lng: position.coords.longitude
+  //           };
+  //           setLocation(userLocation);  
+  //         },
+  //         (error) => {
+  //           console.error('Access to location denied:', error);
+  //           setLocation(null);  
+  //         }
+  //       );
+  //     }
+  //   };
+  //   // call the `getLocation` function when the component mounts
+  //   getLocation();  
+  // }, []);
+
+  // use the `useEffect` hook to set the user's location
+  //* testing use effect start
   useEffect(() => {
     const getLocation = () => {
-      if (navigator.geolocation) {
-        // get the user's location using the Geolocation API
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const userLocation = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
-            setLocation(userLocation);  
-          },
-          (error) => {
-            console.error('Access to location denied:', error);
-            setLocation(null);  
-          }
-        );
-      }
+      const userLocation = {
+        lat: 2,
+        lng: 2
+      };
+      setLocation(userLocation);
     };
-    // call the `getLocation` function when the component mounts
-    getLocation();  
+    getLocation();
+    sendLocation(location)
   }, []);
+//* testing use effect start
 
 
   return (

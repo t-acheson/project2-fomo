@@ -31,7 +31,7 @@ func contactgRPCServer(client pb.BusynessClient, request *pb.BusynessRequest) fl
   duration := time.Since(start) // Calculate the duration
   if err != nil {
     log.Fatalf("client.SendLocationID failed: %v", err)
-    return "error"
+    return -1
   }
   log.Printf("Reply: %f, received in time: %s", reply.Busyness, duration)
   return reply.Busyness

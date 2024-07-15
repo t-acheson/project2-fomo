@@ -1,3 +1,5 @@
+import { latLng } from "leaflet";
+
 const socket = new WebSocket('wss://nycfomo.com/ws');
 // ================================
 // 4 event listeners to console.log the WebSocket status
@@ -22,7 +24,16 @@ socket.addEventListener('close', function (event) {
     console.log('WebSocket connection closed:', event);
 });
 
-
+// ! to change to real location sfter testing
+const sendLocation = (location) => {
+    socket.onopen = function(event) {
+        console.log("WebSocket connection established with server.");
+        socket.send(JSON.stringify({
+            lat: 2,
+            lng: 2
+        }));
+    };
+}
 // ================================
 // Below are functions can be called in other files to interact with the WebSocket
 // ================================
@@ -37,22 +48,31 @@ const sendMessage = (message) => {
     }
 };
 
-//2. listenForMessages: listen for messages from the server
+//listenForMessages: listen for messages from the server
 // When it is called ,it can pass back the message data 
 const listenForMessages = (callback) => {
-    const socket = new WebSocket('wss://nycfomo.com/ws');
-    socket.onmessage = (event) => {
+    const handleMessage = (event) => {
         try {
             const messageData = JSON.parse(event.data);
-            callback(messageData);  
+            callback(messageData);
         } catch (error) {
             console.error('Error parsing message data:', error);
         }
     };
-};
 
+    // Attach the event listener
+    socket.addEventListener('message', handleMessage);
+
+    // Return a cleanup function to close the WebSocket connection
+    return () => {
+        socket.removeEventListener('message', handleMessage);
+        socket.close();
+        console.log('WebSocket connection closed.');
+    };
+};
 
 
 export default socket;
 export { sendMessage };
 export { listenForMessages };
+export {sendLocation}

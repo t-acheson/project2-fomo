@@ -1,31 +1,25 @@
 import React from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
-import LikeDislikeButton from './likeAndDislikeButton';
+import Comment from './comment';
+import { nestComments } from './nestedComments';
 
 const CommentDisplay = ({ comments }) => {
+    console.log('Comments received in CommentDisplay:', comments);
+    const nestedComments = nestComments(comments);
+    
+
     return (
         <div className="comment-container">
-            {comments.length === 0 ? (
+            {nestedComments.length === 0 ? (
                 <div className="loading-message">Loading...</div>
             ) : (
-                <ListGroup>
-                    {comments.map((comment, index) => (
-                        <ListGroup.Item key={index}>
-                            <Card>
-                                <Card.Body>
-                                    <Card.Text>{comment.text}</Card.Text>
-                                    <LikeDislikeButton commentId={comment.id}/>
-                                    <Card.Subtitle className="mb-2 text-muted">
-                                        Received at: {comment.timestamp}
-                                    </Card.Subtitle>
-                                </Card.Body>
-                            </Card>
-                        </ListGroup.Item>
+                <ListGroup className='commentBox'>
+                    {nestedComments.map(comment => (
+                        <Comment key={comment.id} comment={comment} />
                     ))}
                 </ListGroup>
             )}
         </div>
     );
 };
-
 export default CommentDisplay;

@@ -9,16 +9,45 @@ const FeedPage = () => {
     const [comments, setComments] = useState([]);  // State to hold the comments
 
     useEffect(() => {
-        // Function to handle incoming messages
         const handleMessage = (message) => {
-            setComments(prevComments => [...prevComments, message]);  // 更新状态，添加新评论
-        };
+          console.log('New message received:', message);
+    
+          let type, comment;
+          if (message.type && message.comment) {
+            type = message.type;
+            comment = message.comment;
+          } else if (message.id && message.text) {
+            type = 'new_comment';
+            comment = message;
+          } else {
+            console.warn('Received malformed message:', message);
+            return;
+          }
 
-        listenForMessages(handleMessage);  // start listening for messages
-        return () => {
-            // call a websocket close function 
+          if (type === 'new_comment') {
+            setComments((prevComments) => [...prevComments, comment]);
+          } else if (type === 'reply_update') {
+            setComments((prevComments) =>
+              prevComments.map((comm) =>
+                comm.id === comment.parentid
+                  ? { ...comm, replies: [...(comm.replies || []), comment] }
+                  : comm
+              )
+            );
+          } else {
+            console.warn('Unknown message type:', type);
+          }
         };
-    }, []); // only run once when the component mounts
+    
+        const cleanup = listenForMessages(handleMessage);
+    
+        // Cleanup function to close WebSocket connection on component unmount
+        return () => {
+          if (cleanup) cleanup();
+        };
+      }, []);
+    
+    
     return (
         <Container>
             <CommentInput />

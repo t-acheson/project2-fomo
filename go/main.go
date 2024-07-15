@@ -48,7 +48,7 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 	response := fmt.Sprintf(`{"busyness": "%f"}`, estimateBusyness(loqReq.LocationID))
 
   // Decode the response string into a map (assuming JSON format)
-  var responseMap map[float32]interface{}
+  var responseMap map[string]interface{}
   err = json.Unmarshal([]byte(response), &responseMap)
   if err != nil {
   	log.Println("Error decoding response:", err)

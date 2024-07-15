@@ -1,6 +1,6 @@
 body {
   background-color: #404959;
-  color: #ffffff; /* Light text color for contrast */
+  color: #ffffff; 
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
@@ -42,10 +42,11 @@ body {
 .reply-button, .toggle-replies-button {
   margin-left: 10px;
   background: #FFA64D;
-  color: #f1f1f1;
+  color: #FFF;
+  font-weight: 800;
   border: none;
   padding: 10px 20px;
-  border-radius: 20px; 
+  border-radius: 10px; 
   cursor: pointer;
   transition: background 0.3s ease;
 }
@@ -71,12 +72,13 @@ body {
 .reply-input button {
   margin-left: 10px;
   background: #FFA64D; 
-  color: #f1f1f1;
   border: none;
   padding: 10px 20px;
-  border-radius: 20px; 
+  border-radius: 10px; 
   cursor: pointer;
   transition: background 0.3s ease;
+  color: #FFF;
+  font-weight: 800;
 }
 
 .reply-input button:hover {
@@ -84,16 +86,16 @@ body {
 }
 
 .card {
-  border: none !important; /* Ensure card border is removed */
-  background-color: #fff; /* Eggshell white background color */
+  border: none !important; 
+  background-color: #fff; 
   border-radius: 15px !important; 
 }
 
 .card-body {
   position: relative;
-  padding: 15px; /* Add some padding inside the card */
-  border: none !important; /* Ensure no border is applied */
-  border-radius: 15px !important; /* Ensure border-radius is applied */
+  padding: 15px; 
+  border: none !important; 
+  border-radius: 10px !important; 
 }
 
 .comment-text h4 {
@@ -141,3 +143,12 @@ body {
   margin-left: 20px;
   margin-top: 10px;
 }
+
+.btn-warning {
+  background-color: #FFA64D; 
+  border-color: #ff8800;
+  color: #FFF;
+  font-weight: 800;
+  margin-right:20px;
+}
+

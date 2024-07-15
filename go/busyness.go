@@ -21,7 +21,7 @@ var (
 	serverHostOverride = flag.String("server_host_override", "localhost", "The server name used to verify the hostname returned by the TLS handshake")
 )
 
-func contactgRPCServer(client pb.BusynessClient, request *pb.BusynessRequest) string {
+func contactgRPCServer(client pb.BusynessClient, request *pb.BusynessRequest) float32 {
   // Sends busyness request to Python gRPC server and logs response
   log.Printf("Receiving busyness reply for location ID: %d", request.Locationid)
   ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second) // Create context with 10s timeout for request
@@ -33,11 +33,11 @@ func contactgRPCServer(client pb.BusynessClient, request *pb.BusynessRequest) st
     log.Fatalf("client.SendLocationID failed: %v", err)
     return "error"
   }
-  log.Printf("Reply: %s, received in time: %s", reply.Busyness, duration)
+  log.Printf("Reply: %f, received in time: %s", reply.Busyness, duration)
   return reply.Busyness
 } 
 
-func estimateBusyness(locationid int) string {
+func estimateBusyness(locationid int) float32 {
   flag.Parse() // Parse command line flags
   var opts []grpc.DialOption
   if *tlsFlag { // Configure gRPC dial options

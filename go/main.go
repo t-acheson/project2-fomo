@@ -45,10 +45,10 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Contact the grpc server to receieve busyness estimate for locationid
-	response := fmt.Sprintf(`{"busyness": "%s"}`, estimateBusyness(loqReq.LocationID))
+	response := fmt.Sprintf(`{"busyness": "%f"}`, estimateBusyness(loqReq.LocationID))
 
   // Decode the response string into a map (assuming JSON format)
-  var responseMap map[string]interface{}
+  var responseMap map[float32]interface{}
   err = json.Unmarshal([]byte(response), &responseMap)
   if err != nil {
   	log.Println("Error decoding response:", err)

@@ -18,7 +18,8 @@
 .button {
     padding: 10px 20px; 
     background-color: #FFA64D; 
-    color: white; 
+    color: #FFF;
+    font-weight: 800;
     border: none; 
 }
 

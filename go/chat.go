@@ -17,34 +17,10 @@ type Server struct {
 }
 
 type Comment struct {
-  ID int `json:"id"`
-  ParentID *int `json:"parentid,omitempty"` //Pointer and omitempty to handle the parentid case.
-  Text string `json:"text"`
-  //Lat float32 `json:"lat"`  //Still necessary?
-  //Lng float32 `json:"lng"`
-  Likes int `json:"likes"`
-  Dislikes int `json:"dislikes"`
   Timestamp time.Time `json:"timestamp"`
-}
-
-type WebsocketMessage struct {
-  Type string `json:"type"`
-  CommentID int `json:"commentid,omitempty"`
-  ParentID *int `json:"parentid,omitempty"`
-  Text string `json:"text,omitempty"`
-  Likes int `json:"likes,omitempty"`
-  Dislikes int `json:"dislikes,omitempty"`
-  Latitude float64 `json:"lat,omitempty"`
-  Longitude float64 `json:"lng,omitempty"`
-}
-
-type WebsocketReply struct {
-  Type string `json:"type"`
-  Comment *Comment `json:"comment,omitempty"`
-  CommentID int `json:"commentid,omitempty"`
-  //ParentID *int `json:"parentid,omitempty"`
-  Likes int `json:"likes,omitempty"`
-  Dislikes int `json:"dislikes,omitempty"`
+  Text string `json:"text"`
+  Lat float64 `json:"lat"`
+  Lng float64 `json:"lng"`
 }
 
 func NewServer() *Server {
@@ -117,7 +93,7 @@ func (s *Server) removeConnection(uuid uuid.UUID) {
 // Select applicable historical comments and iteratively send them to the new client
 func (s *Server) retrieve(ws *websocket.Conn) {
   rows, err := db.Query(`
-  SELECT id, parent_id, timestamp, text, likes, dislikes
+  SELECT timestamp, text, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng
     FROM comments
     WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
   rangeIn(1,3), rangeIn(1,3), // CHANGE TO ACTUAL USER LOCATION AFTER FRONTEND INTEGRATION
@@ -126,13 +102,13 @@ func (s *Server) retrieve(ws *websocket.Conn) {
   
   for rows.Next() {
     var comment Comment
-    if err := rows.Scan(&comment.ID, &comment.ParentID, &comment.Timestamp, &comment.Text, &comment.Likes, &comment.Dislikes); err != nil {
+    if err := rows.Scan(&comment.Timestamp, &comment.Text, &comment.Lat, &comment.Lng); err != nil {
       fmt.Println("Error retrieving comment from database:", err)
       continue
     }
     message, err := json.Marshal(comment)
     if err != nil {
-      fmt.Println("Error marshaling comment:", err)
+      fmt.Println("Error mashaling comment:", err)
       continue
     }
     if _, err := ws.Write(message); err != nil {
@@ -156,137 +132,52 @@ func (s *Server) readLoop(ws *websocket.Conn) {
       continue
     }
     msg := buf[:n] //Only read out the bytes of the buffer that were used
-    var message WebsocketMessage
-    if err := json.Unmarshal(msg, &message); err != nil {
+    var comment Comment
+    if err := json.Unmarshal(msg, &comment); err != nil {
       fmt.Println("Error unmarshalling json:", err)
       continue //Likely the users fault so we want the application to continue
     }
 
-    s.handleMessage(message) // Broadcast the message to all clients
+    // Insert the comment into the database
+    s.insertComment(comment)
+
+    //comment := Comment{Timestamp: time.Now().UnixNano(), Text: string(msg)}
+    s.broadcast(comment) // Broadcast the message to all clients
+
+    //s.mu.Lock()
+    //comments = append(comments, comment)
+    //s.mu.Unlock()
+
+    // Then, place the comment in the database
   }
 }
 
-func (s *Server) handleMessage(message WebsocketMessage) {
-  switch message.Type {
-  case "new_comment":
-    comment, err := s.insertComment(message.ParentID, message.Text, message.Latitude, message.Longitude)
-    if err != nil {
-      fmt.Println("Error writing comment to db:", err)
-      return
-    }
-    s.broadcast(WebsocketReply{
-      Type: "new_comment",
-      Comment: &comment,
-    }, message.Latitude, message.Longitude)
+func (s *Server) insertComment(comment Comment) {
+    comment.Timestamp = time.Now().UTC()
 
-  case "like_update":
-    err := s.interact(message.CommentID, "likes", message.Likes)
-    if err != nil {
-      fmt.Println("Error updating likes:", err)
-      return
-    }
-    s.broadcast(WebsocketReply{
-      Type: "like_update",
-      CommentID: message.CommentID,
-      Likes: message.Likes,
-    }, message.Latitude, message.Longitude)
-
-  case "dislike_update":
-    err := s.interact(message.CommentID, "dislikes", message.Dislikes)
-    if err != nil {
-      fmt.Println("Error updating dislikes:", err)
-      return
-    }
-    s.broadcast(WebsocketReply{
-      Type: "dislike_update",
-      CommentID: message.CommentID,
-      Dislikes: message.Dislikes,
-    }, message.Latitude, message.Longitude)
-
-  case "reply_update":
-    comment, err := s.insertReply(message.ParentID, message.Text)
-    if err != nil {
-      fmt.Println("Error writing reply to db:", err)
-      return
-    }
-    s.broadcast(WebsocketReply{
-      Type: "reply_update",
-      //ParentID: message.ParentID,
-      Comment: &comment, //Change this to a unique reply field?
-    }, message.Latitude, message.Longitude)
-  }
-}
-
-func (s *Server) insertComment(parentID *int, text string, lat float64, lng float64) (Comment, error) {
-    var id int
-    var timestamp time.Time
-
-    err := db.QueryRow(`
-      INSERT INTO comments (parent_id, text, location, timestamp) VALUES
-      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5)
-      RETURNING id, timestamp;`,
-      parentID, text, lat, lng, time.Now()).Scan(&id, &timestamp)
+    _, err := db.Exec(`
+      INSERT INTO comments (timestamp, text, location) VALUES
+      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326));`,
+      comment.Timestamp, comment.Text, comment.Lat, comment.Lng,
+    )
     if err != nil {
       fmt.Println("Error writing to table comments:", err)
-      return Comment{}, err
     }
 
-    return Comment{
-      ID: id,
-      ParentID: parentID,
-      Text: text,
-      Likes: 0,
-      Dislikes: 0,
-      Timestamp: timestamp,
-    }, nil
 }
 
-func (s *Server) insertReply(parentID *int, text string) (Comment, error) {
-  var id int
-  var timestamp time.Time
-
-  err := db.QueryRow(`
-    INSERT INTO comments (parent_id, text, location, timestamp) VALUES
-    ($1, $2, (SELECT location FROM comments WHERE id = $1), $3)
-    RETURNING id, timestamp;`,
-    parentID, text, time.Now()).Scan(&id, &timestamp)
-  if err != nil {
-    fmt.Println("Error writing reply to table comments:", err)
-    return Comment{}, err
-  }
-
-  return Comment{
-    ID: id,
-    ParentID: parentID,
-    Text: text,
-    Likes: 0,
-    Dislikes: 0,
-    Timestamp: timestamp,
-  }, nil
-}
-
-func (s *Server) interact(id int, column string, value int) (error) {
-  query := fmt.Sprintf("UPDATE comments SET %s = $1 WHERE id = $2", column)
-  _, err := db.Exec(query, value, id)
-  if err != nil {
-    fmt.Println("Error updating the likes/dislikes of comment:", err)
-    return err
-  }
-  return nil
-}
-
-func (s *Server) findClose(lat float64, lng float64) ([]uuid.UUID, error) {
+func (s *Server) findClose(comment Comment) ([]uuid.UUID, error) {
 
   rows, err := db.Query(`
     SELECT uuid
     FROM users
     WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
-    lat, lng,
+    comment.Lat, comment.Lng,
   ) //5000 = 5km radius
   if err != nil {
     fmt.Println("Error retrieving close users:", err)
     return nil, err
-    }
+  }
   defer rows.Close()
 
   var uuids []uuid.UUID
@@ -302,9 +193,9 @@ func (s *Server) findClose(lat float64, lng float64) ([]uuid.UUID, error) {
   return uuids, nil
 }
 
-func (s *Server) broadcast(reply WebsocketReply, lat float64, lng float64) {
+func (s *Server) broadcast(comment Comment) {
 
-  closeUUIDs, err := s.findClose(lat, lng)
+  closeUUIDs, err := s.findClose(comment)
   if err != nil {
     fmt.Println("Unable to broadcast. Error retrieving close users: ", err)
     return
@@ -313,9 +204,9 @@ func (s *Server) broadcast(reply WebsocketReply, lat float64, lng float64) {
   for _, uuid := range closeUUIDs {
     if ws, ok := s.conns[uuid]; ok {
       go func(ws *websocket.Conn) {
-        message, err := json.Marshal(reply)
+        message, err := json.Marshal(comment)
         if err != nil {
-          fmt.Println("Error marshalling reply:", err)
+          fmt.Println("Error marshalling comment:", err)
           return
         }
         if _, err := ws.Write(message); err != nil {

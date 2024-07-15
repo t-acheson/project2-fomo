@@ -30,18 +30,17 @@ const FeedPage = () => {
       }
 
       if (type === 'new_comment') {
-        setComments((prevComments) => [...prevComments, comment]);
+        setComments((prevComments) => {
+          const updatedComments = [...prevComments, comment];
+          console.log('Updated comments state (new_comment):', updatedComments);
+          return updatedComments;
+        });
       } else if (type === 'reply_update') {
-        setComments((prevComments) =>
-          prevComments.map((comm) =>
-            comm.id === comment.parentid
-              ? {
-                  ...comm,
-                  replies: [...(comm.replies || []), comment],
-                }
-              : comm
-          )
-        );
+        setComments((prevComments) => {
+          const updatedComments = [...prevComments, comment]; // Add reply directly without nesting
+          console.log('Updated comments state (reply_update):', updatedComments);
+          return updatedComments;
+        });
       } else {
         console.warn('Unknown message type:', type);
       }
@@ -55,7 +54,7 @@ const FeedPage = () => {
     };
   }, []);
 
-  console.log('Comments received:', comments);
+  console.log('Comments received in FeedPage:', comments)
 
   return (
     <Container>

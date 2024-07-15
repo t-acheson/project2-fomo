@@ -20,4 +20,4 @@ COPY *.pkl .
 EXPOSE 50051
 
 # Set command to run server
-CMD ["python3", "-u", "recommendations_server.py"]
+CMD ["python3", "-u", "busyness_server.py"]

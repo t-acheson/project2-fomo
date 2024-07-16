@@ -5,11 +5,13 @@
 
 .aboutUsBlock .titleHolder {
   margin-bottom: 30px;
+  color: #fff;
 }
 
 .aboutUsBlock .titleHolder h2 {
   font-size: 2rem;
   margin-bottom: 20px;
+  color: #fff;
 }
 
 .aboutUsBlock .image {
@@ -24,4 +26,8 @@ img {
   width: 100%;
   height: auto;
   border-radius: 8px;
+}
+
+.aboutContent{
+  color: #fff;
 }

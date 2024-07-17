@@ -30,7 +30,7 @@ class TestBusynessServicer(unittest.TestCase):
         request = busyness_pb2.BusynessRequest(locationid=1)
 
         # Mock the response
-        expected_reply = busyness_pb2.BusynessReply(busyness="Quiet")
+        expected_reply = busyness_pb2.BusynessReply(busyness=0)
         stub.SendLocationID = MagicMock(return_value=expected_reply)
 
         # Make gRPC call
@@ -48,7 +48,7 @@ class TestBusynessServicer(unittest.TestCase):
         request = busyness_pb2.BusynessRequest(locationid=0)
 
         # Mock the response
-        expected_reply = busyness_pb2.BusynessReply(busyness="Invalid input")
+        expected_reply = busyness_pb2.BusynessReply(busyness=-1)
         stub.SendLocationID = MagicMock(return_value=expected_reply)
 
         # Make gRPC call

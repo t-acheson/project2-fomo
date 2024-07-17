@@ -18,9 +18,11 @@ const CommentInput = () => {
     };
 
     const handleSubmit = () => { 
-        const message = {text, lat, lng };
-        console.log('Formating message:', message);
-        sendMessage(message);
+        if (text.trim() === '') {
+            alert('Comment cannot be empty');
+            return;
+          }
+        sendMessage({type: 'new_comment', text: text, lat:lat, lng:lng });
         setText('');
     };
 
@@ -36,9 +38,6 @@ const CommentInput = () => {
             <Button variant="primary" onClick={handleSubmit} className="button">
                 Submit
             </Button>
-            <Form.Text className="text-muted">
-                {text.length}/{maxLength} characters
-            </Form.Text>
         </InputGroup>
     );
 };

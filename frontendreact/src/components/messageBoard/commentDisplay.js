@@ -1,10 +1,6 @@
 import React from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
-<<<<<<< HEAD
 import LikeDislikeButton from './likeAndDislikeButton';
-=======
-import '../cssFiles/commentDisplay.css';
->>>>>>> parent of 437eaf1 (comment display works.)
 
 const CommentDisplay = ({ comments }) => {
     return (

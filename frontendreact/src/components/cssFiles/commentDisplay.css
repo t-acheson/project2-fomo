@@ -1,15 +1,154 @@
+body {
+  background-color: #404959;
+  color: #ffffff; 
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.comment {
+  border-radius: 20px;
+}
 
 .comment-container {
-    width: 100%; 
-    min-height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 20px ; 
-    border: 1px solid #ccc;
+  width: 100%; 
+  min-height: 300px;
+  align-items: center;
+  justify-content: center;
 }
 
 .loading-message {
-    font-size: 1.5rem; 
-    color: #666; 
+  font-size: 1.5rem; 
+  color: #666; 
 }
+
+/* Remove border and padding for the ListGroup */
+.list-group {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+.list-group-item {
+  border: none !important; 
+  padding: 0; 
+  margin: 10px 20px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* commentDisplay.css */
+.reply-button, .toggle-replies-button {
+  margin-left: 10px;
+  background: #FFA64D;
+  color: #FFF;
+  font-weight: 800;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px; 
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.reply-button:hover, .toggle-replies-button:hover {
+  background: #D9534F;
+}
+
+.reply-input {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.reply-input input {
+  margin-right: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 300px; 
+}
+
+.reply-input button {
+  margin-left: 10px;
+  background: #FFA64D; 
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px; 
+  cursor: pointer;
+  transition: background 0.3s ease;
+  color: #FFF;
+  font-weight: 800;
+}
+
+.reply-input button:hover {
+  background: #D9534F; 
+}
+
+.card {
+  border: none !important; 
+  background-color: #fff; 
+  border-radius: 15px !important; 
+}
+
+.card-body {
+  position: relative;
+  padding: 15px; 
+  border: none !important; 
+  border-radius: 10px !important; 
+}
+
+.comment-text h4 {
+  text-align: left;
+  margin: 0;
+  color: #333; /* Ensure the comment text color is readable */
+}
+
+.comment-header {
+  position: absolute;
+  top: 10px; /* Adjusted to add some space from the top */
+  right: 10px; /* Adjusted to add some space from the right */
+  color: #666; /* Subtle color for metadata */
+}
+
+.comment-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 10px;
+}
+
+.left-actions {
+  display: flex;
+  align-items: center;
+}
+
+.right-actions {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-replies-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.arrow-icon {
+  width: 20px; /* Adjust the width as needed */
+  height: 20px; /* Adjust the height as needed */
+}
+
+.nested-comments {
+  margin-left: 20px;
+  margin-top: 10px;
+}
+
+.btn-warning {
+  background-color: #FFA64D; 
+  border-color: #ff8800;
+  color: #FFF;
+  font-weight: 800;
+  margin-right:20px;
+}
+

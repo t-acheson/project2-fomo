@@ -8,7 +8,6 @@ import (
   "time"
   "encoding/json"
   "github.com/google/uuid"
-  "math/rand"
 )
 
 type Server struct {
@@ -20,8 +19,6 @@ type Comment struct {
   ID int `json:"id"`
   ParentID *int `json:"parentid,omitempty"` //Pointer and omitempty to handle the parentid case.
   Text string `json:"text"`
-  //Lat float32 `json:"lat"`  //Still necessary?
-  //Lng float32 `json:"lng"`
   Likes int `json:"likes"`
   Dislikes int `json:"dislikes"`
   Timestamp time.Time `json:"timestamp"`
@@ -42,7 +39,6 @@ type WebsocketReply struct {
   Type string `json:"type"`
   Comment *Comment `json:"comment,omitempty"`
   CommentID int `json:"commentid,omitempty"`
-  //ParentID *int `json:"parentid,omitempty"`
   Likes int `json:"likes,omitempty"`
   Dislikes int `json:"dislikes,omitempty"`
 }
@@ -53,7 +49,7 @@ func NewServer() *Server {
   }
 }
 
-func (s *Server) handleWebSocket(ws *websocket.Conn) {
+func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
   //s.mu.Lock()
   //defer s.mu.Unlock()
 
@@ -62,7 +58,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
   uuid := uuid.New()
 
   start := time.Now()
-  s.addConnection(uuid)
+  s.addConnection(uuid, lat, lng)
   duration := time.Since(start)
   fmt.Println("Added connection to users table in time:", duration)
 
@@ -70,7 +66,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
 
   // Retreive historical messages
   start = time.Now()
-  s.retrieve(ws)
+  s.retrieve(ws, lat, lng)
   duration = time.Since(start)
   fmt.Println("Retreived historical messages for client in time:", duration)
   
@@ -86,17 +82,12 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
   fmt.Println("Removed connection for users table in time:", duration)
 }
 
-// ! For temporary use until lat/lng can be passed to backend
-func rangeIn(low, hi int) int {
-    return low + rand.Intn(hi-low)
-}
-
-// ! Pass in location from frontend as argument
-func (s *Server) addConnection(uuid uuid.UUID) {
+// Add websocket client to the users table using their lat/lng
+func (s *Server) addConnection(uuid uuid.UUID, lat float64, lng float64) {
   _, err := db.Exec(`
     INSERT INTO users (uuid, location) VALUES
     ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326))`,
-    uuid, rangeIn(1,3), rangeIn(1,3), // ! Temporary random numbers
+    uuid, lat, lng,
   )
   if err != nil {
     fmt.Println("Error writing user to users table:", err)
@@ -115,12 +106,12 @@ func (s *Server) removeConnection(uuid uuid.UUID) {
 }
 
 // Select applicable historical comments and iteratively send them to the new client
-func (s *Server) retrieve(ws *websocket.Conn) {
+func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
   rows, err := db.Query(`
   SELECT id, parent_id, timestamp, text, likes, dislikes
     FROM comments
     WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
-  rangeIn(1,3), rangeIn(1,3), // CHANGE TO ACTUAL USER LOCATION AFTER FRONTEND INTEGRATION
+  lat, lng, // CHANGE TO ACTUAL USER LOCATION AFTER FRONTEND INTEGRATION
   )
   defer rows.Close()
   
@@ -180,7 +171,7 @@ func (s *Server) handleMessage(message WebsocketMessage) {
     }, message.Latitude, message.Longitude)
 
   case "like_update":
-    err := s.interact(message.CommentID, "likes", message.Likes)
+    likeLat, likeLng, err := s.interact(message.CommentID, "likes", message.Likes)
     if err != nil {
       fmt.Println("Error updating likes:", err)
       return
@@ -189,10 +180,10 @@ func (s *Server) handleMessage(message WebsocketMessage) {
       Type: "like_update",
       CommentID: message.CommentID,
       Likes: message.Likes,
-    }, message.Latitude, message.Longitude)
+    }, likeLat, likeLng)
 
   case "dislike_update":
-    err := s.interact(message.CommentID, "dislikes", message.Dislikes)
+    dislikeLat, dislikeLng, err := s.interact(message.CommentID, "dislikes", message.Dislikes)
     if err != nil {
       fmt.Println("Error updating dislikes:", err)
       return
@@ -201,19 +192,18 @@ func (s *Server) handleMessage(message WebsocketMessage) {
       Type: "dislike_update",
       CommentID: message.CommentID,
       Dislikes: message.Dislikes,
-    }, message.Latitude, message.Longitude)
+    }, dislikeLat, dislikeLng)
 
   case "reply_update":
-    comment, err := s.insertReply(message.ParentID, message.Text)
+    comment, replyLat, replyLng, err := s.insertReply(message.ParentID, message.Text)
     if err != nil {
       fmt.Println("Error writing reply to db:", err)
       return
     }
     s.broadcast(WebsocketReply{
       Type: "reply_update",
-      //ParentID: message.ParentID,
-      Comment: &comment, //Change this to a unique reply field?
-    }, message.Latitude, message.Longitude)
+      Comment: &comment,
+    }, replyLat, replyLng)
   }
 }
 
@@ -241,18 +231,19 @@ func (s *Server) insertComment(parentID *int, text string, lat float64, lng floa
     }, nil
 }
 
-func (s *Server) insertReply(parentID *int, text string) (Comment, error) {
+func (s *Server) insertReply(parentID *int, text string) (Comment, float64, float64, error) {
   var id int
   var timestamp time.Time
+  var lat, lng float64
 
   err := db.QueryRow(`
     INSERT INTO comments (parent_id, text, location, timestamp) VALUES
     ($1, $2, (SELECT location FROM comments WHERE id = $1), $3)
-    RETURNING id, timestamp;`,
-    parentID, text, time.Now()).Scan(&id, &timestamp)
+    RETURNING id, timestamp, ST_X(location::geometry), ST_Y(location::geometry);`,
+    parentID, text, time.Now()).Scan(&id, &timestamp, &lat, &lng)
   if err != nil {
     fmt.Println("Error writing reply to table comments:", err)
-    return Comment{}, err
+    return Comment{}, 0, 0, err
   }
 
   return Comment{
@@ -262,17 +253,18 @@ func (s *Server) insertReply(parentID *int, text string) (Comment, error) {
     Likes: 0,
     Dislikes: 0,
     Timestamp: timestamp,
-  }, nil
+  }, lat, lng, nil
 }
 
-func (s *Server) interact(id int, column string, value int) (error) {
-  query := fmt.Sprintf("UPDATE comments SET %s = $1 WHERE id = $2", column)
-  _, err := db.Exec(query, value, id)
+func (s *Server) interact(id int, column string, value int) (float64, float64, error) {
+  var lat, lng float64
+  query := fmt.Sprintf("UPDATE comments SET %s = $1 WHERE id = $2 RETURNING ST_X(location::geometry), ST_Y(location::geometry);", column)
+  err := db.QueryRow(query, value, id).Scan(&lat, &lng)
   if err != nil {
     fmt.Println("Error updating the likes/dislikes of comment:", err)
-    return err
+    return 0, 0, err
   }
-  return nil
+  return lat, lng, nil
 }
 
 func (s *Server) findClose(lat float64, lng float64) ([]uuid.UUID, error) {

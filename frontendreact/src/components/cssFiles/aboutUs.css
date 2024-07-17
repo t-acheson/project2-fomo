@@ -1,17 +1,27 @@
 .aboutUsBlock {
   margin: 50px 30px;
+  text-align: center;
+}
+
+.aboutUsBlock .titleHolder {
+  margin-bottom: 30px;
+}
+
+.aboutUsBlock .titleHolder h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
 }
 
 .aboutUsBlock .image {
-    padding-bottom: 20px;
-  }
+  padding-bottom: 20px;
+}
 
 .aboutUsBlock .features [class*="col-"] {
   padding-bottom: 30px;
 }
 
 img {
-
-  width: 100%; 
-  height: auto; 
-  }
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}

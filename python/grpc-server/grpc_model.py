@@ -56,7 +56,7 @@ def predict_busyness(locationid):
     prediction = model.predict(input_data)
     
     # numeric prediction to its corresponding busyness label 
-    predicted_label = label_mapping[prediction[0]]
+    predicted_label = prediction[0]/5 #label_mapping[prediction[0]]
     
     return predicted_label
 

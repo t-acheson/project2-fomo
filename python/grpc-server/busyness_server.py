@@ -22,7 +22,7 @@ class BusynessServicer(busyness_pb2_grpc.BusynessServicer):
         busynessReply = get_busyness(request)
         if busynessReply is None: # Invalid request recieved
             #Send default/empty reply
-            return busyness_pb2.BusynessReply(busyness="Invalid input")
+            return busyness_pb2.BusynessReply(busyness=-1)
         else:
             return busyness_pb2.BusynessReply(busyness=busynessReply)
 

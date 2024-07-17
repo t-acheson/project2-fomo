@@ -15,5 +15,5 @@ message BusynessRequest {
 
 // Reply format from to Go stub/client
 message BusynessReply {
-	string busyness = 1;
+	float busyness = 1;
 }

@@ -13,7 +13,7 @@ func runCron() {
 
 
 func archiveComments() {
-  err := db.Execute(`
+  err := db.Exec(`
   INSERT INTO archived_comments (parent_id, timestamp, text, location, likes, dislikes)
   SELECT parent_id, timestamp, text, location, likes, dislikes
   FROM comments

@@ -3,4 +3,3 @@ protobuf
 pytest
 pandas
 pytz
-flake8

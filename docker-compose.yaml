@@ -19,6 +19,11 @@ services:
     restart: always
     networks:
       - pg_network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m" # Max 10 MB per log file
+        max-file: "5" # Max 5 log files before it starts deleting old ones
 
   # gRPC server
   #grpc:

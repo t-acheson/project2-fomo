@@ -69,17 +69,6 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 			time.Sleep(30 * time.Second)
 			if err := websocket.Message.Send(ws, "ping"); err != nil {
 				fmt.Println("Ping error:", err)
-				err = ws.Close()
-				if err != nil {
-				  fmt.Println("Error closing from goroutine, already closed:", err)
-				}
-
-				delete(s.conns, uuid)
-
-				err = s.removeConnection(uuid)
-				if err != nil {
-				  fmt.Println("Error deleting from the database, already deleted:", err)
-				}
 				return
 			}
 		}
@@ -111,10 +100,6 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 
   delete(s.conns, uuid)
 
-  err = ws.Close()
-  if err != nil {
-    fmt.Println("Clients websocket connection was already closed in handleWebSocket:", err)
-  }
   duration = time.Since(start)
   fmt.Println("Removed connection for users table in time:", duration)
 }

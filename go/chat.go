@@ -61,18 +61,30 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 		return
 	}
 
+	uuid := uuid.New()
+
 	// A goroutine to handle pings
 	go func() {
 		for {
 			time.Sleep(30 * time.Second)
 			if err := websocket.Message.Send(ws, "ping"); err != nil {
 				fmt.Println("Ping error:", err)
+				err = ws.Close()
+				if err != nil {
+				  fmt.Println("Error closing from goroutine, already closed:", err)
+				}
+				err = delete(s.conns, uuid)
+				if err != nil {
+				  fmt.Println("Error deleting from conns map, already deleted:", err)
+				}
+				err = s.removeConnection(uuid)
+				if err != nil {
+				  fmt.Println("Error deleting from the database, already deleted:", err)
+				}
 				return
 			}
 		}
 	}()
-
-  uuid := uuid.New()
 
   start := time.Now()
   s.addConnection(uuid, lat, lng)
@@ -93,9 +105,18 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 
   fmt.Println("Client disconnected at", ws.RemoteAddr())
   start = time.Now()
-  s.removeConnection(uuid)
-  delete(s.conns, uuid)
-  ws.Close()
+  err = s.removeConnection(uuid)
+  if err != nil {
+    fmt.Println("Client already removed from database in handleWebSocket:", err)
+  }
+  err = delete(s.conns, uuid)
+  if err != nil {
+    fmt.Println("Client already removed from conns map in handleWebSocket:", err)
+  }
+  err = ws.Close()
+  if err != nil {
+    fmt.Println("Clients websocket connection was already closed in handleWebSocket:", err)
+  }
   duration = time.Since(start)
   fmt.Println("Removed connection for users table in time:", duration)
 }
@@ -112,7 +133,7 @@ func (s *Server) addConnection(uuid uuid.UUID, lat float64, lng float64) {
   }
 }
 
-func (s *Server) removeConnection(uuid uuid.UUID) {
+func (s *Server) removeConnection(uuid uuid.UUID) error {
   _, err := db.Exec(`
     DELETE FROM users 
     WHERE uuid = $1`,
@@ -120,7 +141,9 @@ func (s *Server) removeConnection(uuid uuid.UUID) {
   )
   if err != nil {
     fmt.Println("Error removing user from users table:", err)
+    return err
   }
+  return nil
 }
 
 // Select applicable historical comments and iteratively send them to the new client

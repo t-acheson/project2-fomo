@@ -73,10 +73,9 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 				if err != nil {
 				  fmt.Println("Error closing from goroutine, already closed:", err)
 				}
-				err = delete(s.conns, uuid)
-				if err != nil {
-				  fmt.Println("Error deleting from conns map, already deleted:", err)
-				}
+
+				delete(s.conns, uuid)
+
 				err = s.removeConnection(uuid)
 				if err != nil {
 				  fmt.Println("Error deleting from the database, already deleted:", err)
@@ -109,10 +108,9 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
   if err != nil {
     fmt.Println("Client already removed from database in handleWebSocket:", err)
   }
-  err = delete(s.conns, uuid)
-  if err != nil {
-    fmt.Println("Client already removed from conns map in handleWebSocket:", err)
-  }
+
+  delete(s.conns, uuid)
+
   err = ws.Close()
   if err != nil {
     fmt.Println("Clients websocket connection was already closed in handleWebSocket:", err)

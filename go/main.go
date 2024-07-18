@@ -68,6 +68,9 @@ func main() {
 	db = connectToPostgres()
 	defer db.Close()
 
+	//Run the crontab for archiving comments
+	runCron()
+
 	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Define the file server for static files
 		fs := http.FileServer(http.Dir("frontendreact/build"))

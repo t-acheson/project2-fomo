@@ -13,5 +13,5 @@ class BusynessRequest(_message.Message):
 class BusynessReply(_message.Message):
     __slots__ = ("busyness",)
     BUSYNESS_FIELD_NUMBER: _ClassVar[int]
-    busyness: str
-    def __init__(self, busyness: _Optional[str] = ...) -> None: ...
+    busyness: float
+    def __init__(self, busyness: _Optional[float] = ...) -> None: ...

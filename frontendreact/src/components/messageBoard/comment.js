@@ -22,6 +22,7 @@ const Comment = ({ comment }) => {
   const handleReplySubmit = (reply) => {
     setReplies([...replies, reply]);
     setShowReplyInput(false);
+    setShowReplies(true);
   };
 
   const handleCancelReply = () => {

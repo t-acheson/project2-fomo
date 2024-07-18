@@ -55,6 +55,23 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 
   fmt.Println("New incoming connection from client:", ws.RemoteAddr())
 
+  err := ws.SetDeadline(time.Now().Add(60 * time.Second))
+	if err != nil {
+		log.Println("SetDeadline error:", err)
+		return
+	}
+
+	// A goroutine to handle pings
+	go func() {
+		for {
+			time.Sleep(30 * time.Second)
+			if err := websocket.Message.Send(ws, "ping"); err != nil {
+				log.Println("Ping error:", err)
+				return
+			}
+		}
+	}()
+
   uuid := uuid.New()
 
   start := time.Now()
@@ -78,6 +95,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
   start = time.Now()
   s.removeConnection(uuid)
   delete(s.conns, uuid)
+  ws.Close()
   duration = time.Since(start)
   fmt.Println("Removed connection for users table in time:", duration)
 }
@@ -150,10 +168,18 @@ func (s *Server) readLoop(ws *websocket.Conn) {
     var message WebsocketMessage
     if err := json.Unmarshal(msg, &message); err != nil {
       fmt.Println("Error unmarshalling json:", err)
-      continue //Likely the users fault so we want the application to continue
+      break
     }
 
-    s.handleMessage(message) // Broadcast the message to all clients
+    if message.Type == "pong" {
+      err = ws.SetDeadline(time.Now().Add(60 * time.Second))
+		  if err != nil {
+			  fmt.Println("SetDeadline error:", err)
+			  break 
+		  }
+		} else {
+      s.handleMessage(message) // Broadcast the message to all clients
+	  }  
   }
 }
 

@@ -67,7 +67,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 	go func() {
 		for {
 			time.Sleep(30 * time.Second)
-			if err := websocket.Message.Send(ws, "ping"); err != nil {
+			if err := websocket.Message.Send(ws, `{"type": "ping"}`); err != nil {
 				fmt.Println("Ping error:", err)
 				return
 			}

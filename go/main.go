@@ -39,10 +39,15 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error decoding request body:", err)
 		return
 	}
-
+	
 	log.Printf("Location ID: %d\n", loqReq.LocationID)
 
+<<<<<<< Updated upstream
 	w.Header().Set("Content-Type", "application/json")
+=======
+	//Test the gRPC server
+	//	testRecommend()
+>>>>>>> Stashed changes
 
 	// Contact the grpc server to receieve busyness estimate for locationid
 	response := fmt.Sprintf(`{"busyness": "%f"}`, estimateBusyness(loqReq.LocationID))

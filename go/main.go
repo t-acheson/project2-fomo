@@ -39,7 +39,7 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error decoding request body:", err)
 		return
 	}
-
+	
 	log.Printf("Location ID: %d\n", loqReq.LocationID)
 
 	w.Header().Set("Content-Type", "application/json")

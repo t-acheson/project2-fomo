@@ -55,7 +55,24 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 
   fmt.Println("New incoming connection from client:", ws.RemoteAddr())
 
-  uuid := uuid.New()
+  err := ws.SetDeadline(time.Now().Add(60 * time.Second))
+	if err != nil {
+		fmt.Println("SetDeadline error:", err)
+		return
+	}
+
+	uuid := uuid.New()
+
+	// A goroutine to handle pings
+	go func() {
+		for {
+			time.Sleep(30 * time.Second)
+			if err := websocket.Message.Send(ws, "ping"); err != nil {
+				fmt.Println("Ping error:", err)
+				return
+			}
+		}
+	}()
 
   start := time.Now()
   s.addConnection(uuid, lat, lng)
@@ -76,8 +93,13 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 
   fmt.Println("Client disconnected at", ws.RemoteAddr())
   start = time.Now()
-  s.removeConnection(uuid)
+  err = s.removeConnection(uuid)
+  if err != nil {
+    fmt.Println("Client already removed from database in handleWebSocket:", err)
+  }
+
   delete(s.conns, uuid)
+
   duration = time.Since(start)
   fmt.Println("Removed connection for users table in time:", duration)
 }
@@ -94,7 +116,7 @@ func (s *Server) addConnection(uuid uuid.UUID, lat float64, lng float64) {
   }
 }
 
-func (s *Server) removeConnection(uuid uuid.UUID) {
+func (s *Server) removeConnection(uuid uuid.UUID) error {
   _, err := db.Exec(`
     DELETE FROM users 
     WHERE uuid = $1`,
@@ -102,7 +124,9 @@ func (s *Server) removeConnection(uuid uuid.UUID) {
   )
   if err != nil {
     fmt.Println("Error removing user from users table:", err)
+    return err
   }
+  return nil
 }
 
 // Select applicable historical comments and iteratively send them to the new client
@@ -144,16 +168,24 @@ func (s *Server) readLoop(ws *websocket.Conn) {
         break
       }
       fmt.Println("Error:", err)
-      continue
+      break  //Maybe there is a better way to handle this error than just breaking
     }
     msg := buf[:n] //Only read out the bytes of the buffer that were used
     var message WebsocketMessage
     if err := json.Unmarshal(msg, &message); err != nil {
       fmt.Println("Error unmarshalling json:", err)
-      continue //Likely the users fault so we want the application to continue
+      break
     }
 
-    s.handleMessage(message) // Broadcast the message to all clients
+    if message.Type == "pong" {
+      err = ws.SetDeadline(time.Now().Add(60 * time.Second))
+		  if err != nil {
+			  fmt.Println("SetDeadline error:", err)
+			  break 
+		  }
+		} else {
+      s.handleMessage(message) // Broadcast the message to all clients
+	  }  
   }
 }
 

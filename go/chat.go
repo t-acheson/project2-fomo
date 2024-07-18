@@ -183,7 +183,7 @@ func (s *Server) readLoop(ws *websocket.Conn) {
         break
       }
       fmt.Println("Error:", err)
-      continue
+      break  //Maybe there is a better way to handle this error than just breaking
     }
     msg := buf[:n] //Only read out the bytes of the buffer that were used
     var message WebsocketMessage

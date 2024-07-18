@@ -5,6 +5,7 @@ import CommentDisplay from '../components/messageBoard/commentDisplay';
 import CommentTag from '../components/messageBoard/commentTag';
 import CommentFilter from '../components/messageBoard/commentFilters';
 import SortedComments from '../components/messageBoard/sortComments';
+import { sendMessage } from '../hooks/webSocket';
 import { listenForMessages } from '../hooks/webSocket'; // Import the listenForMessages function from the websocket file
 
 
@@ -15,6 +16,11 @@ const FeedPage = () => {
   useEffect(() => {
     const handleMessage = (message) => {
       console.log('New message received:', message);
+
+      if (message.type === 'ping') {
+        sendMessage({ type: 'pong' });
+        return;
+      }
 
       let type, comment;
 

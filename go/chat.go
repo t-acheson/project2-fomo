@@ -57,7 +57,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 
   err := ws.SetDeadline(time.Now().Add(60 * time.Second))
 	if err != nil {
-		log.Println("SetDeadline error:", err)
+		fmt.Println("SetDeadline error:", err)
 		return
 	}
 
@@ -66,7 +66,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 		for {
 			time.Sleep(30 * time.Second)
 			if err := websocket.Message.Send(ws, "ping"); err != nil {
-				log.Println("Ping error:", err)
+				fmt.Println("Ping error:", err)
 				return
 			}
 		}

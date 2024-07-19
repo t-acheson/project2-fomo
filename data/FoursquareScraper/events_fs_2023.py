@@ -72,8 +72,7 @@ queens = [
     #"Clearview", "Dutch Kills", "Edgemere"
 ]
 
-# 6 categories to stay under 30,000
-# Foursquare categories - broad
+# Foursquare categories - events
 categories = [
     #"16000",   #Landmarks and Outdoors
     #"14000",   #Event
@@ -155,7 +154,7 @@ cursor = connection.cursor()
 
 # Create table for New York events data
 sql = """
-CREATE TABLE IF NOT EXISTS events_fs (
+CREATE TABLE IF NOT EXISTS events_fs_2023 (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255),
     address VARCHAR(255),
@@ -178,7 +177,7 @@ except Exception as e:
     print(e)
     
 # start: function to commit values to Comments table previously created
-def events_to_db(name, created_at, address, latitude, longitude): # created_at,
+def events_to_db(name, address, created_at, latitude, longitude): # created_at,
     # Convert created_at to useable datetime format 
     if created_at is not None:
         created_at = datetime.datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%fZ')
@@ -186,7 +185,7 @@ def events_to_db(name, created_at, address, latitude, longitude): # created_at,
     vals = (name, address, created_at, latitude, longitude) # created_at,
     
     # Insert into table - list name, address etc. again to specify the column heading of table to insert vals into
-    cursor.execute("INSERT INTO events_fs (name, address, created_at, latitude, longitude) VALUES (%s, %s, %s, %s, %s)", vals)
+    cursor.execute("INSERT INTO events_fs_2023 (name, address, created_at, latitude, longitude) VALUES (%s, %s, %s, %s, %s)", vals)
     connection.commit()
 # end : function to commit Comments to database
                         
@@ -212,7 +211,7 @@ for borough in boroughs:
             #Initialise for loop to iterate through categories
             for category in categories:
                 # use string to insert each iterable of category and m into the url
-                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ccreated_at%2Clocation&near={m}%2CNY&limit=50"
+                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation&near={m}%2CNY&limit=50"
                 responsem = requests.get(url, headers=headers)
                 data1 = responsem.json()
                 # Add API response data (stored in variable data1) to responses list
@@ -224,7 +223,7 @@ for borough in boroughs:
     elif borough == "bronx":
         for br in bronx:
             for category in categories:
-                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={br}%2CNY&limit=50"
+                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation&near={br}%2CNY&limit=50"
                 responsebr = requests.get(url, headers=headers)
                 data2 = responsebr.json()
                 responses.append(data2)
@@ -234,9 +233,9 @@ for borough in boroughs:
     elif borough == "statenIsland":
         for s in statenIsland:
             for category in categories:
-                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={s}%2CNY&limit=50"
-                responsebr = requests.get(url, headers=headers)
-                data3 = responsebr.json()
+                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation&near={s}%2CNY&limit=50"
+                responseS = requests.get(url, headers=headers)
+                data3 = responseS.json()
                 responses.append(data3)
                 print("Please wait... retrieving data for Staten Island neighborhoods")
                 #time.sleep(delay)
@@ -244,9 +243,9 @@ for borough in boroughs:
     elif borough == "brooklyn":
         for b in brooklyn:
             for category in categories:
-                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={b}%2CNY&limit=50"
-                responsebr = requests.get(url, headers=headers)
-                data4 = responsebr.json()
+                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation&near={b}%2CNY&limit=50"
+                responseb = requests.get(url, headers=headers)
+                data4 = responseb.json()
                 responses.append(data4)
                 print("Please wait... retrieving data for Brooklyn neighborhoods")
                 #time.sleep(delay)
@@ -254,9 +253,9 @@ for borough in boroughs:
     elif borough == "queens":
         for q in queens:
             for category in categories:
-                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={q}%2CNY&limit=50"
-                responsebr = requests.get(url, headers=headers)
-                data5 = responsebr.json()
+                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation&near={q}%2CNY&limit=50"
+                responseq = requests.get(url, headers=headers)
+                data5 = responseq.json()
                 responses.append(data5)
                 print("Please wait... retrieving data for Queens neighborhoods")
                 #time.sleep(delay)
@@ -268,28 +267,24 @@ for borough in boroughs:
 for data in responses:
     # Initialise for loop iterating through results in each data element
     for result in data.get('results', []):
-        # Extract specific data to be inserted into table
-        name = result.get('name')
-        address = result['location'].get('formatted_address')
-        #created_at = result['categories']['icon'].get('created_at')
-        created_at = None
-        for category in result.get('categories', []):
-            created_at = category.get('icon', {}).get('created_at')
-            if created_at:
-                break
-        latitude = data['context']['geo_bounds']['circle']['center']['latitude']
-        longitude = data['context']['geo_bounds']['circle']['center']['longitude']
+                # Extract specific data to be inserted into table
+                name = result.get('name')
+                address = result['location'].get('formatted_address')
+                latitude = data['context']['geo_bounds']['circle']['center']['latitude']
+                longitude = data['context']['geo_bounds']['circle']['center']['longitude']
 
-        # Ensure created_at is a datetime string before converting
-        if created_at:
-            try:
-                created_year = int(created_at[:4])  # Extract year
-                if created_year >= 2022:
-                    events_to_db(name, address, created_at, latitude, longitude)
-            except ValueError:
-                print(f"Skipping invalid created_at format: {created_at}")
-        else:
-            events_to_db(name, address, None, latitude, longitude)
+                # if tips are in data response, extract tips info and insert into Comments table
+                if 'tips' in result:
+                    for tip in result['tips']:
+                        created_at = tip.get('created_at')
+                        if created_at:
+                            # Filter out events before 2022
+                            created_at_date = datetime.datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%fZ')
+                            if created_at_date.year >= 2022:
+                                # Call events_to_db function to insert data into table
+                                events_to_db(name, address, created_at, latitude, longitude)
+                else:
+                    events_to_db(name, address, None, latitude, longitude)
 
 # Can close the cursor and connection with below commands
 cursor.close()

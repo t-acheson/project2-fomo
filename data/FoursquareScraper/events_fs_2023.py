@@ -16,12 +16,20 @@ boroughs = [
 manhattan = [
     #"Battery Park City", 
     #"Carnegie Hill", "East Harlem", 
-    "Financial District", "Gramercy", "Hamilton Heights",
+    #"Financial District", "Gramercy", "Hamilton Heights",
     #"Inwood", "Lenox Hill", "Manhattan Valley", 
     #"NoHo", "Roosevelt Island", "SoHo", 
-    "Times Square",#"Union Square", "Wall Street",
+    #"Times Square", "Union Square", "Wall Street",
     #"Yorkville", "Beekman Place", "Chelsea",
-    "East Village", "Flatiron", "Greenwich Village"
+    #"East Village", "Flatiron", "Greenwich Village",
+    #"Chinatown", "Civic Center", "Clinton",
+    #"Herald Square", "Hudson Square", "Harlem",
+    #"Lincoln Square", "Little Italy", "Lower East Side",
+    #"Manhattanville", "Midtown", "Midtown South",
+    #"Morningside Heights", "Murray Hill", "South Village",
+    #"Stuyvesant Town", "Sutton Place", "Tribeca",
+    #"Tudor City", "Turtle Bay", "Upper East Side",
+    #"Upper West Side", "Washington Heights", "West Village"
 ]
 
 # Bronx neighborhoods
@@ -33,7 +41,19 @@ bronx = [
     #"North Riverdale", "Olinville", "Parkchester",
     #"Riverdale", "Schuylerville", "Throgs Neck", 
     #"Unionport", "Van Nest", "Wakefield",
-    #"Baychester", "City Island", "Eastchester"
+    #"Baychester", "City Island", "Eastchester",
+    #"Bedford Park", "Belmont", "Bronxdale",
+    #"Bronx Park South", "Bronx River", "Claremont Village",
+    #"Clason Point", "Concourse", "Concourse Village",
+    #"Co-op City", "Country Club", "Edenwald",
+    #"Edgewater Park", "Fordham", "Hunts Point", 
+    #"Kingsbridge Heights", "Melrose", "Morris Heights",
+    #"Morris Park", "Morrisania", "Mott Haven", 
+    #"Mount Eden", "Mount Hope", "Norwood",
+    #"Pelham Bay", "Pelham Gardens", "Pelham Parkway",
+    #"Port Morris", "Soundview", "Spuyten Duyvil",
+    #"University Heights", "West Farms", "Westchester Square", 
+    #"Williamsbridge", "Woodlawn"
 ]
 
 # Staten Island neighborhoods
@@ -45,7 +65,21 @@ statenIsland = [
     #"Oakwood", "Park Hill", "Randall Manor", 
     #"Sandy Ground", "Todt Hill", "Ward Hill", 
     #"Arden Heights", "Bloomfield", "Charleston",
-    #"Elm Park", "Grant City", "Howland Hook"
+    #"Elm Park", "Grant City", "Howland Hook",
+    #"Arlington", "Arrochar", "Bulls Head",
+    #"Butler Manor", "Clifton", "Concord",
+    #"Chelsea", "Eltingville", "Emerson Hill",
+    #"Grasmere", "Great Kills", "Greenridge",
+    #"Grymes Hill", "Huguenot", "Livingston",
+    #"Mariner's Harbor", "Midland Beach", "New Dorp",
+    #"New Dorp Beach", "New Springville", "Old Place",
+    #"Old Town", "Pleasant Plains", "Port Ivory",
+    #"Port Richmond", "Prince's Bay", "Richmond Town", 
+    #"Richmond Valley", "Rosebank", "Rossville", 
+    #"Shore Acres", "Silver Lake", "South Beach",
+    #"St. George", "Stapleton", "Sunnyside",
+    #"Tompkinsville", "Tottenville", "Travis",
+    #"Westerleigh", "Willowbrook", "Woodrow"
 ]
 
 # Brooklyn neighborhoods
@@ -57,7 +91,25 @@ brooklyn = [
     #"Paerdegat Basin", "Red Hook", "Sea Gate", 
     #"Tompkins Park North", "Vinegar Hill", "Weeksville", 
     #"Bay Ridge", "Carroll Gardens", "Downtown", 
-    #"East New York", "Flatbush", "Gerritsen Beach"
+    #"East New York", "Flatbush", "Gerritsen Beach",
+    #"Bedford Stuyvesant", "Bensonhurst", "Boerum Hill",
+    #"Borough Park", "Brighton Beach", "Brooklyn Heights",
+    #"Brownsville", "Bushwick", "City Line",
+    #"Clinton Hill", "Cobble Hill", "Coney Island",
+    #"Crown Heights", "Cypress Hills", "DUMBO",
+    #"Dyker Heights", "East Williamsburg", "Flatlands",
+    #"Fort Greene", "Fort Hamilton", "Fulton Ferry",
+    #"Gowanus", "Gravesend", "Greenpoint",
+    #"Homecrest", "Kings Highway", "Manhattan Terrace",
+    #"Mapleton", "Marine Park", "Midwood",
+    #"Mill Basin", "Mill Island", "New Lots",
+    #"North Side", "Ocean Parkway", "Park Slope",
+    #"Plum Beach", "Prospect Heights", "Prospect Lefferts Gardens",
+    #"Prospect Park South", "Remsen Village", "Rugby",
+    #"South Side", "Sheepshead Bay", "Spring Creek",
+    #"Starrett City", "Stuyvesant Heights", "Sunset Park",
+    #"West Brighton", "Williamsburg", 
+    #"Windsor Terrace", "Wingate"
 ]
 
 # Queens neighborhoods
@@ -70,7 +122,28 @@ queens = [
     #"Ravenswood", "Seaside", "Utopia", 
     #"Whitestone", "Astoria", "Bayside", 
     #"Clearview", "Dutch Kills", "Edgemere"
+    #"Astoria Heights", "Auburndale", "Bayswater",
+    #"Beechhurst", "Bellaire", "Belle Harbor",
+    #"Bellerose", "Blissville", "Breezy Point",
+    #"Brookville", "Briarwood", "Broad Channel",
+    #"College Point", "Elmhurst", "Floral Park",
+    #"Flushing", "Forest Hills", "Forest Hills Gardens", 
+    #"Fresh Meadows", "Glendale", "Hillcrest",
+    #"Holliswood", "Hollis", "Howard Beach",
+    #"Hunters Point", "Jamaica", "Jamaica Center",
+    #"Jamaica Estates", "Jamaica Hills", "Kew Gardens Hills",
+    #"Lefrak City", "Little Neck", "Long Island City",
+    #"Lindenwood", "Maspeth", "Middle Village",
+    #"Murray Hill", "North Corona", "New Hyde Park",
+    #"Ozone Park", "Queensboro Hill", "Rego Park",
+    #"Richmond Hill", "Ridgewood", "Rochdale",
+    #"Rockaway Park", "Rosedale", "Roxbury",
+    #"South Corona", "Somerville", "South Jamaica", 
+    #"South Ozone Park", "Springfield Gardens", "St. Albans",
+    "Steinway", "Sunnyside", "Sunnyside Gardens", 
+    "Woodhaven", "Woodside"
 ]
+
 
 # Foursquare categories - events
 categories = [
@@ -167,7 +240,7 @@ CREATE TABLE IF NOT EXISTS events_fs_2023 (
 
 try:
     #Drop table if table Comments already exists
-    cursor.execute("DROP TABLE IF EXISTS events_fs")
+    #cursor.execute("DROP TABLE IF EXISTS events_fs")
     #Create new table - with above commented out, new table only created if doesn't exist
     cursor.execute(sql)
     #Save the changes made to schema

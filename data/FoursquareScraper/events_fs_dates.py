@@ -28,8 +28,8 @@ manhattan = [
     #"Manhattanville", "Midtown", "Midtown South",
     #"Morningside Heights", "Murray Hill", "South Village",
     #"Stuyvesant Town", "Sutton Place", "Tribeca",
-     "Tudor City", "Turtle Bay", "Upper East Side",
-    # "Upper West Side", "Washington Heights", "West Village"
+    #"Tudor City", "Turtle Bay", "Upper East Side",
+    #"Upper West Side", "Washington Heights", "West Village"
 ]
 
 # Bronx neighborhoods
@@ -48,12 +48,12 @@ bronx = [
     #"Co-op City", "Country Club", "Edenwald",
     #"Edgewater Park", "Fordham", "Hunts Point", 
     #"Kingsbridge Heights", "Melrose", "Morris Heights",
-    "Morris Park", "Morrisania", "Mott Haven", 
-    # "Mount Eden", "Mount Hope", "Norwood",
-    # "Pelham Bay", "Pelham Gardens", "Pelham Parkway",
-    # "Port Morris", "Soundview", "Spuyten Duyvil",
-    # "University Heights", "West Farms", "Westchester Square", 
-    # "Williamsbridge", "Woodlawn"
+    #"Morris Park", "Morrisania", "Mott Haven", 
+    #"Mount Eden", "Mount Hope", "Norwood",
+    #"Pelham Bay", "Pelham Gardens", "Pelham Parkway",
+    #"Port Morris", "Soundview", "Spuyten Duyvil",
+    #"University Heights", "West Farms", "Westchester Square", 
+    #"Williamsbridge", "Woodlawn"
 ]
 
 # Staten Island neighborhoods
@@ -72,14 +72,14 @@ statenIsland = [
     #"Grasmere", "Great Kills", "Greenridge",
     #"Grymes Hill", "Huguenot", "Livingston",
     #"Mariner's Harbor", "Midland Beach", "New Dorp",
-    "New Dorp Beach", "New Springville", "Old Place",
-    # "Old Town", "Pleasant Plains", "Port Ivory",
-    # "Port Richmond", "Prince's Bay", "Richmond Town", 
-    # "Richmond Valley", "Rosebank", "Rossville", 
-    # "Shore Acres", "Silver Lake", "South Beach",
-    # "St. George", "Stapleton", "Sunnyside",
-    # "Tompkinsville", "Tottenville", "Travis",
-    # "Westerleigh", "Willowbrook", "Woodrow"
+    #"New Dorp Beach", "New Springville", "Old Place",
+    #"Old Town", "Pleasant Plains", "Port Ivory",
+    #"Port Richmond", "Prince's Bay", "Richmond Town", 
+    #"Richmond Valley", "Rosebank", "Rossville", 
+    #"Shore Acres", "Silver Lake", "South Beach",
+    #"St. George", "Stapleton", "Sunnyside",
+    #"Tompkinsville", "Tottenville", "Travis",
+    #"Westerleigh", "Willowbrook", "Woodrow"
 ]
 
 # Brooklyn neighborhoods
@@ -98,18 +98,18 @@ brooklyn = [
     #"Clinton Hill", "Cobble Hill", "Coney Island",
     #"Crown Heights", "Cypress Hills", "DUMBO",
     #"Dyker Heights", "East Williamsburg", "Flatlands",
-    "Fort Greene", "Fort Hamilton", "Fulton Ferry",
-    # "Gowanus", "Gravesend", "Greenpoint",
-    # "Homecrest", "Kings Highway", "Manhattan Terrace",
-    # "Mapleton", "Marine Park", "Midwood",
-    # "Mill Basin", "Mill Island", "New Lots",
-    # "North Side", "Ocean Parkway", "Park Slope",
-    # "Plum Beach", "Prospect Heights", "Prospect Lefferts Gardens",
-    # "Prospect Park South", "Remsen Village", "Rugby",
-    # "South Side", "Sheepshead Bay", "Spring Creek",
-    # "Starrett City", "Stuyvesant Heights", "Sunset Park",
-    # "West Brighton", "Williamsburg", 
-    # "Windsor Terrace", "Wingate"
+    #"Fort Greene", "Fort Hamilton", "Fulton Ferry",
+    #"Gowanus", "Gravesend", "Greenpoint",
+    #"Homecrest", "Kings Highway", "Manhattan Terrace",
+    #"Mapleton", "Marine Park", "Midwood",
+    #"Mill Basin", "Mill Island", "New Lots",
+    #"North Side", "Ocean Parkway", "Park Slope",
+    #"Plum Beach", "Prospect Heights", "Prospect Lefferts Gardens",
+    #"Prospect Park South", "Remsen Village", "Rugby",
+    #"South Side", "Sheepshead Bay", "Spring Creek",
+    #"Starrett City", "Stuyvesant Heights", "Sunset Park",
+    #"West Brighton", "Williamsburg", 
+    #"Windsor Terrace", "Wingate"
 ]
 
 # Queens neighborhoods
@@ -128,20 +128,20 @@ queens = [
     #"Brookville", "Briarwood", "Broad Channel",
     #"College Point", "Elmhurst", "Floral Park",
     #"Flushing", "Forest Hills", "Forest Hills Gardens", 
-    "Fresh Meadows", "Glendale", "Hillcrest",
-    # "Holliswood", "Hollis", "Howard Beach",
-    # "Hunters Point", "Jamaica", "Jamaica Center",
-    # "Jamaica Estates", "Jamaica Hills", "Kew Gardens Hills",
-    # "Lefrak City", "Little Neck", "Long Island City",
-    # "Lindenwood", "Maspeth", "Middle Village",
-    # "Murray Hill", "North Corona", "New Hyde Park",
-    # "Ozone Park", "Queensboro Hill", "Rego Park",
+    #"Fresh Meadows", "Glendale", "Hillcrest",
+    #"Holliswood", "Hollis", "Howard Beach",
+    #"Hunters Point", "Jamaica", "Jamaica Center",
+    #"Jamaica Estates", "Jamaica Hills", "Kew Gardens Hills",
+    #"Lefrak City", "Little Neck", "Long Island City",
+    #"Lindenwood", "Maspeth", "Middle Village",
+    #"Murray Hill", "North Corona", "New Hyde Park",
+    #"Ozone Park", "Queensboro Hill", "Rego Park",
     #"Richmond Hill", "Ridgewood", "Rochdale",
     #"Rockaway Park", "Rosedale", "Roxbury",
     #"South Corona", "Somerville", "South Jamaica", 
     #"South Ozone Park", "Springfield Gardens", "St. Albans",
-    #"Steinway", "Sunnyside", "Sunnyside Gardens", 
-    #"Woodhaven", "Woodside"
+    "Steinway", "Sunnyside", "Sunnyside Gardens", 
+    "Woodhaven", "Woodside"
 ]
 
 # Foursquare categories - events

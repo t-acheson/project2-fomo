@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -9,8 +10,8 @@ const BaseMap = ({ children }) => {
   return (
     <MapContainer center={center} zoom={zoom} style={{ height: '80vh', width: '100%' }}>
       <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
       />
       {children}
     </MapContainer>

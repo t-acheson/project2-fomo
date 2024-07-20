@@ -81,7 +81,9 @@ const FeedPage = () => {
     };
   }, []);
 
-  console.log('Comments received in FeedPage:', comments)
+  useEffect(() => {
+    console.log('Comments received in FeedPage:', comments);
+  }, [comments]);
 
   return (
     <Container>

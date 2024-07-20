@@ -152,3 +152,14 @@ body {
   margin-right:20px;
 }
 
+#dropdown-basic-button:hover {
+  background-color: #D9534F !important;
+  border-color: #D9534F !important;
+  color: white !important;
+}
+
+#dropdown-basic-button{
+  background-color: #FFA64D !important; 
+  border-color: #ff8800 !important;
+  color: white !important;
+}

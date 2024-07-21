@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BaseMap from '../components/map/BaseMap';
 import UserMarker from '../components/map/UserMarker';
 import TestLocationButton from '../components/map/TestLocationButton';
@@ -13,11 +13,17 @@ import LegendControl from '../components/map/BusynessLegend';
 
 function MapPage() {
   const [hoverInfo, setHoverInfo] = useState(null);
+  const [features, setFeatures] = useState([]);
 
-  if (!geoLocation || !geoLocation.features) {
+  useEffect(() => {
+    if (geoLocation && geoLocation.features) {
+      setFeatures(geoLocation.features);
+    }
+  }, [geoLocation]);
+
+  if (!features.length) {
     return <div>Loading...</div>;
   }
-
   return (
     <div style={{ height: '80vh', width: '100%' }}>
       <BaseMap>

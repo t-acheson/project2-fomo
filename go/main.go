@@ -24,20 +24,24 @@ func redirectHTTP(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
 }
 
-// Middleware to handle CORS
-func corsMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		if r.Method == "OPTIONS" {
+// CORS middleware function
+func CORSMiddleware(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Set CORS headers
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS") // Allow specific methods
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization") // Allow specific headers
+
+		// Handle preflight requests
+		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
-		next.ServeHTTP(w, r)
-	})
-}
- 
+
+		// Call the actual handler
+		h(w, r)
+	}
+} 
 // Handles HTTP request at the "/location" endpoint.
 // Decodes the request body, calls the grpc server and encodes response as JSON
 func locationHandler(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +101,7 @@ func main() {
 	}))
 
 	// location handler
-	http.HandleFunc("/location", corsMiddleware(http.HandlerFunc(locationHandler)))
+	http.HandleFunc("/location", CORSMiddleware(locationHandler))
 	log.Println("Location handler is set up")
 
 	// Set up websocket server

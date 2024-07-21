@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { GeoJSON } from 'react-leaflet';
 import { defaultStyle, highlightStyle } from './mapStyle';
 import { prepareHeatmapData } from './heatmap';
 
 const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
-  const preparedFeatures = prepareHeatmapData(features);
+  const [preparedFeatures, setPreparedFeatures] = useState([]);
+
+  useEffect(() => {
+    const fetchAndPrepareData = async () => {
+      const data = await prepareHeatmapData(features);
+      setPreparedFeatures(data);
+    };
+
+    fetchAndPrepareData();
+  }, [features]);
 
   return preparedFeatures.map((taxizone, index) => (
     <GeoJSON

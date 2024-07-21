@@ -3,16 +3,19 @@ package main
 import (
   "fmt"
   "github.com/robfig/cron/v3"
+  "strconv"
 )
 
 func runCron() {
   c := cron.New()
   c.AddFunc("0 7 * * *", func() {archiveComments()})
+  c.AddFunc("0 7 * * *", func() {cacheBusyness()})
   c.Start()
 }
 
 
 func archiveComments() {
+  fmt.Println("Archiving old comments")
   _, err := db.Exec(`
   INSERT INTO archived_comments (parent_id, timestamp, text, location, likes, dislikes)
   SELECT parent_id, timestamp, text, location, likes, dislikes
@@ -27,4 +30,15 @@ func archiveComments() {
   }
 }
 
+
+func cacheBusyness() {
+  fmt.Println("Regenerating busyness values")
+  busynessValues := make(map[string]float32) // Key location ID, value busyness
+
+  for i := range 263 {
+    busynessValues[strconv.Itoa(i)] = estimateBusyness(i) // Itoa changes int to string
+  }
+
+  busynessMap = busynessValues // Update the busynessMap in main
+}
 

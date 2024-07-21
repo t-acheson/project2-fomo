@@ -14,53 +14,52 @@ import (
 // Define a connection the the Postgres db
 var db *sql.DB
 
-// Structure of the incoming request of location ID from frontend to be sent to grpc server
-type LocationRequest struct {
-	LocationID int `json:"location_id"`
-}
+var busynessMap map[string]float32
 
 //Redirect HTTP request to HTTPS
 func redirectHTTP(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
 }
- 
+
+// CORS middleware function
+func CORSMiddleware(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Set CORS headers
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins
+		w.Header().Set("Access-Control-Allow-Methods", "POST") // Allow specific methods
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type") // Allow specific headers
+
+		// Handle preflight requests
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		// Call the actual handler
+		h(w, r)
+	}
+} 
 // Handles HTTP request at the "/location" endpoint.
 // Decodes the request body, calls the grpc server and encodes response as JSON
 func locationHandler(w http.ResponseWriter, r *http.Request) {
 	// Log that a request has been received at the "/location" endpoint
 	log.Println("Received request at /location endpoint")
 
-	// Decode the request body into a LocationRequest struct
-	var loqReq LocationRequest
-	err := json.NewDecoder(r.Body).Decode(&loqReq)
+	w.Header().Set("Content-Type", "application/json")
+
+	// Code for turning the map to json
+	jsonBusyness, err := json.Marshal(busynessMap)
 	if err != nil {
-		// If there is an error decoding the request body, return a bad request error
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Println("Error decoding request body:", err)
+		fmt.Println("Error marshalling JSON:", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 	
-	log.Printf("Location ID: %d\n", loqReq.LocationID)
-
-	w.Header().Set("Content-Type", "application/json")
-
-	// Contact the grpc server to receieve busyness estimate for locationid
-	response := fmt.Sprintf(`{"busyness": "%f"}`, estimateBusyness(loqReq.LocationID))
-
-  // Decode the response string into a map (assuming JSON format)
-  var responseMap map[string]interface{}
-  err = json.Unmarshal([]byte(response), &responseMap)
-  if err != nil {
-  	log.Println("Error decoding response:", err)
-   	http.Error(w, "Internal server error", http.StatusInternalServerError)
-    return
-  }
-
-  // Encode the response map as JSON and write it to the response writer
-  err = json.NewEncoder(w).Encode(responseMap)
-  if err != nil {
-  	log.Println("Error encoding response:", err)
-  }
+	// Write JSON to response
+	_, err = w.Write(jsonBusyness)
+	if err != nil {
+		fmt.Println("Error writing response:", err)
+	}
 }
 
 func main() {
@@ -68,7 +67,10 @@ func main() {
 	db = connectToPostgres()
 	defer db.Close()
 
-	//Run the crontab for archiving comments
+	// Generate busyness values initially
+	cacheBusyness()
+
+	// Run the crontab for archiving comments and updating busyness
 	runCron()
 
 	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +86,7 @@ func main() {
 	}))
 
 	// location handler
-	http.HandleFunc("/location", locationHandler)
+	http.HandleFunc("/location", CORSMiddleware(locationHandler))
 	log.Println("Location handler is set up")
 
 	// Set up websocket server

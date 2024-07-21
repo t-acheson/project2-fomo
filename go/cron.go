@@ -3,6 +3,7 @@ package main
 import (
   "fmt"
   "github.com/robfig/cron/v3"
+  "strconv"
 )
 
 func runCron() {
@@ -35,7 +36,7 @@ func cacheBusyness() {
   busynessValues := make(map[string]float32) // Key location ID, value busyness
 
   for i := range 263 {
-    busynessValues[string(i)] = estimateBusyness(i)
+    busynessValues[strconv.Itoa(i)] = estimateBusyness(i) // Itoa changes int to string
   }
 
   busynessMap = busynessValues // Update the busynessMap in main

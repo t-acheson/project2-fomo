@@ -48,7 +48,7 @@ func locationHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Code for turning the map to json
-	jsonBusyness, err := json.Marshall(busynessMap)
+	jsonBusyness, err := json.Marshal(busynessMap)
 	if err != nil {
 		fmt.Println("Error marshalling JSON:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

@@ -1,5 +1,7 @@
 const socket = new WebSocket('wss://nycfomo.com/ws');
-
+// ================================
+// 4 event listeners to console.log the WebSocket status
+// ================================
 // Connection opened
 socket.addEventListener('open', function (event) {
     console.log('WebSocket is connected.');
@@ -21,7 +23,10 @@ socket.addEventListener('close', function (event) {
 });
 
 
-// Function to send the user input message to the server
+// ================================
+// Below are functions can be called in other files to interact with the WebSocket
+// ================================
+// 1. sendMessage: send a message to the server
 const sendMessage = (message) => {
     console.log('Attempting to send message:', JSON.stringify(message));  // Log before attempting to send
     if (socket.readyState === WebSocket.OPEN) {
@@ -32,6 +37,22 @@ const sendMessage = (message) => {
     }
 };
 
+//2. listenForMessages: listen for messages from the server
+// When it is called ,it can pass back the message data 
+const listenForMessages = (callback) => {
+    const socket = new WebSocket('wss://nycfomo.com/ws');
+    socket.onmessage = (event) => {
+        try {
+            const messageData = JSON.parse(event.data);
+            callback(messageData);  
+        } catch (error) {
+            console.error('Error parsing message data:', error);
+        }
+    };
+};
+
+
 
 export default socket;
 export { sendMessage };
+export { listenForMessages };

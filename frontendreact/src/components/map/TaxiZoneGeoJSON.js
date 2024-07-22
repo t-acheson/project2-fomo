@@ -5,6 +5,8 @@ import { prepareHeatmapData } from './heatmap';
 
 const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
   const [preparedFeatures, setPreparedFeatures] = useState([]);
+  const [popupContent, setPopupContent] = useState(''); // Define popupContent state
+
 
   useEffect(() => {
     const fetchAndPrepareData = async () => {

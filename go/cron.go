@@ -35,7 +35,7 @@ func cacheBusyness() {
   fmt.Println("Regenerating busyness values")
   busynessValues := make(map[string]float32) // Key location ID, value busyness
 
-  for i := range 263 {
+  for i := 1; i <= 263; i++ {
     busynessValues[strconv.Itoa(i)] = estimateBusyness(i) // Itoa changes int to string
   }
 

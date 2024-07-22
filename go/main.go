@@ -1,13 +1,14 @@
 package main
 
 import (
-	"fmt" //Formatted I/O
-	"log"      //Logging errors
-	"net/http" //HTTP server
-	"os" //Pass in environment vars
-	"golang.org/x/net/websocket"
 	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
 	"regexp"
+	"golang.org/x/net/websocket"
+	// "github.com/google/uuid"
 	"database/sql"
 )
 
@@ -109,6 +110,35 @@ func main() {
 	}
 
 	http.Handle("/ws", websocket.Handler(websocketHandler))
+
+
+	//handler for top comment functions 
+	http.HandleFunc("/topcomment", CORSMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		// Log that a request has been received at the "/topcomment" endpoint
+		log.Println("Received request at /topcomment endpoint")
+		var params struct {
+			Lat float64 `json:"lat"`
+			Lng float64 `json:"lng"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+			http.Error(w, "Bad Request", http.StatusBadRequest)
+			return
+		}
+
+		topComment, err := server.getTopComment(params.Lat, params.Lng)
+		if err != nil {
+			http.Error(w, "Error getting Top Comment", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(topComment); err != nil {
+			http.Error(w, "Error encoding top comment response", http.StatusInternalServerError)
+			return
+		}
+	}))
+
+
 
 	//Start TLS listener on port 443
 	go func() {

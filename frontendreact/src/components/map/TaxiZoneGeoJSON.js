@@ -22,7 +22,11 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
       const response = await fetch(`/api/top-comment?lat=${lat}&lng=${lng}`);
       if (response.ok) {
         const data = await response.json();
-        setPopupContent(data.comment);
+        if (data.comment) {
+          setPopupContent(data.comment);
+        } else {
+          console.log('No comment found in response');
+        }
       } else {
         const errorText = await response.text();
         console.log('Failed to fetch top comment:', response.status, errorText);

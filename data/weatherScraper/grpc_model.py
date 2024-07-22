@@ -102,7 +102,7 @@ def fetch_weather(locationid):
 
 # Start: define function checking if event is happening on given date within an hour of given time 
 def check_event_on(check_datetime):
-    print(f"Checking for events on {check_datetime}...")
+    #print(f"Checking for events on {check_datetime}...")
     
     # Connect to PostgreSQL
     with SSHTunnelForwarder(
@@ -135,7 +135,7 @@ def check_event_on(check_datetime):
         cursor.close()
         connection.close()
         
-    print(f"Number of events found: {count}")
+    #print(f"Number of events found: {count}")
     return count > 0
 # end: function checking if event on date yes/no
 

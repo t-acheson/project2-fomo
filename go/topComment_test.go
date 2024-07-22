@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 	// "database/sql"
-	_ "github.com/lib/pq" // Import Postgres driver
+//  "github.com/lib/pq" // Import Postgres driver
 )
 
 // Define a mock server struct for testing
@@ -23,11 +23,9 @@ func (s *MockServer) getTopComment(lat float64, lng float64) (*Comment, error) {
 	}, nil
 }
 
+
 // Test the getTopComment function
 func TestGetTopComment(t *testing.T) {
-	// Initialize the database connection
-	db = connectToPostgres()
-	defer db.Close()
 
 	// Mock server for testing
 	server := &MockServer{}

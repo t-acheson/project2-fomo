@@ -2,7 +2,7 @@ module backend
 
 go 1.22
 
-toolchain go1.22.4
+// toolchain go1.22.4
 
 require (
 	github.com/elliotchance/sshtunnel v1.6.1

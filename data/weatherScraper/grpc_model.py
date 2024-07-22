@@ -140,13 +140,13 @@ def check_event_on(check_datetime):
 def ridership_to_category(raw_prediction):
     if raw_prediction <= 16:
         return 1  # Quiet value
-    elif 17 <= raw_prediction <= 130:
+    elif raw_prediction <= 130:
         return 2  # Not Too Busy
-    elif 131 <= raw_prediction <= 417:
+    elif raw_prediction <= 417:
         return 3  # A Little Busy
-    elif 418 <= raw_prediction <= 1236:
+    elif raw_prediction <= 1236:
         return 4  # Busy
-    elif 1237 <= raw_prediction <= 12984:
+    elif raw_prediction <= 12984:
         return 5  # Very Busy
     else:
         return 6  # Extremely Busy

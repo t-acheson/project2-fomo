@@ -9,20 +9,6 @@ import (
 	// // "time"
 )
 
-// // comment structure.
-// type Comment struct {
-// 	ID        int       `json:"id"`
-// 	ParentID  *int      `json:"parentid,omitempty"`
-// 	Text      string    `json:"text"`
-// 	Likes     int       `json:"likes"`
-// 	Dislikes  int       `json:"dislikes"`
-// 	Timestamp time.Time `json:"timestamp"`
-// }
-
-// Server represents the server with a connection map.
-// type Server struct {
-// 	conns map[uuid.UUID]*websocket.Conn
-// }
 
 // getTopComment retrieves the comment with the highest number of likes within a 2km radius of the given latitude and longitude.
 // If there are multiple comments with the same number of likes, it returns the most recent one.

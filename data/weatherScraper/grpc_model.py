@@ -91,7 +91,7 @@ def fetch_weather(locationid):
             'snow_1h': result[11],
             'snow_3h': result[12]
         }
-        print(weather_data)
+        #print(weather_data)
         return weather_data
     else:
         raise ValueError("No weather data found")
@@ -135,6 +135,22 @@ def check_event_on(check_datetime):
     print(f"Number of events found: {count}")
     return count > 0
 # end: function checking if event on date yes/no
+
+# Start: define function to map predicted ridership to busyness category
+def ridership_to_category(raw_prediction):
+    if raw_prediction <= 16:
+        return 1  # Quiet value
+    elif 17 <= raw_prediction <= 130:
+        return 2  # Not Too Busy
+    elif 131 <= raw_prediction <= 417:
+        return 3  # A Little Busy
+    elif 418 <= raw_prediction <= 1236:
+        return 4  # Busy
+    elif 1237 <= raw_prediction <= 12984:
+        return 5  # Very Busy
+    else:
+        return 6  # Extremely Busy
+# End: function mapping ridership to busyness category
 
 # Start: define function to call inputs and model to output predicted busyness
 def predict_busyness(locationid):
@@ -196,11 +212,16 @@ def predict_busyness(locationid):
         # replace negatives with 0
         raw_prediction = np.maximum(raw_prediction, 0) 
         print("Raw prediction:", raw_prediction)
+        
+        # Map predicted ridership to busyness category
+        busyness_category = ridership_to_category(raw_prediction[0])
+        print("Busyness category:", busyness_category)
+        
     except Exception as e:
         print(f"Error making prediction: {e}")
         sys.exit(1)
     
-    return raw_prediction
+    return busyness_category
 # End function returning predicted busyness
 
 # Test the prediction function
@@ -215,4 +236,30 @@ if __name__ == "__main__":
 
     location_id = int(sys.argv[1])
     busyness = predict_busyness(location_id)
-    print(json.dumps({"busyness": busyness.tolist()}))
+    print(json.dumps({"busyness": busyness}))
+    
+    
+    
+# Quantiles for data used in training model  
+# Number of entries in each ridership range:
+# Quiet: 636968
+# Not Too Busy: 651967
+# A Little Busy: 644018
+# Busy: 644902
+# Very Busy: 612598
+# Extremely Busy: 32229
+
+# Quiet: 1
+# Not Too Busy: 2
+# A Little Busy: 3
+# Busy: 4
+# Very Busy: 5
+# Extremely Busy: 6
+
+# Ranges used for each category:
+# Quiet: 0 - 16
+# Not Too Busy: 17 - 130
+# A Little Busy: 131 - 417
+# Busy: 418 - 1236
+# Very Busy: 1237 - 12984
+# Extremely Busy: 12985 - 65536

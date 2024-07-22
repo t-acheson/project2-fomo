@@ -11,8 +11,13 @@ import Header from './components/header';
 import Footer from './components/footer';
 import './App.css'
 import { sendLocation } from './hooks/webSocket';
+import TimeLock from './components/TimeLock';
+
 // create a context for the location state
 export const LocationContext = createContext(null);
+
+const TimeLockedMapPage = TimeLock(MapPage);
+const TimeLockedFeedPage = TimeLock(FeedPage);
 
 function App() {
  // create a location state
@@ -64,8 +69,15 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/map" element={<MapPage />} />
-          <Route path="/feed" element={<FeedPage />} />
+
+          {/* Uncomment below code for full time access */} 
+          {/* <Route path="/map" element={<MapPage />} />
+          <Route path="/feed" element={<FeedPage />} /> */} 
+
+          {/* Comment below 2 lines of code for restricted time access */} 
+          <Route path="/map" element={<TimeLockedMapPage />} /> {/* Wrap with TimeLock */}
+          <Route path="/feed" element={<TimeLockedFeedPage />} /> {/* Wrap with TimeLock */}
+
           {/* <Route path="/notification" element={<NotificationPage />} /> */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

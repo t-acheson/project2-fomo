@@ -1,3 +1,4 @@
+# For calling model
 import pickle
 import pandas as pd
 from datetime import datetime, timedelta
@@ -10,6 +11,8 @@ import psycopg2
 import os
 from dotenv import load_dotenv
 from sshtunnel import SSHTunnelForwarder
+
+#! NEEDS A .env FILE FOR POSTGRES
 
 # Load environment variables
 load_dotenv()
@@ -39,14 +42,14 @@ except Exception as e:
 ny_tz = pytz.timezone('America/New_York')
 
 # Busyness labels
-label_mapping = {
-    0: 'Quiet',
-    1: 'Not Busy',
-    2: 'A Little Busy',
-    3: 'Busy',
-    4: 'Very Busy',
-    5: 'Extremely Busy'
-}
+# label_mapping = {
+#     1: 'Quiet',
+#     2: 'Not Busy',
+#     3: 'A Little Busy',
+#     4: 'Busy',
+#     5: 'Very Busy',
+#     6: 'Extremely Busy'
+# }
 
 # Start: function to fetch most recent weather data from Postgres database
 def fetch_weather(locationid):
@@ -174,8 +177,8 @@ def predict_busyness(locationid):
     has_event = check_event_on(future_time)
     events = 1 if has_event else 0
     
-    print(f"Future time: {future_time}")
-    print(f"Event status: {'Event happening' if has_event else 'No event'}")
+    #print(f"Future time: {future_time}")
+    #print(f"Event status: {'Event happening' if has_event else 'No event'}")
     
     # Input features
     input_data = pd.DataFrame({
@@ -211,7 +214,7 @@ def predict_busyness(locationid):
         raw_prediction = model.predict(input_data)
         # replace negatives with 0
         raw_prediction = np.maximum(raw_prediction, 0) 
-        print("Raw prediction:", raw_prediction)
+        #print("Raw prediction:", raw_prediction)
         
         # Map predicted ridership to busyness category
         busyness_category = ridership_to_category(raw_prediction[0])

@@ -48,6 +48,7 @@ label_mapping = {
     5: 'Extremely Busy'
 }
 
+# Start: function to fetch most recent weather data from Postgres database
 def fetch_weather(locationid):
     # Connect to PostgreSQL
     with SSHTunnelForwarder(
@@ -94,7 +95,9 @@ def fetch_weather(locationid):
         return weather_data
     else:
         raise ValueError("No weather data found")
+# end: function fetching current weather from postgres
 
+# Start: define function checking if event is happening on given date within an hour of given time 
 def check_event_on(check_datetime):
     print(f"Checking for events on {check_datetime}...")
     
@@ -131,7 +134,9 @@ def check_event_on(check_datetime):
         
     print(f"Number of events found: {count}")
     return count > 0
+# end: function checking if event on date yes/no
 
+# Start: define function to call inputs and model to output predicted busyness
 def predict_busyness(locationid):
     # Fetch the latest weather data
     weather_data = fetch_weather(locationid)
@@ -185,42 +190,6 @@ def predict_busyness(locationid):
     input_data['year'] = input_data['year'].astype('float64')
 
     
-    #prediction = model.predict(input_data)
-    
-    # numeric prediction to its corresponding busyness label 
-    #predicted_label = label_mapping[prediction[0]]
-    
-    # try:
-    #     #dmatrix = xgb.DMatrix(input_data, enable_categorical=True)
-    #     prediction = model.predict(input_data)
-    # except Exception as e:
-    #     print(f"Error making prediction: {e}")
-    #     sys.exit(1)
-    
-    # try:
-    #     raw_prediction = model.predict(input_data)
-        
-    #     # Handle different types of output
-    #     if model.objective == 'binary:logistic':
-    #         # For binary classification
-    #         probability = 1 / (1 + np.exp(-raw_prediction))
-    #         return probability
-        
-    #     elif model.objective == 'multi:softmax' or model.objective == 'multi:softprob':
-    #         # For multi-class classification
-    #         probabilities = softmax(raw_prediction, axis=1)
-    #         return probabilities
-        
-    #     else:
-    #         # Assuming regression or other types
-    #         return raw_prediction
-        
-    # except Exception as e:
-    #     print(f"Error making prediction: {e}")
-    #     sys.exit(1)
-    
-    #return prediction #predicted_label
-    
     # Predict
     try:
         raw_prediction = model.predict(input_data)
@@ -232,6 +201,7 @@ def predict_busyness(locationid):
         sys.exit(1)
     
     return raw_prediction
+# End function returning predicted busyness
 
 # Test the prediction function
 #locationid = 6

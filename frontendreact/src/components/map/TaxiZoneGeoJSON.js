@@ -15,10 +15,9 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
     fetchAndPrepareData();
   }, [features]);
 
-  //TODO need to change from location_id to lat lng
-  const fetchTopComment = async(location_id) => {
+  const fetchTopComment = async(lat, lng) => {
     try{
-      const response = await fetch(`/api/top-comment?location_id=${2,2}`); //2,2 lat lng current hard coded in need to get user click lat lng instead 
+      const response = await fetch(`/api/top-comment?lat=${lat}&lng=${lng}`); 
       if (response.ok) {
         const data = await response.json();
         setPopupContent(data.comment);
@@ -52,9 +51,10 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
             }
           },
           click: (e) => {
-            console.log('Clicked location_id:', feature.properties.location_id);
-            fetchTopComment(feature.properties.location_id);
-            layer.bindPopup(comment).openPopup();
+            const { lat, lng } = e.latlng;
+            console.log('Clicked lat:', lat, 'lng:', lng);
+            fetchTopComment(lat, lng);
+            layer.bindPopup(popupContent).openPopup();
           }
         });
       }}

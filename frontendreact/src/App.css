@@ -11,6 +11,7 @@ body {
   font-family: 'Inter', sans-serif; /* Use a modern, clean font */
   background-color: #222831; /* Light background color for contrast */
   color: #333; /* Dark text color for readability */
+  margin-top: 60px; 
 }
 
 h1, h2, h3, h4, h5, h6 {

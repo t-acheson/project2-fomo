@@ -89,7 +89,7 @@ func connectToPostgres() *sql.DB {
 
   _, err = db.Exec(`
     CREATE TABLE IF NOT EXISTS archived_comments (
-      id SERIAL PRIMARY KEY,                                                                                                                                                                        
+      id INT PRIMARY KEY,                                                                                                                                                                        
       parent_id INT,              
       timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       text TEXT NOT NULL,         

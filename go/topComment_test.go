@@ -7,35 +7,30 @@ import (
 //  "github.com/lib/pq" // Import Postgres driver
 )
 
-// Define a mock server struct for testing
-type MockServer struct{}
-
-// Implement the getTopComment function
-func (s *MockServer) getTopComment(lat float64, lng float64) (*Comment, error) {
-	// Mock implementation for testing
-	return &Comment{
-		ID:        1,
-		ParentID:  nil,
-		Text:      "This is a top comment",
-		Likes:     100,
-		Dislikes:  5,
-		Timestamp: time.Now(),
-	}, nil
-}
-
-
-// Test the getTopComment function
 func TestGetTopComment(t *testing.T) {
+	// Backup the original function
+	originalFunc := getTopCommentFunc
+	// Restore the original function after the test
+	defer func() { getTopCommentFunc = originalFunc }()
 
-	// Mock server for testing
-	server := &MockServer{}
+	// Mock implementation of the getTopComment function
+	getTopCommentFunc = func(lat float64, lng float64) (*Comment, error) {
+		return &Comment{
+			ID:        1,
+			ParentID:  nil,
+			Text:      "This is a top comment",
+			Likes:     100,
+			Dislikes:  5,
+			Timestamp: time.Now(),
+		}, nil
+	}
 
 	// Test data
 	lat := 37.7749
 	lng := -122.4194
 
 	// Call the getTopComment function
-	comment, err := server.getTopComment(lat, lng)
+	comment, err := getTopCommentFunc(lat, lng)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}

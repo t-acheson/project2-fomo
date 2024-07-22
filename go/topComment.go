@@ -9,10 +9,12 @@ import (
 	// // "time"
 )
 
+//func for mocking in tests
+var getTopCommentFunc = getTopComment
 
 // getTopComment retrieves the comment with the highest number of likes within a 2km radius of the given latitude and longitude.
 // If there are multiple comments with the same number of likes, it returns the most recent one.
-func (s *Server) getTopComment(lat float64, lng float64) (*Comment, error) {
+func getTopComment(lat float64, lng float64) (*Comment, error) {
 	var topComment Comment
 	err := db.QueryRow(`
 		SELECT id, parent_id, text, likes, dislikes, timestamp 

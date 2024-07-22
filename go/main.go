@@ -125,7 +125,7 @@ func main() {
 			return
 		}
 
-		topComment, err := server.getTopComment(params.Lat, params.Lng)
+		topComment, err := getTopCommentFunc(params.Lat, params.Lng)
 		if err != nil {
 			http.Error(w, "Error getting Top Comment", http.StatusInternalServerError)
 			return

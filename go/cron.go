@@ -17,8 +17,8 @@ func runCron() {
 func archiveComments() {
   fmt.Println("Archiving old comments")
   _, err := db.Exec(`
-  INSERT INTO archived_comments (parent_id, timestamp, text, location, likes, dislikes)
-  SELECT parent_id, timestamp, text, location, likes, dislikes
+  INSERT INTO archived_comments
+  SELECT *
   FROM comments
   WHERE timestamp < NOW() - INTERVAL '48 hours';
 

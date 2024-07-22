@@ -29,7 +29,7 @@ const CommentInput = () => {
         { value: 'Tag13', label: 'Crowded' },
         { value: 'Tag13', label: 'LiveMusic' },
         { value: 'Tag14', label: 'DateSpot' },
-        { value: 'Tag14', label: 'OpenMic' },
+        { value: 'Tag15', label: 'OpenMic' },
 
     ];
 

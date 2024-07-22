@@ -18,13 +18,14 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
   }, [features]);
 
   const fetchTopComment = async(lat, lng) => {
-    try{
-      const response = await fetch(`/api/top-comment?lat=${lat}&lng=${lng}`); 
+    try {
+      const response = await fetch(`/api/top-comment?lat=${lat}&lng=${lng}`);
       if (response.ok) {
         const data = await response.json();
         setPopupContent(data.comment);
       } else {
-        console.log('Failed to fetch top comment');
+        const errorText = await response.text();
+        console.log('Failed to fetch top comment:', response.status, errorText);
       }
     } catch (error) {
       console.error('Failed to fetch top comment', error);

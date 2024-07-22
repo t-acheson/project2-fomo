@@ -5,6 +5,7 @@ import ReplyInput from './replyInput';
 import '../cssFiles/commentDisplay.css';
 import upArrow from '../../assets/up-arrow.svg'; // Adjust the path as needed
 import downArrow from '../../assets/down-arrow.svg';
+import TimeAndTag from './commentTimeAndTags';
 
 const Comment = ({ comment }) => {
   const [showReplyInput, setShowReplyInput] = useState(false);
@@ -38,13 +39,6 @@ const Comment = ({ comment }) => {
       <ListGroup.Item key={comment.id}>
         <Card>
           <Card.Body className="card-body">
-            <div className="comment-header">
-              <Card.Subtitle className="mb-2 text-muted">
-                Received at: {comment.timestamp}
-                <br />
-                test - id:{comment.id} parent:{comment.parentid}
-              </Card.Subtitle>
-            </div>
             <Card.Text className="comment-text">
               <h4>{comment.text}</h4>
             </Card.Text>
@@ -70,6 +64,7 @@ const Comment = ({ comment }) => {
                   Reply
                 </button>
               </div>
+              <TimeAndTag comments={comment}/>
             </div>
             {showReplyInput && (
               <ReplyInput parentId={comment.id} onSubmitReply={handleReplySubmit} onCancelReply={handleCancelReply} />

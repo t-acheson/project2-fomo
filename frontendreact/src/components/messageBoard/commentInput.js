@@ -12,6 +12,9 @@ const CommentInput = () => {
     const { lat, lng } = location || { lat: 40.7128, lng: -74.0060 };
     const maxLength = 280; // Maximum length for the input
     const [selectedTags, setSelectedTags] = useState([]);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertVariant, setAlertVariant] = useState('');
+
 
     const tags = [
         { value: 'Tag1', label: 'Non-alcoholic' },
@@ -62,6 +65,8 @@ const CommentInput = () => {
             lng:lng });
         setText('');
         setSelectedTags([]);
+        setAlertMessage('Comment added successfully!');
+        setAlertVariant('success');
     };
 
     return (

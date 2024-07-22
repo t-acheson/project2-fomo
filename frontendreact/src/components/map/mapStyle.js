@@ -1,10 +1,10 @@
 export const defaultStyle = {
     fillColor: '#FBD3C',
     fillOpacity: 0.8,
-    weight: 1.5,
+    weight: 1,
     opacity: 1,
-    dashArray: '3',
-    color: '#4033AA'
+    dashArray: '4',
+    color: 'grey'
   };
   
   export const highlightStyle = {

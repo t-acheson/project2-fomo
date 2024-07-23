@@ -141,7 +141,7 @@ func (s *Server) removeConnection(uuid uuid.UUID) error {
 // Select applicable historical comments and iteratively send them to the new client
 func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
   rows, err := db.Query(`
-  SELECT id, parent_id, timestamp, text, likes, dislikes
+  SELECT id, parent_id, timestamp, text, likes, dislikes, tags
     FROM comments
     WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
   lat, lng, // CHANGE TO ACTUAL USER LOCATION AFTER FRONTEND INTEGRATION
@@ -150,7 +150,7 @@ func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
   
   for rows.Next() {
     var comment Comment
-    if err := rows.Scan(&comment.ID, &comment.ParentID, &comment.Timestamp, &comment.Text, &comment.Likes, &comment.Dislikes); err != nil {
+    if err := rows.Scan(&comment.ID, &comment.ParentID, &comment.Timestamp, &comment.Text, &comment.Likes, &comment.Dislikes, &comment.Tags); err != nil {
       fmt.Println("Error retrieving comment from database:", err)
       continue
     }

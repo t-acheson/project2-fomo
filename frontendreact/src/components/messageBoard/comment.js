@@ -5,6 +5,8 @@ import ReplyInput from './replyInput';
 import '../cssFiles/commentDisplay.css';
 import upArrow from '../../assets/up-arrow.svg'; // Adjust the path as needed
 import downArrow from '../../assets/down-arrow.svg';
+import Time from './commentTime';
+import CommentTagDisplay from './commentTagDisplay';
 
 const Comment = ({ comment }) => {
   const [showReplyInput, setShowReplyInput] = useState(false);
@@ -39,15 +41,11 @@ const Comment = ({ comment }) => {
         <Card>
           <Card.Body className="card-body">
             <div className="comment-header">
-              <Card.Subtitle className="mb-2 text-muted">
-                Received at: {comment.timestamp}
-                <br />
-                test - id:{comment.id} parent:{comment.parentid}
-              </Card.Subtitle>
+              <Time comments={comment} />
             </div>
-            <Card.Text className="comment-text">
+            <div className="comment-text">
               <h4>{comment.text}</h4>
-            </Card.Text>
+            </div>
             <div className="comment-actions">
               <div className="left-actions">
                 {replies.length > 0 && (
@@ -59,6 +57,7 @@ const Comment = ({ comment }) => {
                     />
                   </button>
                 )}
+                {!comment.parentid && <CommentTagDisplay tags={comment.tags} />}
               </div>
               <div className="right-actions">
                 <LikeDislikeButton
@@ -87,5 +86,5 @@ const Comment = ({ comment }) => {
     </div>
   );
 };
-  
+
   export default Comment;

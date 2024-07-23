@@ -1,14 +1,23 @@
 .header {
+  position: fixed;
+  top: 0;
+  width: 100%;
   background-color: #222831;
   color: #fff;
   padding: 10px;
   text-align: center;
+  z-index: 1000;
+  border-bottom: 2px solid #1b2027;
 }
 
 .header .navbar-brand {
   color: #F7F6F6;
   font-weight: bold;
   font-size: 1.5rem;
+}
+
+.header .navbar-brand:hover {
+  color: #ff5a5f; 
 }
 
 .header .nav-link {

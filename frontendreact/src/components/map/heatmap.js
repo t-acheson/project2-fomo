@@ -2,12 +2,12 @@ import { fetchBusyness } from "./API";
 
 //Function to map busyness to color
 export const getHeatmapColor = (busyness) => {
-  if (busyness >= 0.8) return '#d7301f';       // Highest busyness
-  if (busyness >= 0.6) return '#fc8d59';     // High busyness
-  if (busyness >= 0.4) return '#fdcc8a';     // Medium busyness
-  if (busyness >= 0.2) return '#fef0d9';     // Low busyness
-  if (busyness >= 0.0) return '#d9f0a3';     // Very low busyness
-  return '#a6d96a';  
+  if (busyness >= 0.8) return '#ee4d5a';       // Highest busyness
+  if (busyness >= 0.6) return '#f66356';     // High busyness
+  if (busyness >= 0.4) return '#f97b57';     // Medium busyness
+  if (busyness >= 0.2) return '#f7945d';     // Low busyness
+  if (busyness >= 0.0) return '#f3ad6a';     // Very low busyness
+  return '#ffea00';  
   };
   
   export const getBusynessDescription = (busyness) => {

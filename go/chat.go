@@ -8,6 +8,7 @@ import (
   "time"
   "encoding/json"
   "github.com/google/uuid"
+  "github.com/lib/pq"
 )
 
 type Server struct {
@@ -22,6 +23,13 @@ type Comment struct {
   Likes int `json:"likes"`
   Dislikes int `json:"dislikes"`
   Timestamp time.Time `json:"timestamp"`
+  Tags Tags `json:"tags,omitempty"` //If the comment is a reply it doesnt need tags
+}
+
+type Tags struct {
+  Tag1 string `json:"tag1"`
+  Tag2 string `json:"tag2,omitempty"`
+  Tag3 string `json:"tag3,omitempty"`
 }
 
 type WebsocketMessage struct {
@@ -33,6 +41,7 @@ type WebsocketMessage struct {
   Dislikes int `json:"dislikes,omitempty"`
   Latitude float64 `json:"lat,omitempty"`
   Longitude float64 `json:"lng,omitempty"`
+  Tags Tags `json:"tags,omitempty"`
 }
 
 type WebsocketReply struct {
@@ -192,7 +201,7 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 func (s *Server) handleMessage(message WebsocketMessage) {
   switch message.Type {
   case "new_comment":
-    comment, err := s.insertComment(message.ParentID, message.Text, message.Latitude, message.Longitude)
+    comment, err := s.insertComment(message.ParentID, message.Text, message.Latitude, message.Longitude, message.Tags)
     if err != nil {
       fmt.Println("Error writing comment to db:", err)
       return
@@ -239,16 +248,27 @@ func (s *Server) handleMessage(message WebsocketMessage) {
   }
 }
 
-func (s *Server) insertComment(parentID *int, text string, lat float64, lng float64) (Comment, error) {
+func (t *Tags) ToSlice() []string {
+    tags := []string{t.Tag1}
+    if t.Tag2 != "" {
+        tags = append(tags, t.Tag2)
+    }
+    if t.Tag3 != "" {
+        tags = append(tags, t.Tag3)
+    }
+    return tags
+}
+
+func (s *Server) insertComment(parentID *int, text string, lat float64, lng float64, tags Tags) (Comment, error) {
     var id int
     var timestamp time.Time
 
     err := db.QueryRow(`
-      INSERT INTO comments (parent_id, text, location, timestamp) VALUES
-      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5)
+      INSERT INTO comments (parent_id, text, location, timestamp, tags) VALUES
+      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5, $6)
       RETURNING id, timestamp;`,
-      parentID, text, lat, lng, time.Now()).Scan(&id, &timestamp)
-    if err != nil {
+      parentID, text, lat, lng, time.Now(), pq.Array(tags.ToSlice())).Scan(&id, &timestamp)
+      if err != nil {
       fmt.Println("Error writing to table comments:", err)
       return Comment{}, err
     }
@@ -260,6 +280,7 @@ func (s *Server) insertComment(parentID *int, text string, lat float64, lng floa
       Likes: 0,
       Dislikes: 0,
       Timestamp: timestamp,
+      Tags: tags,
     }, nil
 }
 

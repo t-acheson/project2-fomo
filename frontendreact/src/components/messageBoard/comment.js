@@ -57,9 +57,9 @@ const Comment = ({ comment }) => {
                     />
                   </button>
                 )}
-                {!comment.parentid && <CommentTagDisplay tags={comment.tags} />}
               </div>
               <div className="right-actions">
+                {!comment.parentid && <CommentTagDisplay tags={comment.tags} />}
                 <LikeDislikeButton
                   commentId={comment.id}
                   likesCounts={comment.likes}

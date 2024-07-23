@@ -1,9 +1,8 @@
 package main
 
 import (
-	// "database/sql"
+	"database/sql"
 	"fmt"
-
 	// "github.com/google/uuid"
 	// "golang.org/x/net/websocket"
 	// // "time"
@@ -23,7 +22,11 @@ func getTopComment(lat float64, lng float64) (*Comment, error) {
 		ORDER BY likes DESC, timestamp DESC
 		LIMIT 1`,
 		lat, lng).Scan(&topComment.ID, &topComment.ParentID, &topComment.Text, &topComment.Likes, &topComment.Dislikes, &topComment.Timestamp)
-	if err != nil {
+		if err != nil {
+			if err == sql.ErrNoRows {
+				fmt.Println("No comments found in this area")
+				return nil, nil
+			}
 		fmt.Println("Error retrieving top comment from database:", err)
 		return nil, err
 	}

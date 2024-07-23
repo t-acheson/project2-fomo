@@ -18,22 +18,27 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
   }, [features]);
 
   const fetchTopComment = async (lat, lng) => {
-    console.log('Fetching top comment for lat:', lat, 'lng:', lng);
-    try {
-      const response = await fetch(`/api/top-comment?lat=${lat}&lng=${lng}`);
-      if (response.ok) {
-        const data = await response.json();
-        setPopupContent(data.comment); // Update the state
-        return data.comment; // Return the comment
-      } else {
-        console.log('Failed to fetch top comment');
-        return 'No comment available'; // Fallback content
+      console.log('Fetching top comment for lat:', lat, 'lng:', lng);
+      try {
+          const response = await fetch(`/api/top-comment?lat=${lat}&lng=${lng}`);
+          if (response.ok) {
+              const data = await response.json();
+              if (data.comment) {
+                  setPopupContent(data.comment); // Update the state
+                  return data.comment; // Return the comment
+              } else {
+                  console.log('No comments found in this area');
+                  return 'No comments found in this area'; // Return the no comment message
+              }
+          } else {
+              console.log('Failed to fetch top comment');
+              return 'No comments found in this area'; // Fallback content
+          }
+      } catch (error) {
+          console.error('Failed to fetch top comment', error);
+          return 'Error fetching comment'; // Error message
       }
-    } catch (error) {
-      console.error('Failed to fetch top comment', error);
-      return 'Error fetching comment'; // Error message
-    }
-  };
+  }
 
 
   return preparedFeatures.map((taxizone, index) => (

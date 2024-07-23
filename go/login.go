@@ -80,6 +80,7 @@ func connectToPostgres() *sql.DB {
       location GEOGRAPHY(POINT, 4326) NOT NULL,
       likes INT DEFAULT 0,
       dislikes INT DEFAULT 0,
+      tags TEXT[],
       FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
     );
   `)
@@ -95,7 +96,8 @@ func connectToPostgres() *sql.DB {
       text TEXT NOT NULL,         
       location GEOGRAPHY(POINT, 4326) NOT NULL,
       likes INT DEFAULT 0,           
-      dislikes INT DEFAULT 0,        
+      dislikes INT DEFAULT 0,
+      tags TEXT[],
       FOREIGN KEY (parent_id) REFERENCES archived_comments(id) ON DELETE CASCADE
     );   
   `)

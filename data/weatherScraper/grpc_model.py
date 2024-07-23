@@ -214,7 +214,7 @@ def predict_busyness(locationid):
         raw_prediction = model.predict(input_data)
         # replace negatives with 0
         raw_prediction = np.maximum(raw_prediction, 0) 
-        #print("Raw prediction:", raw_prediction)
+        print("Raw prediction:", raw_prediction)
         
         # Map predicted ridership to busyness category
         busyness_category = ridership_to_category(raw_prediction[0])
@@ -241,7 +241,13 @@ if __name__ == "__main__":
     busyness = predict_busyness(location_id)
     print(json.dumps({"busyness": busyness}))
     
-    
+
+# results = {}
+# for location_id in range(1, 264):
+#     busyness = predict_busyness(location_id)
+#     results[location_id] = busyness
+#     print(f"Location ID: {location_id}, Predicted Busyness: {busyness}")
+
     
 # Quantiles for data used in training model  
 # Number of entries in each ridership range:

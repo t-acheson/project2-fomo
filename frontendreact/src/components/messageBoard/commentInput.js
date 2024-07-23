@@ -17,24 +17,24 @@ const CommentInput = () => {
 
 
     const tags = [
-        { value: 'Tag1', label: 'Non-alcoholic' },
-        { value: 'Tag2', label: 'FoodieFind' },
-        { value: 'Tag3', label: 'HiddenGem' },
-        { value: 'Tag4', label: 'Outdoor' },
-        { value: 'Tag5', label: 'ChillVibes' },
-        { value: 'Tag6', label: 'BarHopping' },
-        { value: 'Tag7', label: 'GameNight' },
-        { value: 'Tag8', label: 'Festival' },
-        { value: 'Tag9', label: 'CommunityEvent' },
-        { value: 'Tag10', label: 'Exhibit' },
-        { value: 'Tag11', label: 'Theater' },
-        { value: 'Tag12', label: 'Concert' },
-        { value: 'Tag13', label: 'Crowded' },
-        { value: 'Tag13', label: 'LiveMusic' },
-        { value: 'Tag14', label: 'DateSpot' },
-        { value: 'Tag15', label: 'OpenMic' },
-
+        { value: 'Non-alcoholic', label: 'Non-alcoholic' },
+        { value: 'FoodieFind', label: 'FoodieFind' },
+        { value: 'HiddenGem', label: 'HiddenGem' },
+        { value: 'Outdoor', label: 'Outdoor' },
+        { value: 'ChillVibes', label: 'ChillVibes' },
+        { value: 'BarHopping', label: 'BarHopping' },
+        { value: 'GameNight', label: 'GameNight' },
+        { value: 'Festival', label: 'Festival' },
+        { value: 'CommunityEvent', label: 'CommunityEvent' },
+        { value: 'Exhibit', label: 'Exhibit' },
+        { value: 'Theater', label: 'Theater' },
+        { value: 'Concert', label: 'Concert' },
+        { value: 'Crowded', label: 'Crowded' },
+        { value: 'LiveMusic', label: 'LiveMusic' },
+        { value: 'DateSpot', label: 'DateSpot' },
+        { value: 'OpenMic', label: 'OpenMic' }
     ];
+    
 
     const handleInputChange = (event) => { 
         if (event.target.value.length <= maxLength) {
@@ -57,12 +57,19 @@ const CommentInput = () => {
             alert('Please select at least one tag');
             return;
         }
+
+        const tagsObject = {};
+        selectedTags.forEach((tag, index) => {
+            tagsObject[`tag${index + 1}`] = tag.value;
+        });
+
         sendMessage({
             type: 'new_comment', 
             text: text,
-            // tags: selectedTags.map(tag => tag.value), 
             lat:lat, 
-            lng:lng });
+            lng:lng,
+            tags: tagsObject
+            });
         setText('');
         setSelectedTags([]);
         setAlertMessage('Comment added successfully!');

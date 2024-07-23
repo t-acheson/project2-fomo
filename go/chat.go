@@ -8,6 +8,7 @@ import (
   "time"
   "encoding/json"
   "github.com/google/uuid"
+  "github.com/lib/pq"
 )
 
 type Server struct {
@@ -22,13 +23,13 @@ type Comment struct {
   Likes int `json:"likes"`
   Dislikes int `json:"dislikes"`
   Timestamp time.Time `json:"timestamp"`
-  Tags Tags 'json:"tags,omitempty"' //If the comment is a reply it doesnt need tags
+  Tags Tags `json:"tags,omitempty"` //If the comment is a reply it doesnt need tags
 }
 
 type Tags struct {
-  Tag1 string 'json:"tag1"'
-  Tag2 string 'json:"tag2,omitempty"'
-  Tag3 string 'json:"tag3,omitempty'
+  Tag1 string `json:"tag1"`
+  Tag2 string `json:"tag2,omitempty"`
+  Tag3 string `json:"tag3,omitempty"`
 }
 
 type WebsocketMessage struct {
@@ -40,7 +41,7 @@ type WebsocketMessage struct {
   Dislikes int `json:"dislikes,omitempty"`
   Latitude float64 `json:"lat,omitempty"`
   Longitude float64 `json:"lng,omitempty"`
-  Tags Tags 'json:"tags,omitempty"'
+  Tags Tags `json:"tags,omitempty"`
 }
 
 type WebsocketReply struct {
@@ -267,7 +268,7 @@ func (s *Server) insertComment(parentID *int, text string, lat float64, lng floa
       ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5, $6)
       RETURNING id, timestamp;`,
       parentID, text, lat, lng, time.Now(), pq.Array(tags.ToSlice())).Scan(&id, &timestamp)
-    if err != nil {
+      if err != nil {
       fmt.Println("Error writing to table comments:", err)
       return Comment{}, err
     }

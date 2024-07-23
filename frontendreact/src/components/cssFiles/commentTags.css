@@ -1,10 +1,12 @@
 .comment-tags {
-  margin-top: 10px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .tag {
   display: inline-block;
-  background-color: #f1f1f1;
+  background-color: #ffce97;
   border-radius: 10px;
   padding: 5px 10px;
   margin: 2px;

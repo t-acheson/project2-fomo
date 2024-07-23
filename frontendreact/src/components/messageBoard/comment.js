@@ -40,14 +40,12 @@ const Comment = ({ comment }) => {
       <ListGroup.Item key={comment.id}>
         <Card>
           <Card.Body className="card-body">
-            <div className="comment-content">
-              <Card.Text className="comment-text">
-                <h4>{comment.text}</h4>
-              </Card.Text>
+            <div className="comment-header">
               <Time comments={comment} />
             </div>
-            {/* Conditionally render tags only for parent comments */}
-            {!comment.parentid && <CommentTagDisplay tags={comment.tags} />}
+            <div className="comment-text">
+              <h4>{comment.text}</h4>
+            </div>
             <div className="comment-actions">
               <div className="left-actions">
                 {replies.length > 0 && (
@@ -59,6 +57,7 @@ const Comment = ({ comment }) => {
                     />
                   </button>
                 )}
+                {!comment.parentid && <CommentTagDisplay tags={comment.tags} />}
               </div>
               <div className="right-actions">
                 <LikeDislikeButton

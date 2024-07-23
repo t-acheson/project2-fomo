@@ -1,6 +1,6 @@
 body {
   background-color: #404959;
-  color: #ffffff; 
+  color: #ffffff;
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
@@ -8,18 +8,22 @@ body {
 
 .comment {
   border-radius: 20px;
+  width: 100%;
+  box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
 }
 
 .comment-container {
-  width: 100%; 
+  width: 100%;
   min-height: 300px;
   align-items: center;
   justify-content: center;
+  padding: 0 20px; /* Add padding to ensure the content doesn't touch the edges */
+  box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
 }
 
 .loading-message {
-  font-size: 1.5rem; 
-  color: #666; 
+  font-size: 1.5rem;
+  color: #666;
 }
 
 /* Remove border and padding for the ListGroup */
@@ -30,14 +34,15 @@ body {
 }
 
 .list-group-item {
-  border: none !important; 
-  padding: 0; 
-  margin: 10px 20px;
+  border: none !important;
+  padding: 0;
+  margin: 10px 0; /* Adjust margin for responsive spacing */
   border-radius: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
 }
 
-/* commentDisplay.css */
 .reply-button, .toggle-replies-button {
   margin-left: 10px;
   background: #FFA64D;
@@ -45,7 +50,7 @@ body {
   font-weight: 800;
   border: none;
   padding: 10px 20px;
-  border-radius: 10px; 
+  border-radius: 10px;
   cursor: pointer;
   transition: background 0.3s ease;
 }
@@ -65,15 +70,17 @@ body {
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 300px; 
+  width: 100%; /* Adjust width for responsiveness */
+  max-width: 300px;
+  box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
 }
 
 .reply-input button {
   margin-left: 10px;
-  background: #FFA64D; 
+  background: #FFA64D;
   border: none;
   padding: 10px 20px;
-  border-radius: 10px; 
+  border-radius: 10px;
   cursor: pointer;
   transition: background 0.3s ease;
   color: #FFF;
@@ -81,55 +88,82 @@ body {
 }
 
 .reply-input button:hover {
-  background: #D9534F; 
+  background: #D9534F;
 }
 
 .card {
-  border: none !important; 
-  background-color: #fff; 
-  border-radius: 15px !important; 
+  border: none !important;
+  background-color: #fff;
+  border-radius: 15px !important;
+  width: 100%; /* Make card width responsive */
+  box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
 }
 
 .card-body {
   position: relative;
-  padding: 15px; 
-  border: none !important; 
-  border-radius: 10px !important; 
+  padding: 15px;
+  border: none !important;
+  border-radius: 10px !important;
+  box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.comment-text {
+  text-align: left;
+  margin: 10px 10px 10px 10pxs;
+  color: #333;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  flex-grow: 1; /* Allow it to take up available space */
+  width: 100%;
 }
 
 .comment-text h4 {
-  text-align: left;
   margin: 0;
-  color: #333; /* Ensure the comment text color is readable */
 }
 
 .comment-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px; /* Add margin to separate from the metadata */
+  margin-bottom: 10px;
+  flex-wrap: wrap;
 }
 
 .comment-metadata {
   font-size: 0.8em;
   color: #666;
+  white-space: nowrap;
+  width: 100%;
+  text-align: left;
 }
 
 .comment-actions {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   margin-top: 10px;
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
 }
 
 .left-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
 }
 
 .right-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
 }
 
 .toggle-replies-button {
@@ -143,17 +177,34 @@ body {
   height: 20px; /* Adjust the height as needed */
 }
 
+.comment-tags {
+  margin-left: 10px; /* Adjust this value to control the space between the toggle button and tags */
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
+}
+
+.tag {
+  display: inline-block;
+  background-color: #ffce97;
+  border-radius: 10px;
+  padding: 5px 10px;
+  margin: 2px;
+  font-size: 0.9em;
+  color: #333;
+}
+
 .nested-comments {
   margin-left: 20px;
   margin-top: 10px;
 }
 
 .btn-warning {
-  background-color: #FFA64D; 
+  background-color: #FFA64D;
   border-color: #ff8800;
   color: #FFF;
   font-weight: 800;
-  margin-right:20px;
+  margin-right: 20px;
 }
 
 #dropdown-basic-button:hover {
@@ -162,8 +213,102 @@ body {
   color: white !important;
 }
 
-#dropdown-basic-button{
-  background-color: #FFA64D !important; 
+#dropdown-basic-button {
+  background-color: #FFA64D !important;
   border-color: #ff8800 !important;
   color: white !important;
+}
+
+@media (max-width: 1200px) {
+  /* Styles for middle-sized devices (between desktop and tablet) */
+  .card-body {
+    padding: 12px;
+  }
+
+  .reply-button, .toggle-replies-button {
+    padding: 9px 18px;
+    font-size: 1em;
+  }
+
+  .comment-metadata {
+    text-align: left;
+  }
+
+  .comment-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .comment-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .left-actions, .right-actions {
+    width: auto;
+    justify-content: flex-start;
+  }
+
+  .comment-tags {
+    margin-left: auto;
+    margin-top: 0;
+    width: auto;
+    justify-content: flex-start;
+  }
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 10px;
+  }
+
+  .reply-button, .toggle-replies-button {
+    padding: 8px 16px;
+    font-size: 0.9em;
+  }
+
+  .comment-text h4 {
+    font-size: 1rem;
+    width: 100%;
+  }
+
+  .comment-metadata {
+    position: static;
+    margin-top: 5px;
+    width: 100%;
+    text-align: left;
+  }
+
+  .comment-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .comment-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .left-actions, .right-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .right-actions {
+    justify-content: flex-end;
+  }
+
+  .arrow-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .comment-tags {
+    margin-left: 0;
+    margin-top: 10px;
+    width: 100%;
+    justify-content: flex-end;
+  }
 }

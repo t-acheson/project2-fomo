@@ -5,7 +5,8 @@ import ReplyInput from './replyInput';
 import '../cssFiles/commentDisplay.css';
 import upArrow from '../../assets/up-arrow.svg'; // Adjust the path as needed
 import downArrow from '../../assets/down-arrow.svg';
-import TimeAndTag from './commentTimeAndTags';
+import Time from './commentTime';
+import CommentTagDisplay from './commentTagDisplay';
 
 const Comment = ({ comment }) => {
   const [showReplyInput, setShowReplyInput] = useState(false);
@@ -39,9 +40,14 @@ const Comment = ({ comment }) => {
       <ListGroup.Item key={comment.id}>
         <Card>
           <Card.Body className="card-body">
-            <Card.Text className="comment-text">
-              <h4>{comment.text}</h4>
-            </Card.Text>
+            <div className="comment-content">
+              <Card.Text className="comment-text">
+                <h4>{comment.text}</h4>
+              </Card.Text>
+              <Time comments={comment} />
+            </div>
+            {/* Conditionally render tags only for parent comments */}
+            {!comment.parentid && <CommentTagDisplay tags={comment.tags} />}
             <div className="comment-actions">
               <div className="left-actions">
                 {replies.length > 0 && (
@@ -64,7 +70,6 @@ const Comment = ({ comment }) => {
                   Reply
                 </button>
               </div>
-              <TimeAndTag comments={comment}/>
             </div>
             {showReplyInput && (
               <ReplyInput parentId={comment.id} onSubmitReply={handleReplySubmit} onCancelReply={handleCancelReply} />
@@ -82,5 +87,5 @@ const Comment = ({ comment }) => {
     </div>
   );
 };
-  
+
   export default Comment;

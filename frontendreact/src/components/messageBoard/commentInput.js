@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Button, Form, InputGroup, FormControl } from 'react-bootstrap';
+import { Button, Form, InputGroup, FormControl, Alert} from 'react-bootstrap';
 import { LocationContext } from '../../App'; 
 import { sendMessage } from '../../hooks/webSocket'; 
 import Select from 'react-select'; 
@@ -50,14 +50,15 @@ const CommentInput = () => {
 
     const handleSubmit = () => { 
         if (text.trim() === '') {
-            alert('Comment cannot be empty');
+            setAlertMessage('Comment cannot be empty');
+            setAlertVariant('danger');
             return;
         }
         if (selectedTags.length === 0) {
-            alert('Please select at least one tag');
+            setAlertMessage('Please select at least one tag');
+            setAlertVariant('danger');
             return;
         }
-
         const tagsObject = {};
         selectedTags.forEach((tag, index) => {
             tagsObject[`tag${index + 1}`] = tag.value;
@@ -70,6 +71,7 @@ const CommentInput = () => {
             lng:lng,
             tags: tagsObject
             });
+
         setText('');
         setSelectedTags([]);
         setAlertMessage('Comment added successfully!');
@@ -78,6 +80,11 @@ const CommentInput = () => {
 
     return (
         <div className="input-container">
+             {alertMessage && (
+                <Alert variant={alertVariant} onClose={() => setAlertMessage('')} dismissible>
+                    {alertMessage}
+                </Alert>
+            )}
             <InputGroup className="input-group">
                 <FormControl
                     className="input-box"

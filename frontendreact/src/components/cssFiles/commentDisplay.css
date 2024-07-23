@@ -29,7 +29,6 @@ body {
   margin: 0;
 }
 
-
 .list-group-item {
   border: none !important; 
   padding: 0; 
@@ -104,11 +103,16 @@ body {
   color: #333; /* Ensure the comment text color is readable */
 }
 
-.comment-header {
-  position: absolute;
-  top: 10px; /* Adjusted to add some space from the top */
-  right: 10px; /* Adjusted to add some space from the right */
-  color: #666; /* Subtle color for metadata */
+.comment-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px; /* Add margin to separate from the metadata */
+}
+
+.comment-metadata {
+  font-size: 0.8em;
+  color: #666;
 }
 
 .comment-actions {

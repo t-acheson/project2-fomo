@@ -22,13 +22,13 @@ ENV GOPATH /go
 ENV PATH=$PATH:go/bin
 
 # Copy the .proto files into the container
-COPY ./recommendations.proto .
+COPY ./busyness.proto .
 
 # Create grpc-client directory
 RUN mkdir grpc-client
 
 # Generate Go code from .proto file
-RUN protoc --proto_path=. recommendations.proto --go_out=./grpc-client --go-grpc_out=./grpc-client
+RUN protoc --proto_path=. busyness.proto --go_out=./grpc-client --go-grpc_out=./grpc-client
 
 #
 # GENERATE gRPC server
@@ -41,13 +41,13 @@ FROM python:latest as server
 WORKDIR /app
 
 # pip install necessary dependencies
-RUN pip3 install grpcio-tools
+RUN pip3 install grpcio-tools==1.64.1
 
 # Create grpc-server directory
 RUN mkdir grpc-server
 
 # Copy proto file again
-COPY ./recommendations.proto .
+COPY ./busyness.proto .
 
 # Generate python code from .proto file
-RUN python3 -m grpc_tools.protoc --proto_path=. --python_out=./grpc-server --pyi_out=./grpc-server --grpc_python_out=./grpc-server recommendations.proto
+RUN python3 -m grpc_tools.protoc --proto_path=. --python_out=./grpc-server --pyi_out=./grpc-server --grpc_python_out=./grpc-server busyness.proto

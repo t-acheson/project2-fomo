@@ -8,7 +8,7 @@ import (
   "time"
   "encoding/json"
   "github.com/google/uuid"
-  "math/rand"
+  "github.com/lib/pq"
 )
 
 type Server struct {
@@ -17,10 +17,39 @@ type Server struct {
 }
 
 type Comment struct {
-  Timestamp time.Time `json:"timestamp"`
+  ID int `json:"id"`
+  ParentID *int `json:"parentid,omitempty"` //Pointer and omitempty to handle the parentid case.
   Text string `json:"text"`
-  Lat float64 `json:"lat"`
-  Lng float64 `json:"lng"`
+  Likes int `json:"likes"`
+  Dislikes int `json:"dislikes"`
+  Timestamp time.Time `json:"timestamp"`
+  Tags Tags `json:"tags,omitempty"` //If the comment is a reply it doesnt need tags
+}
+
+type Tags struct {
+  Tag1 string `json:"tag1"`
+  Tag2 string `json:"tag2,omitempty"`
+  Tag3 string `json:"tag3,omitempty"`
+}
+
+type WebsocketMessage struct {
+  Type string `json:"type"`
+  CommentID int `json:"commentid,omitempty"`
+  ParentID *int `json:"parentid,omitempty"`
+  Text string `json:"text,omitempty"`
+  Likes int `json:"likes,omitempty"`
+  Dislikes int `json:"dislikes,omitempty"`
+  Latitude float64 `json:"lat,omitempty"`
+  Longitude float64 `json:"lng,omitempty"`
+  Tags Tags `json:"tags,omitempty"`
+}
+
+type WebsocketReply struct {
+  Type string `json:"type"`
+  Comment *Comment `json:"comment,omitempty"`
+  CommentID int `json:"commentid,omitempty"`
+  Likes int `json:"likes,omitempty"`
+  Dislikes int `json:"dislikes,omitempty"`
 }
 
 func NewServer() *Server {
@@ -29,16 +58,33 @@ func NewServer() *Server {
   }
 }
 
-func (s *Server) handleWebSocket(ws *websocket.Conn) {
+func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
   //s.mu.Lock()
   //defer s.mu.Unlock()
 
   fmt.Println("New incoming connection from client:", ws.RemoteAddr())
 
-  uuid := uuid.New()
+  err := ws.SetDeadline(time.Now().Add(60 * time.Second))
+	if err != nil {
+		fmt.Println("SetDeadline error:", err)
+		return
+	}
+
+	uuid := uuid.New()
+
+	// A goroutine to handle pings
+	go func() {
+		for {
+			time.Sleep(30 * time.Second)
+			if err := websocket.Message.Send(ws, `{"type": "ping"}`); err != nil {
+				fmt.Println("Ping error:", err)
+				return
+			}
+		}
+	}()
 
   start := time.Now()
-  s.addConnection(uuid)
+  s.addConnection(uuid, lat, lng)
   duration := time.Since(start)
   fmt.Println("Added connection to users table in time:", duration)
 
@@ -46,7 +92,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
 
   // Retreive historical messages
   start = time.Now()
-  s.retrieve(ws)
+  s.retrieve(ws, lat, lng)
   duration = time.Since(start)
   fmt.Println("Retreived historical messages for client in time:", duration)
   
@@ -56,30 +102,30 @@ func (s *Server) handleWebSocket(ws *websocket.Conn) {
 
   fmt.Println("Client disconnected at", ws.RemoteAddr())
   start = time.Now()
-  s.removeConnection(uuid)
+  err = s.removeConnection(uuid)
+  if err != nil {
+    fmt.Println("Client already removed from database in handleWebSocket:", err)
+  }
+
   delete(s.conns, uuid)
+
   duration = time.Since(start)
   fmt.Println("Removed connection for users table in time:", duration)
 }
 
-// ! For temporary use until lat/lng can be passed to backend
-func rangeIn(low, hi int) int {
-    return low + rand.Intn(hi-low)
-}
-
-// ! Pass in location from frontend as argument
-func (s *Server) addConnection(uuid uuid.UUID) {
+// Add websocket client to the users table using their lat/lng
+func (s *Server) addConnection(uuid uuid.UUID, lat float64, lng float64) {
   _, err := db.Exec(`
     INSERT INTO users (uuid, location) VALUES
     ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326))`,
-    uuid, rangeIn(1,3), rangeIn(1,3), // ! Temporary random numbers
+    uuid, lat, lng,
   )
   if err != nil {
     fmt.Println("Error writing user to users table:", err)
   }
 }
 
-func (s *Server) removeConnection(uuid uuid.UUID) {
+func (s *Server) removeConnection(uuid uuid.UUID) error {
   _, err := db.Exec(`
     DELETE FROM users 
     WHERE uuid = $1`,
@@ -87,28 +133,44 @@ func (s *Server) removeConnection(uuid uuid.UUID) {
   )
   if err != nil {
     fmt.Println("Error removing user from users table:", err)
+    return err
   }
+  return nil
 }
 
 // Select applicable historical comments and iteratively send them to the new client
-func (s *Server) retrieve(ws *websocket.Conn) {
+func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
   rows, err := db.Query(`
-  SELECT timestamp, text, ST_Y(location::geometry) as lat, ST_X(location::geometry) as lng
+  SELECT id, parent_id, timestamp, text, likes, dislikes, tags
     FROM comments
     WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
-  rangeIn(1,3), rangeIn(1,3), // CHANGE TO ACTUAL USER LOCATION AFTER FRONTEND INTEGRATION
+  lat, lng, // CHANGE TO ACTUAL USER LOCATION AFTER FRONTEND INTEGRATION
   )
   defer rows.Close()
   
   for rows.Next() {
     var comment Comment
-    if err := rows.Scan(&comment.Timestamp, &comment.Text, &comment.Lat, &comment.Lng); err != nil {
+    var tags []string
+    if err := rows.Scan(&comment.ID, &comment.ParentID, &comment.Timestamp, &comment.Text, &comment.Likes, &comment.Dislikes, pq.Array(&tags)); err != nil {
       fmt.Println("Error retrieving comment from database:", err)
       continue
     }
+    
+    // Manually map tags to the Tags struct fields
+    if len(tags) > 0 {
+      comment.Tags.Tag1 = tags[0]
+    }
+    if len(tags) > 1 {
+      comment.Tags.Tag2 = tags[1]
+    }
+    if len(tags) > 2 {
+      comment.Tags.Tag3 = tags[2]
+    }
+
+
     message, err := json.Marshal(comment)
     if err != nil {
-      fmt.Println("Error mashaling comment:", err)
+      fmt.Println("Error marshaling comment:", err)
       continue
     }
     if _, err := ws.Write(message); err != nil {
@@ -129,55 +191,161 @@ func (s *Server) readLoop(ws *websocket.Conn) {
         break
       }
       fmt.Println("Error:", err)
-      continue
+      break  //Maybe there is a better way to handle this error than just breaking
     }
     msg := buf[:n] //Only read out the bytes of the buffer that were used
-    var comment Comment
-    if err := json.Unmarshal(msg, &comment); err != nil {
+    var message WebsocketMessage
+    if err := json.Unmarshal(msg, &message); err != nil {
       fmt.Println("Error unmarshalling json:", err)
-      continue //Likely the users fault so we want the application to continue
+      break
     }
 
-    // Insert the comment into the database
-    s.insertComment(comment)
-
-    //comment := Comment{Timestamp: time.Now().UnixNano(), Text: string(msg)}
-    s.broadcast(comment) // Broadcast the message to all clients
-
-    //s.mu.Lock()
-    //comments = append(comments, comment)
-    //s.mu.Unlock()
-
-    // Then, place the comment in the database
+    if message.Type == "pong" {
+      err = ws.SetDeadline(time.Now().Add(60 * time.Second))
+		  if err != nil {
+			  fmt.Println("SetDeadline error:", err)
+			  break 
+		  }
+		} else {
+      s.handleMessage(message) // Broadcast the message to all clients
+	  }  
   }
 }
 
-func (s *Server) insertComment(comment Comment) {
-    comment.Timestamp = time.Now().UTC()
-
-    _, err := db.Exec(`
-      INSERT INTO comments (timestamp, text, location) VALUES
-      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326));`,
-      comment.Timestamp, comment.Text, comment.Lat, comment.Lng,
-    )
+func (s *Server) handleMessage(message WebsocketMessage) {
+  switch message.Type {
+  case "new_comment":
+    comment, err := s.insertComment(message.ParentID, message.Text, message.Latitude, message.Longitude, message.Tags)
     if err != nil {
-      fmt.Println("Error writing to table comments:", err)
+      fmt.Println("Error writing comment to db:", err)
+      return
     }
+    s.broadcast(WebsocketReply{
+      Type: "new_comment",
+      Comment: &comment,
+    }, message.Latitude, message.Longitude)
 
+  case "like_update":
+    likeLat, likeLng, err := s.interact(message.CommentID, "likes", message.Likes)
+    if err != nil {
+      fmt.Println("Error updating likes:", err)
+      return
+    }
+    s.broadcast(WebsocketReply{
+      Type: "like_update",
+      CommentID: message.CommentID,
+      Likes: message.Likes,
+    }, likeLat, likeLng)
+
+  case "dislike_update":
+    dislikeLat, dislikeLng, err := s.interact(message.CommentID, "dislikes", message.Dislikes)
+    if err != nil {
+      fmt.Println("Error updating dislikes:", err)
+      return
+    }
+    s.broadcast(WebsocketReply{
+      Type: "dislike_update",
+      CommentID: message.CommentID,
+      Dislikes: message.Dislikes,
+    }, dislikeLat, dislikeLng)
+
+  case "reply_update":
+    comment, replyLat, replyLng, err := s.insertReply(message.ParentID, message.Text)
+    if err != nil {
+      fmt.Println("Error writing reply to db:", err)
+      return
+    }
+    s.broadcast(WebsocketReply{
+      Type: "reply_update",
+      Comment: &comment,
+    }, replyLat, replyLng)
+  }
 }
 
-func (s *Server) findClose(comment Comment) ([]uuid.UUID, error) {
+func (t *Tags) ToSlice() []string {
+    tags := []string{t.Tag1}
+    if t.Tag2 != "" {
+        tags = append(tags, t.Tag2)
+    }
+    if t.Tag3 != "" {
+        tags = append(tags, t.Tag3)
+    }
+    return tags
+}
+
+func (s *Server) insertComment(parentID *int, text string, lat float64, lng float64, tags Tags) (Comment, error) {
+    var id int
+    var timestamp time.Time
+
+    err := db.QueryRow(`
+      INSERT INTO comments (parent_id, text, location, timestamp, tags) VALUES
+      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5, $6)
+      RETURNING id, timestamp;`,
+      parentID, text, lat, lng, time.Now(), pq.Array(tags.ToSlice())).Scan(&id, &timestamp)
+      if err != nil {
+      fmt.Println("Error writing to table comments:", err)
+      return Comment{}, err
+    }
+
+    return Comment{
+      ID: id,
+      ParentID: parentID,
+      Text: text,
+      Likes: 0,
+      Dislikes: 0,
+      Timestamp: timestamp,
+      Tags: tags,
+    }, nil
+}
+
+func (s *Server) insertReply(parentID *int, text string) (Comment, float64, float64, error) {
+  var id int
+  var timestamp time.Time
+  var lat, lng float64
+
+  err := db.QueryRow(`
+    INSERT INTO comments (parent_id, text, location, timestamp) VALUES
+    ($1, $2, (SELECT location FROM comments WHERE id = $1), $3)
+    RETURNING id, timestamp, ST_X(location::geometry), ST_Y(location::geometry);`,
+    parentID, text, time.Now()).Scan(&id, &timestamp, &lat, &lng)
+  if err != nil {
+    fmt.Println("Error writing reply to table comments:", err)
+    return Comment{}, 0, 0, err
+  }
+
+  return Comment{
+    ID: id,
+    ParentID: parentID,
+    Text: text,
+    Likes: 0,
+    Dislikes: 0,
+    Timestamp: timestamp,
+  }, lat, lng, nil
+}
+
+func (s *Server) interact(id int, column string, value int) (float64, float64, error) {
+  var lat, lng float64
+  query := fmt.Sprintf("UPDATE comments SET %s = $1 WHERE id = $2 RETURNING ST_X(location::geometry), ST_Y(location::geometry);", column)
+  err := db.QueryRow(query, value, id).Scan(&lat, &lng)
+  if err != nil {
+    fmt.Println("Error updating the likes/dislikes of comment:", err)
+    return 0, 0, err
+  }
+  return lat, lng, nil
+}
+
+func (s *Server) findClose(lat float64, lng float64) ([]uuid.UUID, error) {
 
   rows, err := db.Query(`
     SELECT uuid
     FROM users
     WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
-    comment.Lat, comment.Lng,
+    lat, lng,
   ) //5000 = 5km radius
   if err != nil {
     fmt.Println("Error retrieving close users:", err)
     return nil, err
-  }
+    }
   defer rows.Close()
 
   var uuids []uuid.UUID
@@ -193,9 +361,9 @@ func (s *Server) findClose(comment Comment) ([]uuid.UUID, error) {
   return uuids, nil
 }
 
-func (s *Server) broadcast(comment Comment) {
+func (s *Server) broadcast(reply WebsocketReply, lat float64, lng float64) {
 
-  closeUUIDs, err := s.findClose(comment)
+  closeUUIDs, err := s.findClose(lat, lng)
   if err != nil {
     fmt.Println("Unable to broadcast. Error retrieving close users: ", err)
     return
@@ -204,9 +372,9 @@ func (s *Server) broadcast(comment Comment) {
   for _, uuid := range closeUUIDs {
     if ws, ok := s.conns[uuid]; ok {
       go func(ws *websocket.Conn) {
-        message, err := json.Marshal(comment)
+        message, err := json.Marshal(reply)
         if err != nil {
-          fmt.Println("Error marshalling comment:", err)
+          fmt.Println("Error marshalling reply:", err)
           return
         }
         if _, err := ws.Write(message); err != nil {

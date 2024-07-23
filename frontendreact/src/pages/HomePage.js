@@ -1,6 +1,5 @@
 import React from 'react';
-import HomeHero from '../components/homeHero.js';
-import About from '../components/aboutUs.js';
+import HomeHero from '../components/landing/homeHero.js';
 import Features from '../components/landing/features.js';
 
 function HomePage() {
@@ -9,7 +8,6 @@ function HomePage() {
       <main>
         <HomeHero />
         <Features />
-        <About />
       </main>
     </div>
   );

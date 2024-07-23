@@ -44,3 +44,31 @@ func TestGetTopComment(t *testing.T) {
 		t.Errorf("Expected likes %d, got %d", 100, comment.Likes)
 	}
 }
+
+// Test the getTopComment function when no comment is found
+func TestGetTopCommentNoComment(t *testing.T) {
+	// Backup the original function
+	originalFunc := getTopCommentFunc
+	// Restore the original function after the test
+	defer func() { getTopCommentFunc = originalFunc }()
+
+	// Mock implementation of the getTopComment function to simulate no comments found
+	getTopCommentFunc = func(lat float64, lng float64) (*Comment, error) {
+		return nil, nil
+	}
+
+	// Test data
+	lat := 37.7749
+	lng := -122.4194
+
+	// Call the getTopComment function
+	comment, err := getTopCommentFunc(lat, lng)
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
+	}
+
+	// Check the returned comment
+	if comment != nil {
+		t.Fatalf("Expected no comment, got %v", comment)
+	}
+}

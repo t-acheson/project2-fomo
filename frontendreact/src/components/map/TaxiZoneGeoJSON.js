@@ -5,6 +5,8 @@ import { prepareHeatmapData } from './heatmap';
 
 const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
   const [preparedFeatures, setPreparedFeatures] = useState([]);
+  const [popupContent, setPopupContent] = useState(null); // Define popupContent state
+
 
   useEffect(() => {
     const fetchAndPrepareData = async () => {
@@ -14,6 +16,30 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
 
     fetchAndPrepareData();
   }, [features]);
+
+  const fetchTopComment = async (lat, lng) => {
+      console.log('Fetching top comment for lat:', lat, 'lng:', lng);
+      try {
+          const response = await fetch(`/api/top-comment?lat=${lat}&lng=${lng}`);
+          if (response.ok) {
+              const data = await response.json();
+              if (data.comment) {
+                  setPopupContent(data.comment); // Update the state
+                  return data.comment; // Return the comment
+              } else {
+                  console.log('No comments found in this area');
+                  return 'No comments found in this area'; // Return the no comment message
+              }
+          } else {
+              console.log('Failed to fetch top comment');
+              return 'No comments found in this area'; // Fallback content
+          }
+      } catch (error) {
+          console.error('Failed to fetch top comment', error);
+          return 'Error fetching comment'; // Error message
+      }
+  }
+
 
   return preparedFeatures.map((taxizone, index) => (
     <GeoJSON
@@ -36,10 +62,12 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
               onFeatureHover(null);
             }
           },
-          click: (e) => {
-            console.log('Clicked location_id:', feature.properties.location_id);
-            const comment = "Top comment for this zone.";
-            layer.bindPopup(comment).openPopup();
+          click: async (e) => {
+            console.log(e);
+            const { lat, lng } = e.latlng;
+            console.log('Clicked lat:', lat, 'lng:', lng);
+            const comment = await fetchTopComment(lat, lng); // Await fetching top comment
+            layer.bindPopup(comment).openPopup(); // Bind and open the popup with fetched content
           }
         });
       }}

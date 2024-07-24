@@ -71,8 +71,8 @@ function App() {
           <Route path="/" element={<HomePage />} />
 
           {/* Uncomment below code for full time access */} 
-          {/* <Route path="/map" element={<MapPage />} />
-          <Route path="/feed" element={<FeedPage />} /> */} 
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/feed" element={<FeedPage />} /> 
 
           {/* Comment below 2 lines of code for restricted time access */} 
           <Route path="/map" element={<TimeLockedMapPage />} /> {/* Wrap with TimeLock */}

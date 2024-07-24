@@ -1,13 +1,4 @@
-import { latLng } from "leaflet";
-
 const socket = new WebSocket('wss://nycfomo.com/ws');
-
-    // <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3"></script>
-    // FingerprintJS.load().then(fp => {
-    // fp.get().then(result => {
-    //     const fingerprint = result.visitorId;
-    // });
-    // });
 
 // ================================
 // 4 event listeners to console.log the WebSocket status
@@ -43,6 +34,7 @@ const sendLocation = (location) => {
         console.log('Location sent:', location);
     };
 }
+
 // ================================
 // Below are functions can be called in other files to interact with the WebSocket
 // ================================

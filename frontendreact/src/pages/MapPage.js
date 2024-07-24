@@ -4,13 +4,12 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 
 import BaseMap from '../components/map/BaseMap';
 import UserMarker from '../components/map/UserMarker';
-import TestLocationButton from '../components/map/TestLocationButton';
 import TaxiZoneGeoJSON from '../components/map/TaxiZoneGeoJSON';
 import geoLocation from '../data/FOMOTaxiMap';
 import TaxiZoneInfoBox from '../components/map/TaxiZoneInfoBox';
 import LegendControl from '../components/map/BusynessLegend'; 
-// if needed, import style from stylefile here
-// import { ... } from '../components/mapStyles';
+
+
 
 
 
@@ -37,7 +36,6 @@ function MapPage() {
         <TaxiZoneInfoBox hoverInfo={hoverInfo}/>
         {/* <TaxiZonePopup /> */}
         <LegendControl />
-        <TestLocationButton />
       </BaseMap>
     </div>
   );

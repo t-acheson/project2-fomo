@@ -56,7 +56,7 @@
 }
 
 .featuresBlock .imageHolder img {
-  width: 100%;
-  max-width: 450px; /* Maintain the width limit */
-  height: auto;
+  width: 200%; /* changed from 100% */
+  max-width: 600px; /* Maintain the width limit - changed from 450 */
+  height: 100%; /* changed from auto */
 }

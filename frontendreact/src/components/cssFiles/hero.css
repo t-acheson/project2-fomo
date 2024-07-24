@@ -22,6 +22,9 @@
     transform: translateY(50%);
     -webkit-transform: translateY(50%);
     bottom: 30%;
+
+    /* z-index: 1;
+    position: absolute; */
   }
   
 /* button style added - can remove */
@@ -37,10 +40,6 @@
   background-color: #eb2637; 
   border-color: #cc5200;
 }
-
-   .heroBlock p {
-    margin: 0 0 30px;
-  }
   
   .hero-block .carousel-caption {
     left: 7%;
@@ -56,7 +55,7 @@
   .heroBlock p {
     margin: 0 0 25px;
 
-    /* added by Muireann - can remove*/
+    /* added by Muireann - can remove if you don't like*/
     color: #c7d7eb;
     background-color: rgba(5, 5, 5, 0.5);
     /* font-weight: bold; */
@@ -84,6 +83,8 @@
   .heroBlock .carousel-caption {
     left: 7%;
     right: 7%;
+
+    bottom: 30%; /* trying to ensure buttons stay visible*/
   }
   
   .heroBlock .carousel-control {
@@ -121,6 +122,8 @@
   .heroBlock .carousel-caption {
     left: 4%;
     right: 4%;
+
+    bottom: 50%; /*buttons to stay visible */
   }
   
   .heroBlock .carousel-control {

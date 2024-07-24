@@ -5,14 +5,15 @@
   gap: 20px;
 }
 
-.likeContainer {
+.likeContainer, .dislikeContainer {
   position: relative;
   display: flex;
   align-items: center;
   cursor: pointer;
 }
 
-.likeContainer .heartBg {
+.heartBg, .heartBrokenBg {
+  position: relative;
   background: rgba(255, 192, 200, 0);
   border-radius: 50%;
   height: 60px;
@@ -20,88 +21,67 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 100ms ease;
+  transition: all 0.3s ease;
 }
 
-.likeContainer .heartBg:hover {
+.heartBg:hover {
   background: rgba(255, 192, 200, 0.7);
 }
 
-.likeContainer .heartIcon {
-  height: 100px;
-  width: 100px;
-  background: url('../../assets/heart.png');
-  background-position: left;
-  position: absolute;
+.heartBrokenBg:hover {
+  background: rgba(72, 66, 67, 0.7);
 }
 
-.likeContainer .heartIcon.liked {
-  animation: like-anim 0.75s steps(28) forwards;
+
+.heartIcon {
+  height: 100px;
+  width: 100px;
+  background: url('../../assets/heart.png') no-repeat;
+  background-size: 2900%;
+  background-position: left;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.heartIcon.liked {
+  animation: like-anim 0.7s steps(28) forwards;
 }
 
 @keyframes like-anim {
-  to {
-      background-position: right;
-  }
-}
-
-.likeContainer .likesStatus {
-  display: flex;
-  align-items: center;
-  font-family: 'Roboto', sans-serif;
-  color: #A6ACAF;
-  font-weight: 800;
-  font-size: 20px;
-  margin-left: 6px;
-}
-
-.dislikeContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.btnContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0px 0px;
-  border-radius: 50%;
+  to { background-position: right; }
 }
 
 .dislikeBtn {
-  color: #A6ACAF;
-  border-radius: 50%;
-  height: 60px;
-  width: 60px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  border: none;
-  background: rgba(255, 192, 200, 0);
-  display: flex;
-  font-family: 'Roboto', sans-serif;
-  font-weight: 800;
-  font-size: 20px;
-  margin-left: px;
-}
-
-.dislikeActive {
-  color: #A6ACAF;
-  background-color: #4d5662;
-}
-
-.dislikeContainer .btnContainer:hover {
-  background: rgba(67, 61, 62, 0.7);
 }
 
 .material-symbols-outlined {
   font-variation-settings:
       'FILL' 1,
-      'wght' 100,
+      'wght' 400,
       'GRAD' 0,
       'opsz' 24;
-      font-size: 40px;
+  font-size: 40px;
+  color: #A6ACAF;
+  transition: all 0.3s ease;
+}
+
+.dislikeActive .material-symbols-outlined {
+  color: #4d5662;
+}
+
+.likesStatus, .dislikesStatus {
+  font-family: 'Roboto', sans-serif;
+  color: #A6ACAF;
+  font-weight: 800;
+  font-size: 20px;
+  margin-left: 6px;
 }

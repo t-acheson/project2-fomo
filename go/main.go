@@ -1,52 +1,78 @@
 package main
 
 import (
-	"fmt"      //Formatted I/O
-	"log"      //Logging errors
-	"net/http" //HTTP server
-	"time" //Used for time.Sleep
-	"os" //Pass in environment vars
-	"golang.org/x/net/websocket"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
 	"regexp"
-
-	//"github.com/gorilla/sessions" //Session management
+	"golang.org/x/net/websocket"
+	// "github.com/google/uuid"
 	"database/sql"
 )
-
-// Struct to hold user session data
-type User struct {
-	UserID string
-}
-
-// Define a global session store
-//var store = sessions.NewCookieStore([]byte("sampleKey"))
 
 // Define a connection the the Postgres db
 var db *sql.DB
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	//Writes a response to a HTTP request to the HTTP response writer, w.
-	fmt.Fprintf(w, "Go server running")
-}
+var busynessMap map[string]float32
 
 //Redirect HTTP request to HTTPS
 func redirectHTTP(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
 }
 
+// CORS middleware function
+func CORSMiddleware(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Set CORS headers
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins
+		w.Header().Set("Access-Control-Allow-Methods", "POST") // Allow specific methods
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type") // Allow specific headers
+
+		// Handle preflight requests
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		// Call the actual handler
+		h(w, r)
+	}
+} 
+// Handles HTTP request at the "/location" endpoint.
+// Decodes the request body, calls the grpc server and encodes response as JSON
+func locationHandler(w http.ResponseWriter, r *http.Request) {
+	// Log that a request has been received at the "/location" endpoint
+	log.Println("Received request at /location endpoint")
+
+	w.Header().Set("Content-Type", "application/json")
+
+	// Code for turning the map to json
+	jsonBusyness, err := json.Marshal(busynessMap)
+	if err != nil {
+		fmt.Println("Error marshalling JSON:", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	
+	// Write JSON to response
+	_, err = w.Write(jsonBusyness)
+	if err != nil {
+		fmt.Println("Error writing response:", err)
+	}
+}
+
 func main() {
-	// Give the gRPC server a second to open
-	time.Sleep(1 * time.Second)
-
-	//Test the gRPC server
-	testRecommend()
-
-	// Give postgres a few seconds to open
-	time.Sleep(5 * time.Second)
-
 	//Connects to Postgres/PostGIS db
 	db = connectToPostgres()
 	defer db.Close()
+
+	// Generate busyness values initially
+	cacheBusyness()
+
+	// Run the crontab for archiving comments and updating busyness
+	runCron()
 
 	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Define the file server for static files
@@ -60,8 +86,59 @@ func main() {
 		}
 	}))
 
+	// location handler
+	http.HandleFunc("/location", CORSMiddleware(locationHandler))
+	log.Println("Location handler is set up")
+
+	// Set up websocket server
 	server := NewServer()
-	http.Handle("/ws", websocket.Handler(server.handleWebSocket))
+
+	websocketHandler := func(ws *websocket.Conn) {
+		// Require an inital message declaring latitude and longitude
+		var initialMsg struct {
+			Lat float64 `json:"lat"`
+			Lng float64 `json:"lng"`
+		}
+
+		if err := websocket.JSON.Receive(ws, &initialMsg); err != nil {
+			fmt.Println("Error receving inital message with lat/lng:",err)
+			return
+		}
+
+		// Call handleWebSocket with conn and lat/lng
+		server.handleWebSocket(ws, initialMsg.Lat, initialMsg.Lng)
+	}
+
+	http.Handle("/ws", websocket.Handler(websocketHandler))
+
+
+	//handler for top comment functions 
+	http.HandleFunc("/topcomment", CORSMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		// Log that a request has been received at the "/topcomment" endpoint
+		log.Println("Received request at /topcomment endpoint")
+		var params struct {
+			Lat float64 `json:"lat"`
+			Lng float64 `json:"lng"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+			http.Error(w, "Bad Request", http.StatusBadRequest)
+			return
+		}
+
+		topComment, err := getTopCommentFunc(params.Lat, params.Lng)
+		if err != nil {
+			http.Error(w, "Error getting Top Comment", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(topComment); err != nil {
+			http.Error(w, "Error encoding top comment response", http.StatusInternalServerError)
+			return
+		}
+	}))
+
+
 
 	//Start TLS listener on port 443
 	go func() {

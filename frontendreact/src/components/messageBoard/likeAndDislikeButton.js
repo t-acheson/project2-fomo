@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../cssFiles/likeAndDislikeButton.css';
 import { sendMessage } from '../../hooks/webSocket';
 
-const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts}) => {
+const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts }) => {
     const [liked, setLiked] = useState(false);
     const [likesCount, setLikesCount] = useState(likesCounts);
     const [disliked, setDisliked] = useState(false);
@@ -11,30 +11,30 @@ const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts}) => {
     const handleLike = () => {
         const newLikedState = !liked;
         const newLikesCount = liked ? likesCount - 1 : likesCount + 1;
-        
+
         setLiked(newLikedState);
         setLikesCount(newLikesCount);
-        
+
         if (disliked) {
             setDisliked(false);
             setDislikeCount(dislikeCount - 1);
         }
-        
-        sendMessage({ type: 'like_update', commentid: commentId, likes: newLikesCount});
+
+        sendMessage({ type: 'like_update', commentid: commentId, likes: newLikesCount });
     };
 
     const handleDislike = () => {
         const newDislikedState = !disliked;
         const newDislikeCount = disliked ? dislikeCount - 1 : dislikeCount + 1;
-        
+
         setDisliked(newDislikedState);
         setDislikeCount(newDislikeCount);
-        
+
         if (liked) {
             setLiked(false);
             setLikesCount(likesCount - 1);
         }
-        
+
         sendMessage({ type: 'dislike_update', commentid: commentId, dislikes: newDislikeCount });
     };
 
@@ -47,12 +47,12 @@ const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts}) => {
                 <span className="likesStatus">{likesCount}</span>
             </div>
             <div className="dislikeContainer" onClick={handleDislike}>
-                <div className="btnContainer">
+                <div className="heartBrokenBg">
                     <button className={`dislikeBtn ${disliked ? 'dislikeActive' : ''}`}>
                         <span className="material-symbols-outlined">heart_broken</span>
-                        {dislikeCount}
                     </button>
                 </div>
+                <span className="dislikesStatus">{dislikeCount}</span>
             </div>
         </div>
     );

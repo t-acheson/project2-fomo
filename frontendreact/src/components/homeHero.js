@@ -9,7 +9,7 @@ var heroData = [
         id: 1,
         image: require('../assets/road.jpg'),
         title: 'Find the Fun!',
-        description: "Tap into NYC's social hotspots with our colour-coded map. We predict what locations will be buzzing tonight so you can pick the perfect hangout spot to match your vibe!",
+        description: "Tap into NYC's social hotspots with our colour-coded map. Find locations predicted to be buzzing tonight so you can pick the perfect hangout spot to match your vibe!",
         // title: 'Discover the Pulse of NYC After Dark!',
         // description: 'Looking for the perfect spot to spend your evening in New York City? Our app has you covered from 6 PM to 6 AM. Whether you want to avoid the busiest places or dive right into the action, we predict the busyness of various zones in NYC to help you make the best decision.',
       },
@@ -17,7 +17,7 @@ var heroData = [
         id: 2,
         image: require('../assets/bridge.jpg'),
         title: 'The Buzz About Town!',
-        description: "Discover what's hot with users within 2km! chat anonymously, and filter comments by tags or popularity. Discover what’s trending!",
+        description: "Discover what's hot with users within 2km! Chat anonymously, and filter comments by tags or popularity. Discover what’s trending!",
         // title: 'NYC’s Hottest Spots, One Tap Away!',
         // description: "Discover NYC's vibrant nightlife with real-time busyness predictions and anonymous chats. Plan your perfect night out effortlessly!",
       },
@@ -51,7 +51,7 @@ function HomeHero() {
                             <Carousel.Caption>
                                 <h3>{hero.title}</h3>
                                 <p>{hero.description}</p>
-                                <a className="btn btn-primary" href="/map">Map your Mood <i className="fas fa-chevron-right"></i></a>
+                                <a className="btn btn-primary custom-btn" href="/map">Map your Mood <i className="fas fa-chevron-right"></i></a>
                                 {/* <a className="btn btn-primary" href="/map">Get Started <i className="fas fa-chevron-right"></i></a> */}
                             </Carousel.Caption>
                         </Carousel.Item>

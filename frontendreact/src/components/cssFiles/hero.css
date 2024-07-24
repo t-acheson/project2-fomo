@@ -24,6 +24,20 @@
     bottom: 30%;
   }
   
+/* button style added - can remove */
+.custom-btn {
+  background-color: #ff7b00; /* Change this to your desired color */
+  border-color: #ff6600; 
+  color: #fff; 
+}
+
+.custom-btn:hover,
+.custom-btn:focus,
+.custom-btn:active {
+  background-color: #cc3600; 
+  border-color: #cc5200;
+}
+
   /* .heroBlock p {
     margin: 0 0 30px;
   } */
@@ -53,18 +67,23 @@
     /* added by Muireann - can remove*/
     color: #c7d7eb;
     background-color: rgba(5, 5, 5, 0.5);
-    font-weight: bold;
+    /* font-weight: bold; */
     font-size: larger;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    border-bottom-left-radius: 15px; /* Wanted round corners */
+    border-bottom-right-radius: 15px;
   }
 
   .heroBlock h3 {
     margin: 0 0 0;
-    color: #c7d7eb;
+    /* color: #c7d7eb; */
+    color: #ff7b00;
     background-color: rgba(5, 5, 5, 0.5);
     font-weight: bold;
     font-size: 350%;
     font-family:'Courier New', Courier, monospace;
+    border-top-left-radius: 15px; /* Wanted round corners */
+    border-top-right-radius: 15px;
   }
   
 }

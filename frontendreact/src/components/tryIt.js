@@ -15,8 +15,11 @@ function tryIt(){
         <section id="about" className='aboutUsBlock'>
         <Container fluid>
             <div className='titleHolder'>
-                <h2>Try Out Our Map</h2>
-                <Image src={mapImg} />
+                <h2>Try Our Map</h2>
+                <p>Party People Only: 6pm to 6am</p>
+                <a href="/map">
+                        <Image src={mapImg} />
+                    </a>
             </div>
             {/* <Row>
                 <Col sm={6}>

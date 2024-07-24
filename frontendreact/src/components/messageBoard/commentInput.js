@@ -3,6 +3,7 @@ import { Button, Form, InputGroup, FormControl, Alert} from 'react-bootstrap';
 import { LocationContext } from '../../App'; 
 import { sendMessage } from '../../hooks/webSocket'; 
 import Select from 'react-select'; 
+import { customTagStyles } from './customTagStyle';
 import '../cssFiles/commentInput.css';
 
 
@@ -70,7 +71,7 @@ const CommentInput = () => {
             lat:lat, 
             lng:lng,
             tags: tagsObject
-            });
+        });
 
         setText('');
         setSelectedTags([]);
@@ -101,14 +102,8 @@ const CommentInput = () => {
                     onChange={handleTagChange}
                     placeholder="Must select tags (max 3)"
                     className="tag-select"
-                    styles={{ 
-                        control: (base) => ({
-                            ...base,
-                            border: 'none',
-                            boxShadow: 'none',
-                            '&:hover': { border: 'none' }
-                        })
-                    }}
+                    styles={customTagStyles}
+                    classNamePrefix="react-select" // Add this line to apply the CSS styles
                 />
             </InputGroup>
             <Button variant="primary" onClick={handleSubmit} className="button">

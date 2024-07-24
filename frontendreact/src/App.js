@@ -12,7 +12,6 @@ import Footer from './components/footer';
 import './App.css'
 import { sendLocation } from './hooks/webSocket';
 import TimeLock from './components/TimeLock';
-import getFingerprint from './hooks/fingerprint';
 
 // create a context for the location state
 export const LocationContext = createContext(null);
@@ -56,14 +55,7 @@ function App() {
       lng: -73.98422384354889
     };
     setLocation(hardcodedLocation);
-    getFingerprint().then(fingerprint => {
-      console.log('Fingerprint obtained:', fingerprint);
-      const dataToSend = { ...hardcodedLocation, fingerprint };
-      console.log('Data to send:', dataToSend);
-      sendLocation(dataToSend);
-    }).catch(error => {
-      console.error('Error obtaining fingerprint:', error);
-    });
+    sendLocation(hardcodedLocation);
   }, []);
 //* testing use effect start
 

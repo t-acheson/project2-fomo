@@ -1,7 +1,8 @@
 import React from 'react';
 import HomeHero from '../components/homeHero.js';
-import About from '../components/aboutUs.js';
+// import About from '../components/aboutUs.js';
 import Features from '../components/landing/features.js';
+import Try from '../components/tryIt.js';
 
 function HomePage() {
   return (
@@ -9,7 +10,8 @@ function HomePage() {
       <main>
         <HomeHero />
         <Features />
-        <About />
+        <Try />
+        {/* <About /> */}
       </main>
     </div>
   );

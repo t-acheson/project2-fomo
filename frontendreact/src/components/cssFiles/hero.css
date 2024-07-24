@@ -4,7 +4,7 @@
   
   .heroBlock .carousel-item:before {
     content: '';
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0);
     position: absolute;
     top: 0;
     bottom: 0;
@@ -24,9 +24,9 @@
     bottom: 30%;
   }
   
-  .heroBlock p {
+  /* .heroBlock p {
     margin: 0 0 30px;
-  }
+  } */
   
   .hero-block .carousel-caption {
     left: 7%;
@@ -49,6 +49,22 @@
   
   .heroBlock p {
     margin: 0 0 25px;
+
+    /* added by Muireann - can remove*/
+    color: #c7d7eb;
+    background-color: rgba(5, 5, 5, 0.5);
+    font-weight: bold;
+    font-size: larger;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  }
+
+  .heroBlock h3 {
+    margin: 0 0 0;
+    color: #c7d7eb;
+    background-color: rgba(5, 5, 5, 0.5);
+    font-weight: bold;
+    font-size: 350%;
+    font-family:'Courier New', Courier, monospace;
   }
   
 }

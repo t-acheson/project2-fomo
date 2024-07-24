@@ -16,6 +16,9 @@ COPY *.py .
 # Copy the pickle file to server
 COPY *model.pkl .
 
+# Copy the .env to the server
+COPY .env .
+
 # Expose gRPC server port
 EXPOSE 50051
 

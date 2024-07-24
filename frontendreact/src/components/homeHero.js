@@ -10,6 +10,8 @@ var heroData = [
         image: require('../assets/road.jpg'),
         title: 'Find the Fun!',
         description: "Tap into NYC's social hotspots with our colour-coded map. Find locations predicted to be buzzing tonight so you can pick the perfect hangout spot to match your vibe!",
+        link: '/map',
+        buttonText: 'Map your Mood',
         // title: 'Discover the Pulse of NYC After Dark!',
         // description: 'Looking for the perfect spot to spend your evening in New York City? Our app has you covered from 6 PM to 6 AM. Whether you want to avoid the busiest places or dive right into the action, we predict the busyness of various zones in NYC to help you make the best decision.',
       },
@@ -18,6 +20,8 @@ var heroData = [
         image: require('../assets/bridge.jpg'),
         title: 'The Buzz About Town!',
         description: "Discover what's hot with users within 2km! Chat anonymously, and filter comments by tags or popularity. Discover what’s trending!",
+        link: '/feed',
+        buttonText: 'Get Chatting',
         // title: 'NYC’s Hottest Spots, One Tap Away!',
         // description: "Discover NYC's vibrant nightlife with real-time busyness predictions and anonymous chats. Plan your perfect night out effortlessly!",
       },
@@ -26,6 +30,8 @@ var heroData = [
         image: require('../assets/busyStreet.jpg'),
         title: 'Feel FOMO no more!',
         description: "Stuck in work and afraid you're missing out? Our app's for the party people and nightowls! The fun won't start til 6pm!",
+        link: '/map',
+        buttonText: 'Map your Mood',
         // title: 'Nightlife in Real-Time: NYC’s Best Kept Secret!',
         // description: "Navigate NYC's nightlife with live crowd updates and community insights. Find the hottest spots or quiet escapes instantly!",
       }
@@ -51,7 +57,7 @@ function HomeHero() {
                             <Carousel.Caption>
                                 <h3>{hero.title}</h3>
                                 <p>{hero.description}</p>
-                                <a className="btn btn-primary custom-btn" href="/map">Map your Mood <i className="fas fa-chevron-right"></i></a>
+                                <a className="btn btn-primary custom-btn" href={hero.link}>{hero.buttonText} <i className="fas fa-chevron-right"></i></a>
                                 {/* <a className="btn btn-primary" href="/map">Get Started <i className="fas fa-chevron-right"></i></a> */}
                             </Carousel.Caption>
                         </Carousel.Item>

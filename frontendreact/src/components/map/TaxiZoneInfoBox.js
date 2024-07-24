@@ -22,7 +22,7 @@ const TaxiZoneInfoBox = ({ hoverInfo }) => {
     info.update = function (props) {
       this._div.innerHTML = '<h4>New York Zones</h4>' + (props
         ? '<b>' + props.zone + '</b><br />Busyness: ' + props.busyness
-        : 'Hover over a zone');
+        : 'Hover over a zone or </b><br /> Click map for most popular comment in area');
     };
     // returns an updated content of the div based on the passed properties
 

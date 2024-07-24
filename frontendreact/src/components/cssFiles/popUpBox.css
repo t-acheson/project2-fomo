@@ -1,23 +1,26 @@
+/* popUpBox.css */
+
 .info {
-  padding: 8px 10px;
-  font: 14px/18px Arial, Helvetica, sans-serif;
+  padding: 20px;  /* Increase padding */
   background: white;
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
-  color: #333;
+  font-size: 18px; 
+  line-height: 1.5; 
+  max-width: 300px;  
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);  
+  text-align: center;
 }
 
 .info h4 {
-  margin: 0 0 5px;
-  color: #777;
-  font-size: 16px;
+  margin: 0 0 10px 0;
+  text-align: center;
   font-weight: bold;
+  font-size: 20px;  /* Increase header size */
 }
+
 
 .legend {
   line-height: 18px;
-  color: #555;
 }
 
 .legend i {

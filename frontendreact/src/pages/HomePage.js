@@ -1,6 +1,5 @@
 import React from 'react';
-import HomeHero from '../components/homeHero.js';
-// import About from '../components/aboutUs.js';
+import HomeHero from '../components/landing/homeHero.js';
 import Features from '../components/landing/features.js';
 import Try from '../components/tryIt.js';
 

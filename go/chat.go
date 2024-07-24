@@ -141,7 +141,7 @@ func (s *Server) removeConnection(uuid uuid.UUID) error {
 // Select applicable historical comments and iteratively send them to the new client
 func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
   rows, err := db.Query(`
-  SELECT id, parent_id, timestamp, text, likes, dislikes
+  SELECT id, parent_id, timestamp, text, likes, dislikes, tags
     FROM comments
     WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
   lat, lng, // CHANGE TO ACTUAL USER LOCATION AFTER FRONTEND INTEGRATION
@@ -150,10 +150,24 @@ func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
   
   for rows.Next() {
     var comment Comment
-    if err := rows.Scan(&comment.ID, &comment.ParentID, &comment.Timestamp, &comment.Text, &comment.Likes, &comment.Dislikes); err != nil {
+    var tags []string
+    if err := rows.Scan(&comment.ID, &comment.ParentID, &comment.Timestamp, &comment.Text, &comment.Likes, &comment.Dislikes, pq.Array(&tags)); err != nil {
       fmt.Println("Error retrieving comment from database:", err)
       continue
     }
+    
+    // Manually map tags to the Tags struct fields
+    if len(tags) > 0 {
+      comment.Tags.Tag1 = tags[0]
+    }
+    if len(tags) > 1 {
+      comment.Tags.Tag2 = tags[1]
+    }
+    if len(tags) > 2 {
+      comment.Tags.Tag3 = tags[2]
+    }
+
+
     message, err := json.Marshal(comment)
     if err != nil {
       fmt.Println("Error marshaling comment:", err)

@@ -46,9 +46,40 @@
     right: 7%;
   }
 
-  .hero-block .carousel-control {
-    width: 5%;
-  }
+.heroBlock .carousel-item:before {
+  content: '';
+  background: rgba(0, 0, 0, 0.7);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0; 
+}
+
+.heroBlock .carousel-item img {
+  width: 100%;
+}
+
+.heroBlock .carousel-caption {
+  left: 25%;
+  right: 25%;
+  transform: translateY(50%);
+  -webkit-transform: translateY(50%);
+  bottom: 30%;
+}
+
+.heroBlock p {
+  margin: 0 0 30px;
+}
+
+.heroBlock .carousel-caption {
+  left: 7%;
+  right: 7%;
+}
+
+.heroBlock .carousel-control {
+  width: 5%;
+}
 
 
 
@@ -86,9 +117,9 @@
 
     bottom: 30%; /* trying to ensure buttons stay visible*/
   }
-  
+
   .heroBlock .carousel-control {
-    width: 5%;
+      width: 5%;
   }
   
   /* .heroBlock p {
@@ -125,8 +156,14 @@
 
     bottom: 50%; /*buttons to stay visible */
   }
-  
+
   .heroBlock .carousel-control {
-    width: 15%;
+      width: 15%;
   }
 }
+
+
+.carousel-caption .btn {
+  margin-bottom: 150px; 
+} 
+

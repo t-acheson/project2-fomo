@@ -8,7 +8,7 @@ var heroData = [
     {
         id: 1,
         image: require('../assets/road.jpg'),
-        title: 'Find the Fun!',
+        title: 'Find The Fun!',
         description: "Tap into NYC's social hotspots with our colour-coded map. Find locations predicted to be buzzing tonight so you can pick the perfect hangout spot to match your vibe!",
         link: '/map',
         buttonText: 'Map your Mood',
@@ -28,7 +28,7 @@ var heroData = [
       {
         id: 3,
         image: require('../assets/busyStreet.jpg'),
-        title: 'Feel FOMO no more!',
+        title: 'Feel FOMO No More!',
         description: "Stuck in work and afraid you're missing out? Our app's for the party people and nightowls! The fun won't start til 6pm!",
         link: '/map',
         buttonText: 'Map your Mood',

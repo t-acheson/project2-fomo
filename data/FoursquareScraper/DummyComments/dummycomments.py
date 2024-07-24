@@ -40,7 +40,7 @@ cursor = connection.cursor()
 
 # Create the new table matching official comments table
 create_table_sql = """
-CREATE TABLE dummy_comments (
+CREATE TABLE IF NOT EXISTS dummy_comments (
     id SERIAL PRIMARY KEY,
     parent_id INT DEFAULT NULL,
     timestamp TIMESTAMPTZ NOT NULL,
@@ -48,14 +48,38 @@ CREATE TABLE dummy_comments (
     location geometry(Point, 4326) NOT NULL,
     likes INT DEFAULT 0,
     dislikes INT DEFAULT 0,
-    tags TEXT[] DEFAULT NULL
+    tags TEXT[] DEFAULT '{}'
 );
 """
+
+# cursor.execute("DROP TABLE IF EXISTS dummy_comments;")
+# connection.commit()
 
 # Create new table
 cursor.execute(create_table_sql)
 connection.commit()
 
+# Copy relevant data from comments_fs to dummy_comments
+copy_data_sql = """
+INSERT INTO dummy_comments (parent_id, timestamp, text, location, likes, dislikes, tags)
+SELECT parent_id, created_at, comment, geom, likes, dislikes, 
+    CASE 
+        WHEN tags = '{}' THEN '{}'
+        ELSE
+            -- Convert comma-separated tags to array and handle extra quotes
+            REPLACE(
+                REPLACE(
+                    REPLACE(tags, '""', '"'), 
+                    '{', '{' 
+                ), 
+                '}', '}'
+            )::TEXT[]
+    END
+FROM comments_fs;
+"""
+
+cursor.execute(copy_data_sql)
+connection.commit()
 
 cursor.close()
 connection.close()

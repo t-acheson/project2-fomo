@@ -1,7 +1,7 @@
 //Import bootstrap components
 import Carousel from 'react-bootstrap/Carousel';
-import '../../assets/testHeroImage.png';
-import '../cssFiles/hero.css'
+import '../assets/testHeroImage.png';
+import './cssFiles/hero.css'
 
 // Data used for the dynamic carousel component for the hero
 var heroData = [

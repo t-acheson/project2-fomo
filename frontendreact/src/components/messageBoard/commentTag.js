@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, ButtonGroup } from 'react-bootstrap';
-import '../cssFiles/commentTagFilter.css';
+import '../cssFiles/commentTag.css';
 
 
 const CommentTag = () => {

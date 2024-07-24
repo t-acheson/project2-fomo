@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import 'leaflet-defaulticon-compatibility';
-import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
-
 import BaseMap from '../components/map/BaseMap';
 import UserMarker from '../components/map/UserMarker';
 import TestLocationButton from '../components/map/TestLocationButton';

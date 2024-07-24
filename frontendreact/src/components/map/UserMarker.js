@@ -1,26 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Marker, Popup } from 'react-leaflet';
-
-// commented out because we are not in NY right now
-// import { useContext } from 'react';
-// import { LocationContext } from '../../App';
+import { LocationContext } from '../../App'
 
 const UserMarker = () => {
-  // const userPosition = useContext(LocationContext);
-
-  // hard code in NYC center for now
-  const userPosition = { lat: 40.7128, lng: -74.0060 };
+  const userPosition = useContext(LocationContext);
   
-  return (
-    userPosition ? (
-      <Marker position={[userPosition.lat, userPosition.lng]}>
-        <Popup>You are here!</Popup>
-      </Marker>
-    ) : null
-  );
+  return userPosition ? (
+    <Marker position={[userPosition.lat, userPosition.lng]}>
+      <Popup>You are here!</Popup>
+    </Marker>
+  ) : null;
 };
 
 export default UserMarker;
-
-
-

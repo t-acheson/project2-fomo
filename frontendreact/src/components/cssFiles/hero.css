@@ -39,9 +39,9 @@
   border-color: #cc5200;
   }
 
-.heroBlock p {
+/* .heroBlock p {
   margin: 0 0 30px;
-}
+} */
 
 .heroBlock .carousel-caption {
   left: 7%;
@@ -110,5 +110,5 @@
 
 
 .carousel-caption .btn {
-  margin-bottom: 150px; 
+  margin-bottom: 20px; 
 } 

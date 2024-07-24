@@ -3,9 +3,9 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
-import testImg from '../assets/feeds.png';
+// import testImg from '../assets/feeds.png';
 import mapImg from '../../assets/Map.png';
-import './cssFiles/aboutUs.css'
+import '../cssFiles/aboutUs.css'
 
 
 //Start  About function

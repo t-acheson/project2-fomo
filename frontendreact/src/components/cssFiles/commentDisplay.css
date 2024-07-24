@@ -219,6 +219,23 @@ body {
   color: white !important;
 }
 
+.feedpage-tag-filter-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 20px;
+  margin-bottom: 15px; /* Adjust as needed for spacing */
+}
+
+.feedpage-tag-select {
+  flex-grow: 1;
+  margin-right: 20px; /* Adjust as needed for spacing */
+}
+
+.feedpage-sort-dropdown {
+  flex-shrink: 0;
+}
+
 @media (max-width: 1200px) {
   /* Styles for middle-sized devices (between desktop and tablet) */
   .card-body {

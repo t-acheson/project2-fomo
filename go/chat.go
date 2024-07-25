@@ -99,12 +99,12 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64, f
 
   fmt.Println("Client disconnected at", ws.RemoteAddr())
   start = time.Now()
-  err = s.removeConnection(uuid)
+  err = s.removeConnection(fingerprint)
   if err != nil {
     fmt.Println("Client already removed from database in handleWebSocket:", err)
   }
 
-  delete(s.conns, uuid)
+  delete(s.conns, fingerprint)
 
   duration = time.Since(start)
   fmt.Println("Removed connection for users table in time:", duration)
@@ -223,7 +223,7 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
     }, message.Latitude, message.Longitude)
 
   case "like_update":
-    likeLat, likeLng, err := s.interact(message.CommentID, "likes", message.Like, fingerprint)
+    likeLat, likeLng, updatedLikes, updatedDislikes, err := s.interact(message.CommentID, "likes", message.Like, fingerprint)
     if err != nil {
       fmt.Println("Error updating likes:", err)
       return
@@ -231,11 +231,11 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
     s.broadcast(WebsocketReply{
       Type: "like_update",
       CommentID: message.CommentID,
-      Likes: message.Likes,
+      Likes: updatedLikes,
     }, likeLat, likeLng)
 
   case "dislike_update":
-    dislikeLat, dislikeLng, err := s.interact(message.CommentID, "dislikes", message.Dislike, fingerprint)
+    dislikeLat, dislikeLng, updatedLikes, updatedDislikes, err := s.interact(message.CommentID, "dislikes", message.Dislike, fingerprint)
     if err != nil {
       fmt.Println("Error updating dislikes:", err)
       return
@@ -243,7 +243,7 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
     s.broadcast(WebsocketReply{
       Type: "dislike_update",
       CommentID: message.CommentID,
-      Dislikes: message.Dislikes,
+      Dislikes: updatedDislikes,
     }, dislikeLat, dislikeLng)
 
   case "reply_update":
@@ -336,67 +336,70 @@ func checkInteraction(commentid int, fingerprint string, like bool) (bool, err) 
   return exists, nil
 }
 
-func (s *Server) interact(id int, column string, value bool, fingerprint string) (float64, float64, error) {
-    var exists bool
-    var err error
+func (s *Server) interact(id int, column string, increment bool, fingerprint string) (float64, float64, int, int, error) {
+    // increment = true => add a like/dislike, increment = false => remove
+    var like bool
 
     if column == "likes" { // User wants to add or remove a like
-      exists, err = checkInteraction(id, fingerprint, 1)
+      like = true
     } else { // User wants to add or remove a dislike
-      exists, err = checkInteraction(id, fingerprint, 0)
+      like = false
     }
+
+    exists, err := checkInteraction(id, fingerprint, like)
 
     if err != nil {
       fmt.Println("Error attempting to interact with comment:", err)
-      return 0, 0, err
+      return 0, 0, 0, 0, err
     }
 
-    if value == 1 { //User wants to add a like/dislike
+    var update string
+
+    if increment == true { //User wants to add a like/dislike
       if exists {
-        return 0, 0, err // Like already exists, throw error
+        return 0, 0, 0, 0, err // Like/dislike already exists, throw error
       }
+      // Like/dislike is safe to add. Add it to the interactions table
+      update = '+ 1'
+    
+      _, err := db.Exec(`
+      INSERT INTO comments_interactions (comment_id, fingerprint, like) VALUES
+      ($1, $2, $3);`, id, fingerprint, like)
+
+      if err != nil {
+        fmt.Println("Failed to insert new comment interaction:", err)
+        return 0, 0, 0, 0, err
+      }
+
     } else { // User wants to remove a like/dislike
       if !exists {
-        return 0, 0, err // User hasn't liked/disliked the comment so the interaction can't be removed
+        return 0, 0, 0, 0, err // User hasn't liked/disliked the comment so the interaction can't be removed
       }
-    }
-  // If the function hasnt returned by now its safe to update the database
+      // Like/dislike is safe to remove from interactions table
 
-  var update string
-  if value == 1 {
-    update = '+ 1'
-    
-    _, err := db.Exec(`
-    INSERT INTO comments_interactions (comment_id, fingerprint, like) VALUES
-    ($1, $2, $3);`, id, fingerprint, value)
+      update = '- 1'
 
-    if err != nil {
-      fmt.Println("Failed to insert new comment interaction:", err)
-      return 0, 0, err
-    }
-  } else {
-    update = '- 1'
-
-     _, err := db.Exec(`
-    DELETE FROM comments_interactions
-    WHERE comment_id = $1
+      _, err := db.Exec(`
+      DELETE FROM comments_interactions
+      WHERE comment_id = $1
       AND fingerprint = $2
-      AND like = $3;`, id, fingerprint, value)
+      AND like = $3;`, id, fingerprint, like)
 
-    if err != nil {
-      fmt.Println("Failed to remove comment interaction:", err)
-      return 0, 0, err
+      if err != nil {
+        fmt.Println("Failed to remove comment interaction:", err)
+        return 0, 0, 0, 0 err
+      } 
     }
-  }
-
+  // Interaction has been added. Update the comments table
   var lat, lng float64
-  query := fmt.Sprintf("UPDATE comments SET %s = %s %s WHERE id = $2 RETURNING ST_X(location::geometry), ST_Y(location::geometry);", column, column, update)
-  err := db.QueryRow(query, value, id).Scan(&lat, &lng)
+  var likes, dislikes int
+  query := fmt.Sprintf("UPDATE comments SET %s = %s %s WHERE id = $2 RETURNING ST_X(location::geometry), ST_Y(location::geometry), likes, dislikes;", column, column, update)
+  err := db.QueryRow(query, value, id).Scan(&lat, &lng, &likes, &dislikes)
   if err != nil {
     fmt.Println("Error updating the likes/dislikes of comment:", err)
-    return 0, 0, err
+    return 0, 0, 0, 0, err
   }
-  return lat, lng, nil
+  return lat, lng, likes, dislikes, nil
 }
 
 func (s *Server) findClose(lat float64, lng float64) ([]string, error) {

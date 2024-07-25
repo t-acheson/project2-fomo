@@ -50,15 +50,16 @@ function App() {
   // use the `useEffect` hook to set the user's location
   //* testing use effect start
   useEffect(() => {
-    const getLocation = () => {
-      const userLocation = {
-        lat: 2,
-        lng: 2
-      };
-      setLocation(userLocation);
+    const hardcodedLocation = {
+      lat: 40.6478277863495,
+      lng: -73.98422384354889
     };
-    getLocation();
-    sendLocation(location)
+    setLocation(hardcodedLocation);
+
+    // Retrieve the fingerprint and send it along with the location
+    getFingerprint().then(fingerprint => {
+      sendLocation({ ...hardcodedLocation, fingerprint });
+    });
   }, []);
 //* testing use effect start
 

@@ -23,6 +23,11 @@ const LegendControl = () => {
           getBusynessDescription(grades[i]) + '<br>';
       }
 
+      div.style.fontSize = '18px'; // Increase font size
+      div.style.padding = '10px'; // Increase padding
+      div.style.backgroundColor = 'white'; // Background color
+      div.style.borderRadius = '5px'; // Border radius
+
       return div;
     };
 

@@ -1,0 +1,37 @@
+.reset-button-container {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+  }
+  
+  .reset-button {
+    padding: 8px 12px; 
+    background-color: #FFA64D;
+    color: #FFF;
+    font-weight: 800;
+    font-size: 16px;  
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;  
+    max-width: 200px;  
+    transition: background-color 0.3s ease;  
+  }
+  
+  .reset-button:hover {
+    background-color: #D9534F;
+  }
+  
+  .reset-button-text {
+    margin: 5px;
+    font-size: 0.75rem;  /* 稍微增大说明文字的大小 */
+    color: #6c757d;
+  }
+  
+  .map-container {
+    height: 80vh;
+    width: 100%;
+  }

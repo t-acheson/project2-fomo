@@ -1,24 +1,44 @@
-import React, { useState } from 'react';
-import { Button, ButtonGroup } from 'react-bootstrap';
-import '../cssFiles/commentTagFilter.css';
+// TagFilter.js
+import React from 'react';
+import Select from 'react-select';
+import { customTagStyles } from './customTagStyle';
+import '../cssFiles/commentDisplay.css';
 
+const TagFilter = ({ className, setSelectedTags }) => {
+  const tags = [
+    { value: 'Non-alcoholic', label: 'Non-alcoholic' },
+    { value: 'FoodieFind', label: 'FoodieFind' },
+    { value: 'HiddenGem', label: 'HiddenGem' },
+    { value: 'Outdoor', label: 'Outdoor' },
+    { value: 'ChillVibes', label: 'ChillVibes' },
+    { value: 'BarHopping', label: 'BarHopping' },
+    { value: 'GameNight', label: 'GameNight' },
+    { value: 'Festival', label: 'Festival' },
+    { value: 'CommunityEvent', label: 'CommunityEvent' },
+    { value: 'Exhibit', label: 'Exhibit' },
+    { value: 'Theater', label: 'Theater' },
+    { value: 'Concert', label: 'Concert' },
+    { value: 'Crowded', label: 'Crowded' },
+    { value: 'LiveMusic', label: 'LiveMusic' },
+    { value: 'DateSpot', label: 'DateSpot' },
+    { value: 'OpenMic', label: 'OpenMic' }
+  ];
 
-const CommentTag = () => {
-    const [active, setActive] = useState('#Hang-out');
+  const handleTagChange = (selectedOptions) => {
+    setSelectedTags(selectedOptions.map(tag => tag.value));
+  };
 
-    const handleSelect = (tag) => {
-        setActive(tag);
-    };
-
-    return (
-        <ButtonGroup className="button-group" aria-label="Basic example">
-            <Button variant={active === 'Hang-out' ? 'primary' : 'secondary'} onClick={() => handleSelect('Hang-out')}>Hang-out</Button>
-            <Button variant={active === 'Event' ? 'primary' : 'secondary'} onClick={() => handleSelect('Event')}>Event</Button>
-            <Button variant={active === 'Chit Chat' ? 'primary' : 'secondary'} onClick={() => handleSelect('Chit Chat')}>Chit Chat</Button>
-        </ButtonGroup>
-
-    );
+  return (
+    <Select
+      isMulti
+      options={tags}
+      onChange={handleTagChange}
+      placeholder="Filter by tags"
+      className={`tag-select ${className}`} // Apply the custom className here
+      styles={customTagStyles} // Add this line to apply the CSS styles
+    />
+  );
 };
 
-export default CommentTag;
+export default TagFilter;
 

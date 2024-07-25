@@ -1,6 +1,14 @@
 import { latLng } from "leaflet";
 
 const socket = new WebSocket('wss://nycfomo.com/ws');
+
+    // <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3"></script>
+    // FingerprintJS.load().then(fp => {
+    // fp.get().then(result => {
+    //     const fingerprint = result.visitorId;
+    // });
+    // });
+
 // ================================
 // 4 event listeners to console.log the WebSocket status
 // ================================
@@ -16,7 +24,7 @@ socket.addEventListener('message', function (event) {
 
 // Listen for errors
 socket.addEventListener('error', function (event) {
-    console.error('WebSocket error:', event);
+    console.error('WebSocket error:', event.data);
 });
 
 // Listen for connection close
@@ -29,9 +37,10 @@ const sendLocation = (location) => {
     socket.onopen = function(event) {
         console.log("WebSocket connection established with server.");
         socket.send(JSON.stringify({
-            lat: 2,
-            lng: 2
+            lat: location.lat,
+            lng: location.lng
         }));
+        console.log('Location sent:', location);
     };
 }
 // ================================

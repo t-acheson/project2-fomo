@@ -9,35 +9,37 @@ const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts }) => {
     const [dislikeCount, setDislikeCount] = useState(dislikesCounts);
 
     const handleLike = () => {
-        const newLikedState = !liked;
-        const newLikesCount = liked ? likesCount - 1 : likesCount + 1;
-
-        setLiked(newLikedState);
-        setLikesCount(newLikesCount);
-
-        if (disliked) {
-            setDisliked(false);
-            setDislikeCount(dislikeCount - 1);
+        if (!liked) {
+            setLiked(true);
+            setLikesCount(likesCount + 1);
+            if (disliked) {
+                setDisliked(false);
+                setDislikeCount(dislikeCount - 1);
+            }
+            sendMessage({ type: 'like_update', commentid: commentId, like: true });
+        } else {
+            setLiked(false);
+            setLikesCount(likesCount - 1);
+            sendMessage({ type: 'like_update', commentid: commentId, like: false });
         }
-
-        sendMessage({ type: 'like_update', commentid: commentId, likes: newLikesCount });
     };
 
     const handleDislike = () => {
-        const newDislikedState = !disliked;
-        const newDislikeCount = disliked ? dislikeCount - 1 : dislikeCount + 1;
-
-        setDisliked(newDislikedState);
-        setDislikeCount(newDislikeCount);
-
-        if (liked) {
-            setLiked(false);
-            setLikesCount(likesCount - 1);
+        if (!disliked) {
+            setDisliked(true);
+            setDislikeCount(dislikeCount + 1);
+            if (liked) {
+                setLiked(false);
+                setLikesCount(likesCount - 1);
+            }
+            sendMessage({ type: 'dislike_update', commentid: commentId, dislike: true });
+        } else {
+            setDisliked(false);
+            setDislikeCount(dislikeCount - 1);
+            sendMessage({ type: 'dislike_update', commentid: commentId, dislike: false });
         }
-
-        sendMessage({ type: 'dislike_update', commentid: commentId, dislikes: newDislikeCount });
     };
-
+    
     return (
         <div className="likeDislikeContainer">
             <div className="likeContainer" onClick={handleLike}>

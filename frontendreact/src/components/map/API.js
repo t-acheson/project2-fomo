@@ -1,7 +1,7 @@
 export const fetchBusyness = async () => {
 
   try {
-    const response = await fetch('location', {
+    const response = await fetch('/api/location', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

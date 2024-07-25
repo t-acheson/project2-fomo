@@ -12,7 +12,12 @@ import Footer from './components/footer';
 import './App.css'
 import { sendLocation } from './hooks/webSocket';
 import TimeLock from './components/TimeLock';
-import getFingerprint from './hooks/fingerprint';
+
+import { FpjsProvider } from '@fingerprintjs/fingerprintjs-pro-react';
+
+const fingerprintAPIKEY = 'WcDkDdvyTAq1u6F9Pmc8'
+
+// import getFingerprint from './hooks/fingerprint';
 // create a context for the location state
 export const LocationContext = createContext(null);
 
@@ -57,35 +62,38 @@ function App() {
     setLocation(hardcodedLocation);
 
     // Retrieve the fingerprint and send it along with the location
-    getFingerprint().then(fingerprint => {
-      sendLocation({ ...hardcodedLocation, fingerprint });
-    });
-  }, []);
+  //   getFingerprint().then(fingerprint => {
+  //     sendLocation({ ...hardcodedLocation, fingerprint });
+  //   });
+  // }, []);
 //* testing use effect start
 
 
   return (
-    <LocationContext.Provider value={location}>
-      <Router>
-        <Header />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
+    <FpjsProvider loadOptions={{fingerprintAPIKEY}}>
+      <LocationContext.Provider value={location}>
+        <Router>
+          <Header />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
 
-          {/* Uncomment below code for full time access */} 
-          <Route path="/map" element={<MapPage />} />
-          <Route path="/feed" element={<FeedPage />} /> 
+            {/* Uncomment below code for full time access */} 
+            <Route path="/map" element={<MapPage />} />
+            <Route path="/feed" element={<FeedPage />} /> 
 
-          {/* Comment below 2 lines of code for restricted time access */} 
-          {/* <Route path="/map" element={<TimeLockedMapPage />} />  */}
-          {/* <Route path="/feed" element={<TimeLockedFeedPage />} />  */}
+            {/* Comment below 2 lines of code for restricted time access */} 
+            {/* <Route path="/map" element={<TimeLockedMapPage />} />  */}
+            {/* <Route path="/feed" element={<TimeLockedFeedPage />} />  */}
 
-          {/* <Route path="/notification" element={<NotificationPage />} /> */}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-        <Footer />
-      </Router>
-    </LocationContext.Provider>
+            {/* <Route path="/notification" element={<NotificationPage />} /> */}
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+          <Footer />
+        </Router>
+      </LocationContext.Provider>
+      </FpjsProvider>
   );
-}
+});
+} 
 
 export default App;

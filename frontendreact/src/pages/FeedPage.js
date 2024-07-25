@@ -5,14 +5,33 @@ import CommentDisplay from '../components/messageBoard/commentDisplay';
 import TagFilter from '../components/messageBoard/commentTag';
 import CommentFilter from '../components/messageBoard/commentFilters';
 import SortedComments from '../components/messageBoard/sortComments';
-import { sendMessage } from '../hooks/webSocket';
-import { listenForMessages } from '../hooks/webSocket'; // Import the listenForMessages function from the websocket file
-
+import { sendMessage, listenForMessages } from '../hooks/webSocket';
+import { useVisitorData } from '@fingerprintjs/fingerprintjs-pro-react';
+import { LocationContext } from '../App';
 
 const FeedPage = () => {
   const [comments, setComments] = useState([]); // State to hold the comments
   const [sortCriteria, setSortCriteria] = useState('most_recent'); // State for sorting criteria
   const [selectedTags, setSelectedTags] = useState([]); // State for selected tags
+  const location = useContext(LocationContext);
+  const { isLoading, data, error } = useVisitorData();
+
+  useEffect(() => {
+    if (isLoading) {
+      console.log('Loading visitor data...');
+      return;
+    }
+
+    if (error) {
+      console.error('Error loading visitor data:', error);
+      return;
+    }
+
+    if (data) {
+      console.log('Visitor ID:', data.visitorId);
+      sendMessage({ type: 'visitor_id', visitorId: data.visitorId });
+    }
+  }, [isLoading, data, error]);
 
   useEffect(() => {
     const handleMessage = (message) => {
@@ -85,6 +104,7 @@ const FeedPage = () => {
   useEffect(() => {
     console.log('Comments received in FeedPage:', comments);
   }, [comments]);
+
 
   return (
     <Container>

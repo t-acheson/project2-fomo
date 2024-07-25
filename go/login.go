@@ -81,6 +81,7 @@ func connectToPostgres() *sql.DB {
       likes INT DEFAULT 0,
       dislikes INT DEFAULT 0,
       tags TEXT[],
+      author TEXT,
       FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
     );
   `)
@@ -98,6 +99,7 @@ func connectToPostgres() *sql.DB {
       likes INT DEFAULT 0,           
       dislikes INT DEFAULT 0,
       tags TEXT[],
+      author TEXT,
       FOREIGN KEY (parent_id) REFERENCES archived_comments(id) ON DELETE CASCADE
     );   
   `)
@@ -106,8 +108,20 @@ func connectToPostgres() *sql.DB {
   }
 
   _, err = db.Exec(`
+    CREATE TABLE IF NOT EXISTS comments_interactions (
+      comment_id INT REFERENCES comments(id) ON DELETE CASCADE,
+      fingerprint TEXT NOT NULL,
+      like BOOLEAN NOT NULL,
+      PRIMARY KEY (fingerprint, comment_id, like)
+    );
+  `)
+  if err != nil {
+    fmt.Println("Error creating table comments_interactions")
+  }
+
+  _, err = db.Exec(`
     CREATE TABLE IF NOT EXISTS users (
-      uuid UUID PRIMARY KEY,
+      fingerprint TEXT PRIMARY KEY,
       location GEOGRAPHY(POINT, 4326) NOT NULL
     );
   `)

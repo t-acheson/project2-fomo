@@ -7,12 +7,11 @@ import (
   "io"
   "time"
   "encoding/json"
-  "github.com/google/uuid"
   "github.com/lib/pq"
 )
 
 type Server struct {
-  conns map[uuid.UUID]*websocket.Conn
+  conns map[string]*websocket.Conn // Map of FingerprintJS fingerprint hash to websocket connection
   //mu sync.Mutex
 }
 
@@ -37,8 +36,8 @@ type WebsocketMessage struct {
   CommentID int `json:"commentid,omitempty"`
   ParentID *int `json:"parentid,omitempty"`
   Text string `json:"text,omitempty"`
-  Likes int `json:"likes,omitempty"`
-  Dislikes int `json:"dislikes,omitempty"`
+  Like bool `json:"like,omitempty"`
+  Dislike bool `json:"dislike,omitempty"`
   Latitude float64 `json:"lat,omitempty"`
   Longitude float64 `json:"lng,omitempty"`
   Tags Tags `json:"tags,omitempty"`
@@ -54,11 +53,11 @@ type WebsocketReply struct {
 
 func NewServer() *Server {
   return &Server {
-    conns: make(map[uuid.UUID]*websocket.Conn),
+    conns: make(map[string]*websocket.Conn),
   }
 }
 
-func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
+func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64, fingerprint string) {
   //s.mu.Lock()
   //defer s.mu.Unlock()
 
@@ -69,8 +68,6 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 		fmt.Println("SetDeadline error:", err)
 		return
 	}
-
-	uuid := uuid.New()
 
 	// A goroutine to handle pings
 	go func() {
@@ -84,11 +81,11 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 	}()
 
   start := time.Now()
-  s.addConnection(uuid, lat, lng)
+  s.addConnection(fingerprint, lat, lng)
   duration := time.Since(start)
   fmt.Println("Added connection to users table in time:", duration)
 
-  s.conns[uuid] = ws
+  s.conns[fingerprint] = ws
 
   // Retreive historical messages
   start = time.Now()
@@ -97,7 +94,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
   fmt.Println("Retreived historical messages for client in time:", duration)
   
   //s.mu.Unlock()
-  s.readLoop(ws)
+  s.readLoop(ws, fingerprint)
   //s.mu.Lock()
 
   fmt.Println("Client disconnected at", ws.RemoteAddr())
@@ -114,22 +111,22 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64) {
 }
 
 // Add websocket client to the users table using their lat/lng
-func (s *Server) addConnection(uuid uuid.UUID, lat float64, lng float64) {
+func (s *Server) addConnection(fingerprint string, lat float64, lng float64) {
   _, err := db.Exec(`
-    INSERT INTO users (uuid, location) VALUES
+    INSERT INTO users (fingerprint, location) VALUES
     ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326))`,
-    uuid, lat, lng,
+    fingerprint, lat, lng,
   )
   if err != nil {
     fmt.Println("Error writing user to users table:", err)
   }
 }
 
-func (s *Server) removeConnection(uuid uuid.UUID) error {
+func (s *Server) removeConnection(fingerprint string) error {
   _, err := db.Exec(`
     DELETE FROM users 
-    WHERE uuid = $1`,
-    uuid,
+    WHERE fingerprint = $1`,
+    fingerprint,
   )
   if err != nil {
     fmt.Println("Error removing user from users table:", err)
@@ -144,7 +141,7 @@ func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
   SELECT id, parent_id, timestamp, text, likes, dislikes, tags
     FROM comments
     WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
-  lat, lng, // CHANGE TO ACTUAL USER LOCATION AFTER FRONTEND INTEGRATION
+  lat, lng,
   )
   defer rows.Close()
   
@@ -182,7 +179,7 @@ func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
   }
 }
 
-func (s *Server) readLoop(ws *websocket.Conn) {
+func (s *Server) readLoop(ws *websocket.Conn, fingerprint string) {
   buf := make([]byte, 1024) //1024 bytes of message can be loaded into the buffer
   for {
     n, err := ws.Read(buf)
@@ -207,15 +204,15 @@ func (s *Server) readLoop(ws *websocket.Conn) {
 			  break 
 		  }
 		} else {
-      s.handleMessage(message) // Broadcast the message to all clients
+      s.handleMessage(message, fingerprint) // Broadcast the message to all clients
 	  }  
   }
 }
 
-func (s *Server) handleMessage(message WebsocketMessage) {
+func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
   switch message.Type {
   case "new_comment":
-    comment, err := s.insertComment(message.ParentID, message.Text, message.Latitude, message.Longitude, message.Tags)
+    comment, err := s.insertComment(message.ParentID, message.Text, message.Latitude, message.Longitude, message.Tags, fingerprint)
     if err != nil {
       fmt.Println("Error writing comment to db:", err)
       return
@@ -226,7 +223,7 @@ func (s *Server) handleMessage(message WebsocketMessage) {
     }, message.Latitude, message.Longitude)
 
   case "like_update":
-    likeLat, likeLng, err := s.interact(message.CommentID, "likes", message.Likes)
+    likeLat, likeLng, err := s.interact(message.CommentID, "likes", message.Like, fingerprint)
     if err != nil {
       fmt.Println("Error updating likes:", err)
       return
@@ -238,7 +235,7 @@ func (s *Server) handleMessage(message WebsocketMessage) {
     }, likeLat, likeLng)
 
   case "dislike_update":
-    dislikeLat, dislikeLng, err := s.interact(message.CommentID, "dislikes", message.Dislikes)
+    dislikeLat, dislikeLng, err := s.interact(message.CommentID, "dislikes", message.Dislike, fingerprint)
     if err != nil {
       fmt.Println("Error updating dislikes:", err)
       return
@@ -250,7 +247,7 @@ func (s *Server) handleMessage(message WebsocketMessage) {
     }, dislikeLat, dislikeLng)
 
   case "reply_update":
-    comment, replyLat, replyLng, err := s.insertReply(message.ParentID, message.Text)
+    comment, replyLat, replyLng, err := s.insertReply(message.ParentID, message.Text, fingerprint)
     if err != nil {
       fmt.Println("Error writing reply to db:", err)
       return
@@ -273,15 +270,15 @@ func (t *Tags) ToSlice() []string {
     return tags
 }
 
-func (s *Server) insertComment(parentID *int, text string, lat float64, lng float64, tags Tags) (Comment, error) {
+func (s *Server) insertComment(parentID *int, text string, lat float64, lng float64, tags Tags, fingerprint string) (Comment, error) {
     var id int
     var timestamp time.Time
 
     err := db.QueryRow(`
-      INSERT INTO comments (parent_id, text, location, timestamp, tags) VALUES
-      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5, $6)
+      INSERT INTO comments (parent_id, text, location, timestamp, tags, author) VALUES
+      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5, $6, $7)
       RETURNING id, timestamp;`,
-      parentID, text, lat, lng, time.Now(), pq.Array(tags.ToSlice())).Scan(&id, &timestamp)
+      parentID, text, lat, lng, time.Now(), pq.Array(tags.ToSlice()), fingerprint).Scan(&id, &timestamp)
       if err != nil {
       fmt.Println("Error writing to table comments:", err)
       return Comment{}, err
@@ -298,16 +295,16 @@ func (s *Server) insertComment(parentID *int, text string, lat float64, lng floa
     }, nil
 }
 
-func (s *Server) insertReply(parentID *int, text string) (Comment, float64, float64, error) {
+func (s *Server) insertReply(parentID *int, text string, fingerprint string) (Comment, float64, float64, error) {
   var id int
   var timestamp time.Time
   var lat, lng float64
 
   err := db.QueryRow(`
-    INSERT INTO comments (parent_id, text, location, timestamp) VALUES
-    ($1, $2, (SELECT location FROM comments WHERE id = $1), $3)
+    INSERT INTO comments (parent_id, text, location, timestamp, author) VALUES
+    ($1, $2, (SELECT location FROM comments WHERE id = $1), $3, $4)
     RETURNING id, timestamp, ST_X(location::geometry), ST_Y(location::geometry);`,
-    parentID, text, time.Now()).Scan(&id, &timestamp, &lat, &lng)
+    parentID, text, time.Now(), fingerprint).Scan(&id, &timestamp, &lat, &lng)
   if err != nil {
     fmt.Println("Error writing reply to table comments:", err)
     return Comment{}, 0, 0, err
@@ -323,9 +320,74 @@ func (s *Server) insertReply(parentID *int, text string) (Comment, float64, floa
   }, lat, lng, nil
 }
 
-func (s *Server) interact(id int, column string, value int) (float64, float64, error) {
+func checkInteraction(commentid int, fingerprint string, like bool) (bool, err) {
+  var exists bool
+  err := db.QueryRow(`
+    SELECT EXISTS (
+      SELECT 1
+      FROM comments_interactions
+      WHERE fingerprint = $1
+        AND comment_id = $2
+        AND like = $3
+    );`,fingerprint, commentid, like).Scan(&exists)
+  if err != nil {
+    return false, err
+  }
+  return exists, nil
+}
+
+func (s *Server) interact(id int, column string, value bool, fingerprint string) (float64, float64, error) {
+    if column == "likes" { // User wants to add or remove a like
+      exists, err := checkInteraction(id, fingerprint, 1)
+    } else { // User wants to add or remove a dislike
+      exists, err := checkInteraction(id, fingerprint, 0)
+    }
+
+    if err != nil {
+      fmt.Println("Error attempting to interact with comment:", err)
+      return 0, 0, err
+    }
+
+    if value == 1 { //User wants to add a like/dislike
+      if exists {
+        return 0, 0, err // Like already exists, throw error
+      }
+    } else { // User wants to remove a like/dislike
+      if !exists {
+        return 0, 0, err // User hasn't liked/disliked the comment so the interaction can't be removed
+      }
+    }
+  // If the function hasnt returned by now its safe to update the database
+
+  var update string
+  if value == 1 {
+    update = '+ 1'
+    
+    _, err := db.Exec(`
+    INSERT INTO comments_interactions (comment_id, fingerprint, like) VALUES
+    ($1, $2, $3);`, id, fingerprint, value)
+
+    if err != nil {
+      fmt.Println("Failed to insert new comment interaction:", err)
+      return 0, 0, err
+    }
+  } else {
+    update = '- 1'
+
+     _, err := db.Exec(`
+    DELETE FROM comments_interactions
+    WHERE comment_id = $1
+      AND fingerprint = $2
+      AND like = $3;`, id, fingerprint, value)
+
+    if err != nil {
+      fmt.Println("Failed to remove comment interaction:", err)
+      return 0, 0, err
+    }
+  }
+
   var lat, lng float64
-  query := fmt.Sprintf("UPDATE comments SET %s = $1 WHERE id = $2 RETURNING ST_X(location::geometry), ST_Y(location::geometry);", column)
+  query := fmt.Sprintf("UPDATE comments SET %s = %s %s WHERE id = $2 RETURNING ST_X(location::geometry), ST_Y(location::geometry);", column, column, update)
   err := db.QueryRow(query, value, id).Scan(&lat, &lng)
   if err != nil {
     fmt.Println("Error updating the likes/dislikes of comment:", err)
@@ -334,10 +396,10 @@ func (s *Server) interact(id int, column string, value int) (float64, float64, e
   return lat, lng, nil
 }
 
-func (s *Server) findClose(lat float64, lng float64) ([]uuid.UUID, error) {
+func (s *Server) findClose(lat float64, lng float64) ([]string, error) {
 
   rows, err := db.Query(`
-    SELECT uuid
+    SELECT fingerprint
     FROM users
     WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
     lat, lng,
@@ -348,29 +410,29 @@ func (s *Server) findClose(lat float64, lng float64) ([]uuid.UUID, error) {
     }
   defer rows.Close()
 
-  var uuids []uuid.UUID
+  var fingerprints []string
 
   for rows.Next() {
-    var uuid uuid.UUID
-    if err := rows.Scan(&uuid); err != nil {
+    var fingerprint string
+    if err := rows.Scan(&fingerprint); err != nil {
       return nil, err
     }
-    uuids = append(uuids, uuid)
+    fingerprints = append(fingerprints, fingerprint)
   }
 
-  return uuids, nil
+  return fingerprints, nil
 }
 
 func (s *Server) broadcast(reply WebsocketReply, lat float64, lng float64) {
 
-  closeUUIDs, err := s.findClose(lat, lng)
+  closeFingerprints, err := s.findClose(lat, lng)
   if err != nil {
     fmt.Println("Unable to broadcast. Error retrieving close users: ", err)
     return
   }
 
-  for _, uuid := range closeUUIDs {
-    if ws, ok := s.conns[uuid]; ok {
+  for _, fingerprint := range closeFingerprints {
+    if ws, ok := s.conns[fingerprint]; ok {
       go func(ws *websocket.Conn) {
         message, err := json.Marshal(reply)
         if err != nil {

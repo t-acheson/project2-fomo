@@ -55,7 +55,11 @@ function App() {
       lng: -73.98422384354889
     };
     setLocation(hardcodedLocation);
-    sendLocation(hardcodedLocation);
+
+    // Retrieve the fingerprint and send it along with the location
+    getFingerprint().then(fingerprint => {
+      sendLocation({ ...hardcodedLocation, fingerprint });
+    });
   }, []);
 //* testing use effect start
 

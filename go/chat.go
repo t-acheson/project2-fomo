@@ -223,7 +223,7 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
     }, message.Latitude, message.Longitude)
 
   case "like_update":
-    likeLat, likeLng, updatedLikes, updatedDislikes, err := s.interact(message.CommentID, "likes", message.Like, fingerprint)
+    likeLat, likeLng, updatedLikes, _, err := s.interact(message.CommentID, "likes", message.Like, fingerprint)
     if err != nil {
       fmt.Println("Error updating likes:", err)
       return
@@ -235,7 +235,7 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
     }, likeLat, likeLng)
 
   case "dislike_update":
-    dislikeLat, dislikeLng, updatedLikes, updatedDislikes, err := s.interact(message.CommentID, "dislikes", message.Dislike, fingerprint)
+    dislikeLat, dislikeLng, _, updatedDislikes, err := s.interact(message.CommentID, "dislikes", message.Dislike, fingerprint)
     if err != nil {
       fmt.Println("Error updating dislikes:", err)
       return
@@ -320,7 +320,7 @@ func (s *Server) insertReply(parentID *int, text string, fingerprint string) (Co
   }, lat, lng, nil
 }
 
-func checkInteraction(commentid int, fingerprint string, like bool) (bool, err) {
+func checkInteraction(commentid int, fingerprint string, like bool) (bool, error) {
   var exists bool
   err := db.QueryRow(`
     SELECT EXISTS (
@@ -393,8 +393,8 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
   // Interaction has been added. Update the comments table
   var lat, lng float64
   var likes, dislikes int
-  query := fmt.Sprintf("UPDATE comments SET %s = %s %s WHERE id = $2 RETURNING ST_X(location::geometry), ST_Y(location::geometry), likes, dislikes;", column, column, update)
-  err := db.QueryRow(query, value, id).Scan(&lat, &lng, &likes, &dislikes)
+  query := fmt.Sprintf("UPDATE comments SET %s = %s %s WHERE id = $1 RETURNING ST_X(location::geometry), ST_Y(location::geometry), likes, dislikes;", column, column, update)
+  err = db.QueryRow(query, id).Scan(&lat, &lng, &likes, &dislikes)
   if err != nil {
     fmt.Println("Error updating the likes/dislikes of comment:", err)
     return 0, 0, 0, 0, err

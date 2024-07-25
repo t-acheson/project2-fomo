@@ -116,7 +116,7 @@ func connectToPostgres() *sql.DB {
     );
   `)
   if err != nil {
-    fmt.Println("Error creating table comments_interactions")
+    fmt.Println("Error creating table comments_interactions:", err)
   }
 
   _, err = db.Exec(`

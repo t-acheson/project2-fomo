@@ -66,16 +66,16 @@ cursor.execute(update_geom_sql)
 connection.commit()
 
 # Add default values to parent_id column, tags column, and likes/dislikes columns
-update_defaults_sql = """
-UPDATE comments_fs2
-SET parent_id = NULL,
-    tags = COALESCE(tags, '{}'),
-    likes = COALESCE(likes, 0),
-    dislikes = COALESCE(dislikes, 0)
-WHERE parent_id = 0;
-"""
-cursor.execute(update_defaults_sql)
-connection.commit()
+# update_defaults_sql = """
+# UPDATE comments_fs2
+# SET parent_id = NULL,
+#     tags = COALESCE(tags, '{}'),
+#     likes = COALESCE(likes, 0),
+#     dislikes = COALESCE(dislikes, 0)
+# WHERE parent_id = 0;
+# """
+# cursor.execute(update_defaults_sql)
+# connection.commit()
 
 # Close the cursor and connection
 cursor.close()

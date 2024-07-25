@@ -12,7 +12,7 @@ import Footer from './components/footer';
 import './App.css'
 import { sendLocation } from './hooks/webSocket';
 import TimeLock from './components/TimeLock';
-
+import getFingerprint from './hooks/fingerprint';
 // create a context for the location state
 export const LocationContext = createContext(null);
 

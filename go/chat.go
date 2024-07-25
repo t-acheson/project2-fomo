@@ -360,7 +360,7 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
         return 0, 0, 0, 0, err // Like/dislike already exists, throw error
       }
       // Like/dislike is safe to add. Add it to the interactions table
-      update = '+ 1'
+      update = "+ 1"
     
       _, err := db.Exec(`
       INSERT INTO comments_interactions (comment_id, fingerprint, like) VALUES
@@ -377,7 +377,7 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
       }
       // Like/dislike is safe to remove from interactions table
 
-      update = '- 1'
+      update = "- 1"
 
       _, err := db.Exec(`
       DELETE FROM comments_interactions
@@ -387,7 +387,7 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
 
       if err != nil {
         fmt.Println("Failed to remove comment interaction:", err)
-        return 0, 0, 0, 0 err
+        return 0, 0, 0, 0, err
       } 
     }
   // Interaction has been added. Update the comments table

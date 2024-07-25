@@ -328,7 +328,7 @@ func checkInteraction(commentid int, fingerprint string, like bool) (bool, error
       FROM comments_interactions
       WHERE fingerprint = $1
         AND comment_id = $2
-        AND like = $3
+        AND "like" = $3
     );`,fingerprint, commentid, like).Scan(&exists)
   if err != nil {
     return false, err
@@ -363,7 +363,7 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
       update = "+ 1"
     
       _, err := db.Exec(`
-      INSERT INTO comments_interactions (comment_id, fingerprint, like) VALUES
+      INSERT INTO comments_interactions (comment_id, fingerprint, "like") VALUES
       ($1, $2, $3);`, id, fingerprint, like)
 
       if err != nil {
@@ -383,7 +383,7 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
       DELETE FROM comments_interactions
       WHERE comment_id = $1
       AND fingerprint = $2
-      AND like = $3;`, id, fingerprint, like)
+      AND "like" = $3;`, id, fingerprint, like)
 
       if err != nil {
         fmt.Println("Failed to remove comment interaction:", err)

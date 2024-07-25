@@ -46,7 +46,7 @@ cursor = connection.cursor()
 
 # Need to add new columns to existing comments_fs table
 alter_table_sql = """
-ALTER TABLE comments_fs
+ALTER TABLE comments_fs2
 ADD COLUMN IF NOT EXISTS geom geometry(Point, 4326),
 ADD COLUMN IF NOT EXISTS parent_id INT,
 ADD COLUMN IF NOT EXISTS tags TEXT,
@@ -58,7 +58,7 @@ connection.commit()
 
 # Combine longitude and latitude into a geolocation point to match format of the comments table
 update_geom_sql = """
-UPDATE comments_fs
+UPDATE comments_fs2
 SET geom = ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)
 WHERE geom IS NULL;
 """
@@ -67,7 +67,7 @@ connection.commit()
 
 # Add default values to parent_id column, tags column, and likes/dislikes columns
 update_defaults_sql = """
-UPDATE comments_fs
+UPDATE comments_fs2
 SET parent_id = NULL,
     tags = COALESCE(tags, '{}'),
     likes = COALESCE(likes, 0),
@@ -76,22 +76,6 @@ WHERE parent_id = 0;
 """
 cursor.execute(update_defaults_sql)
 connection.commit()
-
-# # Start: define function to commit values to comments_fs table
-# def comments_to_db(name, address, comment, created_at, latitude, longitude, parent_id=0, tags='{}', likes=0, dislikes=0):
-#     # Convert created_at to datetime matching comments table
-#     if created_at is not None:
-#         created_at = datetime.datetime.strptime(created_at, '%Y-%m-%dT%H:%M:%S.%fZ')
-
-#     geom = f"SRID=4326;POINT({longitude} {latitude})"
-#     vals = (name, address, comment, created_at, latitude, longitude, geom, parent_id, tags, likes, dislikes)
-#     cursor.execute("""
-#         INSERT INTO comments_fs (name, address, comment, created_at, latitude, longitude, geom, parent_id, tags, likes, dislikes) 
-#         VALUES (%s, %s, %s, %s, %s, %s, ST_GeomFromText(%s), %s, %s, %s, %s)
-#     """, vals)
-#     connection.commit()
-# # End: function committing values to comments_fs table
-
 
 # Close the cursor and connection
 cursor.close()

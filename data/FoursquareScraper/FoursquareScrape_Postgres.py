@@ -31,7 +31,7 @@ manhattan = [
     #"NoHo", "Roosevelt Island", "SoHo", 
     #"Times Square", "Union Square", "Wall Street",
     #"Yorkville", "Beekman Place", "Chelsea",
-    "East Village", "Flatiron", "Greenwich Village",
+    #"East Village", "Flatiron", "Greenwich Village",
     
     #Start here
     #"Chinatown", "Civic Center", "Clinton",
@@ -39,7 +39,8 @@ manhattan = [
     #"Lincoln Square", "Little Italy", "Lower East Side",
     #"Manhattanville", "Midtown", "Midtown South",
     #"Morningside Heights", "Murray Hill", "South Village",
-    #"Stuyvesant Town", "Sutton Place", "Tribeca",
+    #"Stuyvesant Town", "Sutton Place", 
+    "Tribeca",
     #"Tudor City", "Turtle Bay", "Upper East Side",
     #"Upper West Side", "Washington Heights", "West Village"
 ]
@@ -53,7 +54,7 @@ bronx = [
     #"North Riverdale", "Olinville", "Parkchester",
     #"Riverdale", "Schuylerville", "Throgs Neck", 
     #"Unionport", "Van Nest", "Wakefield",
-    "Baychester", "City Island", "Eastchester",
+    #"Baychester", "City Island", "Eastchester",
     
     
     # Start here
@@ -80,7 +81,7 @@ statenIsland = [
     #"Oakwood", "Park Hill", "Randall Manor", 
     #"Sandy Ground", "Todt Hill", "Ward Hill", 
     #"Arden Heights", "Bloomfield", "Charleston",
-    "Elm Park", "Grant City", "Howland Hook",
+    #"Elm Park", "Grant City", "Howland Hook",
     
     # Start
     #"Arlington", "Arrochar", "Bulls Head",
@@ -108,7 +109,7 @@ brooklyn = [
     #"Paerdegat Basin", "Red Hook", "Sea Gate", 
     #"Tompkins Park North", "Vinegar Hill", "Weeksville", 
     #"Bay Ridge", "Carroll Gardens", "Downtown", 
-    "East New York", "Flatbush", "Gerritsen Beach",
+    #"East New York", "Flatbush", "Gerritsen Beach",
     
     # Start
     #"Bedford Stuyvesant", "Bensonhurst", "Boerum Hill",
@@ -140,7 +141,7 @@ queens = [
     #"Oakland Gardens", "Pomonok", "Queens Village", 
     #"Ravenswood", "Seaside", "Utopia", 
     #"Whitestone", "Astoria", "Bayside", 
-    "Clearview", "Dutch Kills", "Edgemere",
+    #"Clearview", "Dutch Kills", "Edgemere",
     
     # Start
     #"Astoria Heights", "Auburndale", "Bayswater",
@@ -318,7 +319,7 @@ for borough in boroughs:
             #Initialise for loop to iterate through categories
             for category in categories:
                 # use string to insert each iterable of category and m into the url
-                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={m}%2CNY&limit=50"
+                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={m}%2CNY&limit=2"
                 responsem = requests.get(url, headers=headers)
                 data1 = responsem.json()
                 # Add API response data (stored in variable data1) to responses list

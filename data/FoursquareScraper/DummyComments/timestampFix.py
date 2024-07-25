@@ -1,8 +1,4 @@
-# Following code is essentially the same as updateTags.py code but has been adapted to assign likes and dislikes to comments
-# Separated from tag assignment as connection to postgres times out before completing assignment
-
 import psycopg2
-import random
 from sshtunnel import SSHTunnelForwarder
 from dotenv import load_dotenv
 import os
@@ -42,24 +38,22 @@ connection = psycopg2.connect(
 
 cursor = connection.cursor()
 
-# Get all comment ids
-cursor.execute("SELECT id FROM comments_fs2")
-comment_ids = cursor.fetchall()
+# Update the timestamp and location columns
+update_sql = """
+UPDATE dummy_comments2
+SET
+    timestamp = TO_TIMESTAMP(timestamp, 'YYYY-MM-DD HH24:MI:SS.US+00'),
+    location = ST_SetSRID(ST_GeomFromEWKB(location), 4326)
+WHERE
+    timestamp IS NOT NULL
+    AND location IS NOT NULL;
+"""
 
-# Update each row with a random number of likes and dislikes between 0 and 10
-for comment_id in comment_ids:
-    random_likes = random.randint(0, 10)
-    random_dislikes = random.randint(0, 10)
-    cursor.execute(
-        "UPDATE comments_fs2 SET likes = %s, dislikes = %s WHERE id = %s",
-        (random_likes, random_dislikes, comment_id)
-    )
-    print(f"Comment ID {comment_id[0]}, Likes: {random_likes}, Dislikes: {random_dislikes}")
-
-
+cursor.execute(update_sql)
 connection.commit()
-
 
 cursor.close()
 connection.close()
 tunnel.stop()
+
+print("Timestamp and location columns have been updated.")

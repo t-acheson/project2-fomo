@@ -54,14 +54,14 @@ def get_random_tags(tags_list, min_count=1, max_count=3):
 
 
 # Get all comment ids
-cursor.execute("SELECT id FROM comments_fs WHERE tags = '{}'")
+cursor.execute("SELECT id FROM comments_fs2 WHERE tags IS NULL")
 comment_ids = cursor.fetchall()
 
 # Update rows with 1 to 3 random tags for each comment
 for comment_id in comment_ids:
     random_tags = get_random_tags(possible_tags)
     cursor.execute(
-        "UPDATE comments_fs SET tags = %s WHERE id = %s",
+        "UPDATE comments_fs2 SET tags = %s WHERE id = %s",
         (random_tags, comment_id)
     )
     print(f"Assigned tags {random_tags} to comment ID {comment_id[0]}")

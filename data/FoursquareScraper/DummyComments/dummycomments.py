@@ -40,7 +40,7 @@ cursor = connection.cursor()
 
 # Create the new table matching official comments table
 create_table_sql = """
-CREATE TABLE IF NOT EXISTS dummy_comments (
+CREATE TABLE IF NOT EXISTS dummy_comments2 (
     id SERIAL PRIMARY KEY,
     parent_id INT DEFAULT NULL,
     timestamp TIMESTAMPTZ NOT NULL,
@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS dummy_comments (
 );
 """
 
-# cursor.execute("DROP TABLE IF EXISTS dummy_comments;")
-# connection.commit()
+cursor.execute("DROP TABLE IF EXISTS dummy_comments2;")
+connection.commit()
 
 # Create new table
 cursor.execute(create_table_sql)
@@ -61,7 +61,7 @@ connection.commit()
 
 # Copy relevant data from comments_fs to dummy_comments
 copy_data_sql = """
-INSERT INTO dummy_comments (parent_id, timestamp, text, location, likes, dislikes, tags)
+INSERT INTO dummy_comments2 (parent_id, timestamp, text, location, likes, dislikes, tags)
 SELECT parent_id, created_at, comment, geom, likes, dislikes, 
     CASE 
         WHEN tags = '{}' THEN '{}'
@@ -75,7 +75,7 @@ SELECT parent_id, created_at, comment, geom, likes, dislikes,
                 '}', '}'
             )::TEXT[]
     END
-FROM comments_fs;
+FROM comments_fs2;
 """
 
 cursor.execute(copy_data_sql)

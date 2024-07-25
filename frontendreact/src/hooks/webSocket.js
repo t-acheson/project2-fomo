@@ -15,7 +15,7 @@ socket.addEventListener('message', function (event) {
 
 // Listen for errors
 socket.addEventListener('error', function (event) {
-    console.error('WebSocket error:', event);
+    console.error('WebSocket error:', event.data);
 });
 
 // Listen for connection close

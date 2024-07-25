@@ -44,13 +44,13 @@ const FeedPage = () => {
       if (type === 'new_comment') {
         setComments((prevComments) => {
           const updatedComments = [...prevComments, comment];
-          console.log('Updated comments state (new_comment):', updatedComments);
+          // console.log('Updated comments state (new_comment):', updatedComments);
           return updatedComments;
         });
       } else if (type === 'reply_update') {
         setComments((prevComments) => {
           const updatedComments = [...prevComments, comment]; // Add reply directly without nesting
-          console.log('Updated comments state (reply_update):', updatedComments);
+          // console.log('Updated comments state (reply_update):', updatedComments);
           return updatedComments;
         });
       } else if (type === 'like_update') {

@@ -56,13 +56,10 @@ function App() {
       lng: -73.98422384354889
     };
     setLocation(hardcodedLocation);
+
+    // Retrieve the fingerprint and send it along with the location
     getFingerprint().then(fingerprint => {
-      console.log('Fingerprint obtained:', fingerprint);
-      const dataToSend = { ...hardcodedLocation, fingerprint };
-      console.log('Data to send:', dataToSend);
-      sendLocation(dataToSend);
-    }).catch(error => {
-      console.error('Error obtaining fingerprint:', error);
+      sendLocation({ ...hardcodedLocation, fingerprint });
     });
   }, []);
 //* testing use effect start

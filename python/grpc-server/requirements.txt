@@ -5,3 +5,7 @@ pandas
 pytz
 scikit-learn
 flake8
+xgboost
+psycopg2
+python-dotenv
+sshtunnel

@@ -361,7 +361,7 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
       }
       // Like/dislike is safe to add. Add it to the interactions table
       update = "+ 1"
-    
+ 
       _, err := db.Exec(`
       INSERT INTO comments_interactions (comment_id, fingerprint, "like") VALUES
       ($1, $2, $3);`, id, fingerprint, like)

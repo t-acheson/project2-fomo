@@ -46,7 +46,7 @@ cursor = connection.cursor()
 
 # Need to add new columns to existing comments_fs table
 alter_table_sql = """
-ALTER TABLE comments_fs2
+ALTER TABLE comments_fs3
 ADD COLUMN IF NOT EXISTS geom geometry(Point, 4326),
 ADD COLUMN IF NOT EXISTS parent_id INT,
 ADD COLUMN IF NOT EXISTS tags TEXT,
@@ -58,7 +58,7 @@ connection.commit()
 
 # Combine longitude and latitude into a geolocation point to match format of the comments table
 update_geom_sql = """
-UPDATE comments_fs2
+UPDATE comments_fs3
 SET geom = ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)
 WHERE geom IS NULL;
 """

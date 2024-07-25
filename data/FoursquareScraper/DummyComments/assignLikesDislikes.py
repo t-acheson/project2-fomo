@@ -43,7 +43,7 @@ connection = psycopg2.connect(
 cursor = connection.cursor()
 
 # Get all comment ids
-cursor.execute("SELECT id FROM comments_fs2")
+cursor.execute("SELECT id FROM comments_fs3")
 comment_ids = cursor.fetchall()
 
 # Update each row with a random number of likes and dislikes between 0 and 10
@@ -51,7 +51,7 @@ for comment_id in comment_ids:
     random_likes = random.randint(0, 10)
     random_dislikes = random.randint(0, 10)
     cursor.execute(
-        "UPDATE comments_fs2 SET likes = %s, dislikes = %s WHERE id = %s",
+        "UPDATE comments_fs3 SET likes = %s, dislikes = %s WHERE id = %s",
         (random_likes, random_dislikes, comment_id)
     )
     print(f"Comment ID {comment_id[0]}, Likes: {random_likes}, Dislikes: {random_dislikes}")

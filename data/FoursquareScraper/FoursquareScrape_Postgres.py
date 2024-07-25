@@ -34,6 +34,7 @@ manhattan = [
     #"East Village", "Flatiron", "Greenwich Village",
     
     #Start here
+    #* Following in comments_fs2
     #"Chinatown", "Civic Center", "Clinton",
     #"Herald Square", "Hudson Square", "Harlem",
     #"Lincoln Square", "Little Italy", "Lower East Side",
@@ -41,7 +42,8 @@ manhattan = [
     #"Morningside Heights", "Murray Hill", "South Village",
     #"Stuyvesant Town", "Sutton Place", "Tribeca",
     #"Tudor City", "Turtle Bay", "Upper East Side",
-    "Upper West Side", "Washington Heights", "West Village"
+    #! Trouble inserting this pull in database but mostly complete
+    #"Upper West Side", "Washington Heights", "West Village"
 ]
 
 # Bronx neighborhoods
@@ -57,6 +59,7 @@ bronx = [
     
     
     # Start here
+    #* Following in comments_fs2
     #"Bedford Park", "Belmont", "Bronxdale",
     #"Bronx Park South", "Bronx River", "Claremont Village",
     #"Clason Point", "Concourse", "Concourse Village",
@@ -64,7 +67,10 @@ bronx = [
     #"Edgewater Park", "Fordham", "Hunts Point", 
     #"Kingsbridge Heights", "Melrose", "Morris Heights",
     #"Morris Park", "Morrisania", "Mott Haven", 
-    "Mount Eden", "Mount Hope", "Norwood",
+    #! Trouble inserting this pull in database but mostly complete
+    #"Mount Eden", "Mount Hope", "Norwood",
+    
+    #* Following in comments_fs3
     #"Pelham Bay", "Pelham Gardens", "Pelham Parkway",
     #"Port Morris", "Soundview", "Spuyten Duyvil",
     #"University Heights", "West Farms", "Westchester Square", 
@@ -83,6 +89,7 @@ statenIsland = [
     #"Elm Park", "Grant City", "Howland Hook",
     
     # Start
+    #* Following in comments_fs2
     #"Arlington", "Arrochar", "Bulls Head",
     #"Butler Manor", "Clifton", "Concord",
     #"Chelsea", "Eltingville", "Emerson Hill",
@@ -90,7 +97,10 @@ statenIsland = [
     #"Grymes Hill", "Huguenot", "Livingston",
     #"Mariner's Harbor", "Midland Beach", "New Dorp",
     #"New Dorp Beach", "New Springville", "Old Place",
-    "Old Town", "Pleasant Plains", "Port Ivory",
+    #! Trouble inserting this pull in database but mostly complete
+    #"Old Town", "Pleasant Plains", "Port Ivory",
+    
+    #* Following in comments_fs3
     #"Port Richmond", "Prince's Bay", "Richmond Town", 
     #"Richmond Valley", "Rosebank", "Rossville", 
     #"Shore Acres", "Silver Lake", "South Beach",
@@ -111,6 +121,7 @@ brooklyn = [
     #"East New York", "Flatbush", "Gerritsen Beach",
     
     # Start
+    #* Following in comments_fs2
     #"Bedford Stuyvesant", "Bensonhurst", "Boerum Hill",
     #"Borough Park", "Brighton Beach", "Brooklyn Heights",
     #"Brownsville", "Bushwick", "City Line",
@@ -118,7 +129,10 @@ brooklyn = [
     #"Crown Heights", "Cypress Hills", "DUMBO",
     #"Dyker Heights", "East Williamsburg", "Flatlands",
     #"Fort Greene", "Fort Hamilton", "Fulton Ferry",
-    "Gowanus", "Gravesend", "Greenpoint",
+    #! Trouble inserting this pull in database but mostly complete
+    #"Gowanus", "Gravesend", "Greenpoint",
+    
+    #* Following in comments_fs3
     #"Homecrest", "Kings Highway", "Manhattan Terrace",
     #"Mapleton", "Marine Park", "Midwood",
     #"Mill Basin", "Mill Island", "New Lots",
@@ -143,6 +157,7 @@ queens = [
     #"Clearview", "Dutch Kills", "Edgemere",
     
     # Start
+    #* Following in comments_fs2
     #"Astoria Heights", "Auburndale", "Bayswater",
     #"Beechhurst", "Bellaire", "Belle Harbor",
     #"Bellerose", "Blissville", "Breezy Point",
@@ -150,7 +165,10 @@ queens = [
     #"College Point", "Elmhurst", "Floral Park",
     #"Flushing", "Forest Hills", "Forest Hills Gardens", 
     #"Fresh Meadows", "Glendale", "Hillcrest",
-    "Holliswood", "Hollis", "Howard Beach",
+    #! Trouble inserting this pull in database but mostly complete
+    #"Holliswood", "Hollis", "Howard Beach",
+    
+    #* Following in comments_fs3
     #"Hunters Point", "Jamaica", "Jamaica Center",
     #"Jamaica Estates", "Jamaica Hills", "Kew Gardens Hills",
     #"Lefrak City", "Little Neck", "Long Island City",
@@ -160,9 +178,9 @@ queens = [
     #"Richmond Hill", "Ridgewood", "Rochdale",
     #"Rockaway Park", "Rosedale", "Roxbury",
     #"South Corona", "Somerville", "South Jamaica", 
-    #"South Ozone Park", "Springfield Gardens", "St. Albans",
-    #"Steinway", "Sunnyside", "Sunnyside Gardens", 
-    #"Woodhaven", "Woodside"
+    "South Ozone Park", "Springfield Gardens", "St. Albans",
+    "Steinway", "Sunnyside", "Sunnyside Gardens", 
+    "Woodhaven", "Woodside"
 ]
 
 # 6 categories to stay under 30,000
@@ -261,7 +279,7 @@ cursor = connection.cursor()
 
 # Create table for New York weather data
 sql = """
-CREATE TABLE IF NOT EXISTS comments_fs2 (
+CREATE TABLE IF NOT EXISTS comments_fs3 (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255),
     address VARCHAR(255),
@@ -292,7 +310,7 @@ def comments_to_db(name, address, comment, created_at, latitude, longitude):
         
     vals = (name, address, comment, created_at, latitude, longitude)
     # Insert into table - list name, address etc. again to specify the column heading of table to insert vals into
-    cursor.execute("INSERT INTO comments_fs2 (name, address, comment, created_at, latitude, longitude) VALUES (%s, %s, %s, %s, %s, %s)", vals)
+    cursor.execute("INSERT INTO comments_fs3 (name, address, comment, created_at, latitude, longitude) VALUES (%s, %s, %s, %s, %s, %s)", vals)
     connection.commit()
 # end : function to commit Comments to database
                         

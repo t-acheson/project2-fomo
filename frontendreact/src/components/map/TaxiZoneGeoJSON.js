@@ -19,7 +19,7 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
   const fetchTopComment = async (lat, lng) => {
     console.log('Fetching top comment for lat:', lat, 'lng:', lng);
     try {
-      const response = await fetch('/api/topcomment', {
+      const response = await fetch('topcomment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

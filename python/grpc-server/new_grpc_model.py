@@ -30,8 +30,10 @@ POSTGRES_DB = os.getenv('POSTGRES_DB')
 POSTGRES_PORT = int(os.getenv('POSTGRES_PORT'))
 
 # Load model
+
+#! New model: 'xgb_model.pkl'
 try:
-    with open('xgb_model.pkl', 'rb') as file:
+    with open('RF_m1.pkl', 'rb') as file:
         model = pickle.load(file)
     print("Model loaded successfully.")
 except Exception as e:
@@ -147,7 +149,7 @@ def ridership_to_category(raw_prediction):
 # Start: define function to call inputs and model to output predicted busyness
 def predict_busyness(locationid):
     # Fetch the latest weather data
-    weather_data = fetch_weather(locationid)
+    #weather_data = fetch_weather(locationid)
 
     # Current datetime - New York
     now = datetime.now(ny_tz)
@@ -159,54 +161,60 @@ def predict_busyness(locationid):
     hour = future_time.hour
     day = future_time.day
     month = future_time.month
-    #weekday = future_time.weekday()
-    year = future_time.year
+    weekday = future_time.weekday()
+    #year = future_time.year
     
     # Check if there is an event
-    has_event = check_event_on(future_time)
-    events = 1 if has_event else 0
+    #has_event = check_event_on(future_time)
+    #events = 1 if has_event else 0
         
     # Input features
     input_data = pd.DataFrame({
         'locationid': [locationid],
-        'year': [year],
-        'month': [month],
-        'day': [day],
+        #'year': [year],
         'hour': [hour],
-        #'weekday': [weekday]
+        'day': [day],
+        'month': [month],
+        #'day': [day],
+        #'hour': [hour],
+        'weekday': [weekday],
         
-        'temperature_2m (°C)': [weather_data['temperature_2m (°C)']],
-        'windspeed_10m (km/h)': [weather_data['windspeed_10m (km/h)']],
-        'winddirection_10m (°)': [weather_data['winddirection_10m (°)']],
-        'sentiment': [1],
-        'events': [events],
+        # 'temperature_2m (°C)': [weather_data['temperature_2m (°C)']],
+        # 'windspeed_10m (km/h)': [weather_data['windspeed_10m (km/h)']],
+        # 'winddirection_10m (°)': [weather_data['winddirection_10m (°)']],
+        # 'sentiment': [1],
+        # 'events': [events],
         
     })
     
     input_data['locationid'] = input_data['locationid'].astype('float64')
-    input_data['hour'] = input_data['hour'].astype('float64')
-    input_data['day'] = input_data['day'].astype('int32')
-    input_data['month'] = input_data['month'].astype('int32')
-    input_data['temperature_2m (°C)'] = input_data['temperature_2m (°C)'].astype('float32')
-    input_data['windspeed_10m (km/h)'] = input_data['windspeed_10m (km/h)'].astype('float32')
-    input_data['winddirection_10m (°)'] = input_data['winddirection_10m (°)'].astype('float32')
-    input_data['sentiment'] = input_data['sentiment'].astype('float64')
-    input_data['events'] = input_data['events'].astype('int64')
-    input_data['year'] = input_data['year'].astype('float64')
+    input_data['day'] = input_data['day'].astype('category')
+    input_data['month'] = input_data['month'].astype('category')
+    input_data['weekday'] = input_data['weekday'].astype('category')
+    
+    # input_data['hour'] = input_data['hour'].astype('float64')
+    # input_data['day'] = input_data['day'].astype('int32')
+    # input_data['month'] = input_data['month'].astype('int32')
+    # input_data['temperature_2m (°C)'] = input_data['temperature_2m (°C)'].astype('float32')
+    # input_data['windspeed_10m (km/h)'] = input_data['windspeed_10m (km/h)'].astype('float32')
+    # input_data['winddirection_10m (°)'] = input_data['winddirection_10m (°)'].astype('float32')
+    # input_data['sentiment'] = input_data['sentiment'].astype('float64')
+    # input_data['events'] = input_data['events'].astype('int64')
+    # input_data['year'] = input_data['year'].astype('float64')
 
     
     # Predict
     try:
         raw_prediction = model.predict(input_data)
         # replace negatives with 0
-        raw_prediction = np.maximum(raw_prediction, 0) 
+        #raw_prediction = np.maximum(raw_prediction, 0) 
         print("Raw prediction:", raw_prediction)
         
         # Map predicted ridership to busyness category
-        busyness_category = ridership_to_category(raw_prediction[0])
-        print("Busyness category:", busyness_category)
+        #busyness_category = ridership_to_category(raw_prediction[0])
+        #print("Busyness category:", busyness_category)
 
-        return busyness_category/6 #Convert to float
+        return raw_prediction/6 #busyness_category/6 #Convert to float
         
     except Exception as e:
         print(f"Error making prediction: {e}")

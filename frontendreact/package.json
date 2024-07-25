@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^4.4.3",
     "@mapbox/geojson-rewind": "^0.5.2",
     "@react-google-maps/api": "^2.19.3",
     "@testing-library/react": "^16.0.0",

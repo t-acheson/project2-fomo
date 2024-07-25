@@ -111,8 +111,8 @@ func connectToPostgres() *sql.DB {
     CREATE TABLE IF NOT EXISTS comments_interactions (
       comment_id INT REFERENCES comments(id) ON DELETE CASCADE,
       fingerprint TEXT NOT NULL,
-      like BOOLEAN NOT NULL,
-      PRIMARY KEY (fingerprint, comment_id, like)
+      "like" BOOLEAN NOT NULL,
+      PRIMARY KEY (fingerprint, comment_id, "like")
     );
   `)
   if err != nil {

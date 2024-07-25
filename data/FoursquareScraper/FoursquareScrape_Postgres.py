@@ -39,10 +39,9 @@ manhattan = [
     #"Lincoln Square", "Little Italy", "Lower East Side",
     #"Manhattanville", "Midtown", "Midtown South",
     #"Morningside Heights", "Murray Hill", "South Village",
-    #"Stuyvesant Town", "Sutton Place", 
-    "Tribeca",
+    #"Stuyvesant Town", "Sutton Place", "Tribeca",
     #"Tudor City", "Turtle Bay", "Upper East Side",
-    #"Upper West Side", "Washington Heights", "West Village"
+    "Upper West Side", "Washington Heights", "West Village"
 ]
 
 # Bronx neighborhoods
@@ -65,7 +64,7 @@ bronx = [
     #"Edgewater Park", "Fordham", "Hunts Point", 
     #"Kingsbridge Heights", "Melrose", "Morris Heights",
     #"Morris Park", "Morrisania", "Mott Haven", 
-    #"Mount Eden", "Mount Hope", "Norwood",
+    "Mount Eden", "Mount Hope", "Norwood",
     #"Pelham Bay", "Pelham Gardens", "Pelham Parkway",
     #"Port Morris", "Soundview", "Spuyten Duyvil",
     #"University Heights", "West Farms", "Westchester Square", 
@@ -91,7 +90,7 @@ statenIsland = [
     #"Grymes Hill", "Huguenot", "Livingston",
     #"Mariner's Harbor", "Midland Beach", "New Dorp",
     #"New Dorp Beach", "New Springville", "Old Place",
-    #"Old Town", "Pleasant Plains", "Port Ivory",
+    "Old Town", "Pleasant Plains", "Port Ivory",
     #"Port Richmond", "Prince's Bay", "Richmond Town", 
     #"Richmond Valley", "Rosebank", "Rossville", 
     #"Shore Acres", "Silver Lake", "South Beach",
@@ -119,7 +118,7 @@ brooklyn = [
     #"Crown Heights", "Cypress Hills", "DUMBO",
     #"Dyker Heights", "East Williamsburg", "Flatlands",
     #"Fort Greene", "Fort Hamilton", "Fulton Ferry",
-    #"Gowanus", "Gravesend", "Greenpoint",
+    "Gowanus", "Gravesend", "Greenpoint",
     #"Homecrest", "Kings Highway", "Manhattan Terrace",
     #"Mapleton", "Marine Park", "Midwood",
     #"Mill Basin", "Mill Island", "New Lots",
@@ -151,7 +150,7 @@ queens = [
     #"College Point", "Elmhurst", "Floral Park",
     #"Flushing", "Forest Hills", "Forest Hills Gardens", 
     #"Fresh Meadows", "Glendale", "Hillcrest",
-    #"Holliswood", "Hollis", "Howard Beach",
+    "Holliswood", "Hollis", "Howard Beach",
     #"Hunters Point", "Jamaica", "Jamaica Center",
     #"Jamaica Estates", "Jamaica Hills", "Kew Gardens Hills",
     #"Lefrak City", "Little Neck", "Long Island City",
@@ -276,7 +275,7 @@ CREATE TABLE IF NOT EXISTS comments_fs2 (
 
 try:
     #Drop table if table Comments already exists
-    #cursor.execute("DROP TABLE IF EXISTS Comments")
+    #cursor.execute("DROP TABLE IF EXISTS comments_fs2")
     #Create new table - with above commented out, new table only created if doesn't exist
     cursor.execute(sql)
     #Save the changes made to schema
@@ -319,7 +318,7 @@ for borough in boroughs:
             #Initialise for loop to iterate through categories
             for category in categories:
                 # use string to insert each iterable of category and m into the url
-                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={m}%2CNY&limit=2"
+                url = f"https://api.foursquare.com/v3/places/search?categories={category}&fields=name%2Ctips%2Clocation%2Cpopularity&near={m}%2CNY&limit=50"
                 responsem = requests.get(url, headers=headers)
                 data1 = responsem.json()
                 # Add API response data (stored in variable data1) to responses list

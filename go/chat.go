@@ -337,10 +337,13 @@ func checkInteraction(commentid int, fingerprint string, like bool) (bool, err) 
 }
 
 func (s *Server) interact(id int, column string, value bool, fingerprint string) (float64, float64, error) {
+    var exists bool
+    var err error
+
     if column == "likes" { // User wants to add or remove a like
-      exists, err := checkInteraction(id, fingerprint, 1)
+      exists, err = checkInteraction(id, fingerprint, 1)
     } else { // User wants to add or remove a dislike
-      exists, err := checkInteraction(id, fingerprint, 0)
+      exists, err = checkInteraction(id, fingerprint, 0)
     }
 
     if err != nil {

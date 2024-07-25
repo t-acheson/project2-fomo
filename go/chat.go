@@ -114,7 +114,9 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64, f
 func (s *Server) addConnection(fingerprint string, lat float64, lng float64) {
   _, err := db.Exec(`
     INSERT INTO users (fingerprint, location) VALUES
-    ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326))`,
+    ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326))
+    ON CONFLICT (fingerprint)
+    DO UPDATE SET location = EXCLUDED.location;`,
     fingerprint, lat, lng,
   )
   if err != nil {

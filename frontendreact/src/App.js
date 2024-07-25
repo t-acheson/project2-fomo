@@ -10,9 +10,8 @@ import NotificationPage from './pages/NotificationPage';
 import Header from './components/header';
 import Footer from './components/footer';
 import './App.css'
-import { sendLocation } from './hooks/webSocket';
 import TimeLock from './components/TimeLock';
-import getFingerprint from './hooks/fingerprint';
+
 // create a context for the location state
 export const LocationContext = createContext(null);
 
@@ -21,7 +20,8 @@ const TimeLockedFeedPage = TimeLock(FeedPage);
 
 function App() {
  // create a location state
-  const [location, setLocation] = useState(null);
+    const [location, setLocation] = useState(null);
+
 // use the `useEffect` hook to get the user's location
 //! to uncode for actual user location
   // useEffect(() => {
@@ -46,26 +46,17 @@ function App() {
   //   // call the `getLocation` function when the component mounts
   //   getLocation();  
   // }, []);
-
-  // use the `useEffect` hook to set the user's location
-  //* testing use effect start
-  useEffect(() => {
-    const hardcodedLocation = {
-      lat: 40.6478277863495,
-      lng: -73.98422384354889
-    };
-    setLocation(hardcodedLocation);
-
-    // Retrieve the fingerprint and send it along with the location
-    getFingerprint().then(fingerprint => {
-      sendLocation({ ...hardcodedLocation, fingerprint });
-    });
-  }, []);
-//* testing use effect start
+    
+    useEffect(() => {
+      const hardcodedLocation = {
+        lat: 40.6478277863495,
+        lng: -73.98422384354889
+      };
+      setLocation(hardcodedLocation);
+    }, []);
 
 
   return (
-    <LocationContext.Provider value={location}>
       <Router>
         <Header />
         <Routes>
@@ -84,7 +75,6 @@ function App() {
         </Routes>
         <Footer />
       </Router>
-    </LocationContext.Provider>
   );
 }
 

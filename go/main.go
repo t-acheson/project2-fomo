@@ -98,6 +98,7 @@ func main() {
 		var initialMsg struct {
 			Lat float64 `json:"lat"`
 			Lng float64 `json:"lng"`
+			Fingerprint string `json:"fingerprint"`
 		}
 
 		if err := websocket.JSON.Receive(ws, &initialMsg); err != nil {
@@ -106,7 +107,7 @@ func main() {
 		}
 
 		// Call handleWebSocket with conn and lat/lng
-		server.handleWebSocket(ws, initialMsg.Lat, initialMsg.Lng)
+		server.handleWebSocket(ws, initialMsg.Lat, initialMsg.Lng, initialMsg.Fingerprint)
 	}
 
 	http.Handle("/ws", websocket.Handler(websocketHandler))

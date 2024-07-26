@@ -5,7 +5,7 @@ import (
   "strconv"
 )
 
-func runCron() {
+func runScheduler() {
   now := time.Now()
   firstRun := time.Date(now.Year(), now.Month(), now.Day() + 1, 7, 0, 0, 0, time.UTC) // First run is tomorrow at 7am
 

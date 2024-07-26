@@ -79,7 +79,7 @@ func main() {
 	cacheBusyness()
 
 	// Run the timer for archiving comments and updating busyness
-	go runCron()
+	go runScheduler()
 
 	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Define the file server for static files

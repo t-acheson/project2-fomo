@@ -22,9 +22,7 @@ const ResetButton = ({ setViewport }) => {
       >
         Reset
       </button>
-      <div className="reset-button-text">
-        Click to reset map
-      </div>
+      
     </div>
   );
 };

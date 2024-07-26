@@ -80,3 +80,8 @@
     white-space: nowrap;
     border: 0;
 }
+
+.input-box::placeholder {
+    color: black; 
+    opacity: 1;   
+}

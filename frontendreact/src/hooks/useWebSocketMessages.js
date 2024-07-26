@@ -1,10 +1,14 @@
 import { useEffect } from 'react';
 import { listenForMessages, sendMessage } from './webSocket';
+import moment from 'moment-timezone';
 
 const useWebSocketMessages = (setComments) => {
   useEffect(() => {
     const handleMessage = (message) => {
       console.log('New message received:', message);
+
+      // Get the current time in New York
+      const currentTimeNY = moment().tz('America/New_York');
 
       if (message.type === 'ping') {
         // If the message type is 'ping', send back 'pong'
@@ -15,6 +19,17 @@ const useWebSocketMessages = (setComments) => {
       // Assume messages that are simple comment objects
       if (message.id && message.text) {
         const { id, parentid, text, likes, dislikes, timestamp } = message;
+
+        const commentTime = moment(timestamp);
+
+        if (commentTime.isAfter(currentTimeNY)) {
+          // If the comment time is in the future, do not display it
+          console.warn('Received comment with future timestamp:', message);
+          return;
+        }
+
+
+
         setComments((prevComments) => {
           // Update the comments state with the new comment
           const updatedComments = [...prevComments];

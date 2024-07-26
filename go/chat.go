@@ -63,7 +63,8 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64, f
   //s.mu.Lock()
   //defer s.mu.Unlock()
 
-  nyc, err := time.LoadLocation("America/New_York")
+  var err error
+  nyc, err = time.LoadLocation("America/New_York")
 	if err != nil {
 		fmt.Println("Error loading timezone:", err)
 		return
@@ -71,7 +72,7 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64, f
 
   fmt.Println("New incoming connection from client:", ws.RemoteAddr())
 
-  err := ws.SetDeadline(time.Now().Add(60 * time.Second))
+  err = ws.SetDeadline(time.Now().Add(60 * time.Second))
 	if err != nil {
 		fmt.Println("SetDeadline error:", err)
 		return

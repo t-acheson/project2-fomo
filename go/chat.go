@@ -150,14 +150,17 @@ func getSentiment(text string) (int, error) {
   cmd := exec.Command("python3", "GoSentiment.py", text)
   output, err := cmd.Output()
   if err != nil {
+    fmt.Println("Error executing Python script:", err)
     return 0, err
   }
 
   sentiment, err := strconv.Atoi(strings.TrimSpace(string(output)))
   if err != nil {
+    fmt.Println("Error converting sentiment output to integer:", err)
     return 0, err
   }
 
+  fmt.Println("Sentiment score:", sentiment) // Log sentiment score
   return sentiment, nil
 }
 
@@ -317,12 +320,14 @@ func (s *Server) insertComment(parentID *int, text string, lat float64, lng floa
     var id int
     var timestamp time.Time
 
+    fmt.Println("Inserting comment with sentiment:", sentiment) // Log sentiment
+
     err := db.QueryRow(`
       INSERT INTO comments (parent_id, text, location, timestamp, tags, author, sentiment) VALUES
       ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5, $6, $7, $8)
       RETURNING id, timestamp;`,
       parentID, text, lat, lng, time.Now(), pq.Array(tags.ToSlice()), fingerprint, sentiment).Scan(&id, &timestamp)
-      if err != nil {
+    if err != nil {
       fmt.Println("Error writing to table comments:", err)
       return Comment{}, err
     }

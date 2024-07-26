@@ -16,7 +16,7 @@ const CommentDisplay = ({ comments }) => {
         return commentTime.isSameOrBefore(currentTimeNY);
     });
 
-    const nestedComments = nestComments(comments);
+    const nestedComments = nestComments(filteredComments);
     console.log('Nested comments to be displayed:', nestedComments);
     
 

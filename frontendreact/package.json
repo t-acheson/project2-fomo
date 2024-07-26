@@ -55,6 +55,8 @@
     "@babel/preset-react": "^7.24.7",
     "@testing-library/jest-dom": "^6.4.8",
     "babel-jest": "^29.7.0",
+    "jest": "^27.5.1",
+    "jest-fetch-mock": "^3.0.3",
     "web-vitals": "^4.2.0"
   },
   "proxy": "http://localhost:80"

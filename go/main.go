@@ -78,8 +78,8 @@ func main() {
 	// Generate busyness values initially
 	cacheBusyness()
 
-	// Run the crontab for archiving comments and updating busyness
-	runCron()
+	// Run the timer for archiving comments and updating busyness
+	go runScheduler()
 
 	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Define the file server for static files

@@ -100,6 +100,9 @@ func main() {
 	// Set up websocket server
 	server := NewServer()
 
+	// Set postgres timezone and nyc var to new york timezone
+	setTimezone()
+
 	// Define the WebSocket handler function
 websocketHandler := func(ws *websocket.Conn) {
 	var initialMsg InitialMessage

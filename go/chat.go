@@ -59,20 +59,26 @@ func NewServer() *Server {
 
 var nyc *time.Location
 
-func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64, fingerprint string) {
-  //s.mu.Lock()
-  //defer s.mu.Unlock()
+func setTimezone() {
+  _, err := db.Exec("SET TIME ZONE 'America/New_York';")
+  if err != nil {
+    fmt.Println("Error changing the timezone in postgres")
+  }
 
-  var err error
   nyc, err = time.LoadLocation("America/New_York")
 	if err != nil {
 		fmt.Println("Error loading timezone:", err)
 		return
 	}
+}
+
+func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64, fingerprint string) {
+  //s.mu.Lock()
+  //defer s.mu.Unlock()
 
   fmt.Println("New incoming connection from client:", ws.RemoteAddr())
 
-  err = ws.SetDeadline(time.Now().Add(60 * time.Second))
+  err := ws.SetDeadline(time.Now().Add(60 * time.Second))
 	if err != nil {
 		fmt.Println("SetDeadline error:", err)
 		return

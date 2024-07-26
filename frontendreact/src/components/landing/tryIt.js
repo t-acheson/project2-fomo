@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 // import testImg from '../assets/feeds.png';
-import mapImg from '../../assets/Map.png';
+import mapImg from '../../assets/mapdemo.jpg';
 import '../cssFiles/aboutUs.css'
 
 
@@ -18,7 +18,7 @@ function tryIt(){
                 <h2>Try Our Map</h2>
                 <p>Party People Only: 6pm to 6am</p>
                 <a href="/map">
-                        <Image src={mapImg} />
+                        <Image src={mapImg} alt="Map feature demo screenshot" />
                     </a>
             </div>
         </Container>

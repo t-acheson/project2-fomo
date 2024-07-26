@@ -3,21 +3,30 @@ import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 // Singleton WebSocket Manager
 let socket = null;
+let reconnectAttempts = 0;
+const maxReconnectAttempts = 5;
+const reconnectDelay = 5000; // milliseconds
 
 const initializeWebSocket = async () => {
-  if (socket) {
-    console.warn('WebSocket already initialized.');
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    console.warn('WebSocket already initialized and open.');
     return;
+  }
+
+  if (socket) {
+    console.warn('Closing existing WebSocket connection.');
+    socket.close();
   }
 
   socket = new WebSocket('wss://nycfomo.com/ws');
 
-  try {
-    const fp = await FingerprintJS.load();
-    const result = await fp.get();
-    const fingerprint = result.visitorId;
+  //try {
+  
+    socket.addEventListener('open', async (event) => {
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      const fingerprint = result.visitorId;
 
-    socket.onopen = function(event) {
       console.log("WebSocket connection established with server.");
       socket.send(JSON.stringify({
         lat: 40.6478277863495, // Example latitude
@@ -25,10 +34,7 @@ const initializeWebSocket = async () => {
         fingerprint: fingerprint // Send fingerprint data
       }));
       console.log('Location sent from:', fingerprint);
-    };
-
-    socket.addEventListener('open', function(event) {
-      console.log('WebSocket is connected.');
+      reconnectAttempts = 0; // Reset reconnect attempts on successful connection
     });
 
     socket.addEventListener('message', function(event) {
@@ -36,30 +42,40 @@ const initializeWebSocket = async () => {
     });
 
     socket.addEventListener('error', function(event) {
-      console.error('WebSocket error:', event.data);
+      console.error('WebSocket error:', event);
     });
 
     socket.addEventListener('close', function(event) {
       console.log('WebSocket connection closed:', event);
+      if (reconnectAttempts < maxReconnectAttempts) {
+        console.log(`Reconnecting in ${reconnectDelay / 1000} seconds...`);
+        setTimeout(() => {
+          reconnectAttempts++;
+          initializeWebSocket();
+        }, reconnectDelay);
+      } else {
+        console.error('Max reconnect attempts reached. Unable to reconnect.');
+      }
     });
 
-  } catch (error) {
-    console.error('Error initializing WebSocket:', error);
-  }
+  //} catch (error) {
+  //  console.error('Error initializing WebSocket:', error);
+  //}
 };
 
 // Function to send a message to the server
 const sendMessage = (message) => {
-  if (!socket) {
-    console.error('WebSocket is not initialized.');
+  if (!socket || socket.readyState !== WebSocket.OPEN) {
+    console.error('WebSocket is not initialized or not open. Message not sent.');
     return;
   }
+
   console.log('Attempting to send message:', JSON.stringify(message));
-  if (socket.readyState === WebSocket.OPEN) {
+  try {
     socket.send(JSON.stringify(message));
     console.log('Message sent successfully');
-  } else {
-    console.error('WebSocket is not open. Message not sent.');
+  } catch (error) {
+    console.error('Error sending message:', error);
   }
 };
 
@@ -69,6 +85,7 @@ const listenForMessages = (callback) => {
     console.error('WebSocket is not initialized.');
     return () => {};
   }
+
   const handleMessage = (event) => {
     try {
       const messageData = JSON.parse(event.data);
@@ -93,4 +110,3 @@ const listenForMessages = (callback) => {
 initializeWebSocket();
 
 export { sendMessage, listenForMessages };
-

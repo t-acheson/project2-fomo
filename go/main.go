@@ -17,6 +17,13 @@ var db *sql.DB
 
 var busynessMap map[string]float32
 
+// Define a structure for the initial message
+type InitialMessage struct {
+	Lat         float64 `json:"lat"`
+	Lng         float64 `json:"lng"`
+	Fingerprint string  `json:"fingerprint"`
+}
+
 //Redirect HTTP request to HTTPS
 func redirectHTTP(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
@@ -93,22 +100,36 @@ func main() {
 	// Set up websocket server
 	server := NewServer()
 
-	websocketHandler := func(ws *websocket.Conn) {
-		// Require an inital message declaring latitude and longitude
-		var initialMsg struct {
-			Lat float64 `json:"lat"`
-			Lng float64 `json:"lng"`
-			Fingerprint string `json:"fingerprint"`
-		}
+	// Define the WebSocket handler function
+websocketHandler := func(ws *websocket.Conn) {
+	var initialMsg InitialMessage
+	var rawMessage []byte
 
-		if err := websocket.JSON.Receive(ws, &initialMsg); err != nil {
-			fmt.Println("Error receving inital message with lat/lng:",err)
-			return
-		}
-
-		// Call handleWebSocket with conn and lat/lng
-		server.handleWebSocket(ws, initialMsg.Lat, initialMsg.Lng, initialMsg.Fingerprint)
+	// Read the raw message
+	if err := websocket.Message.Receive(ws, &rawMessage); err != nil {
+		fmt.Println("Error receiving raw message:", err)
+		return
 	}
+
+	// Log the raw message data
+	fmt.Println("Raw message received:", string(rawMessage))
+
+	// Attempt to unmarshal the raw message into the struct
+	if err := json.Unmarshal(rawMessage, &initialMsg); err != nil {
+		// Log the raw data and partially parsed fields if unmarshalling fails
+		fmt.Printf("Error unmarshalling JSON: %v\n", err)
+		fmt.Printf("Partial message data: Lat: %f, Lng: %f, Fingerprint: %s\n",
+			initialMsg.Lat, initialMsg.Lng, initialMsg.Fingerprint)
+		return
+	}
+
+	// Log the successfully parsed fields
+	fmt.Printf("Successfully parsed message: Lat: %f, Lng: %f, Fingerprint: %s\n",
+		initialMsg.Lat, initialMsg.Lng, initialMsg.Fingerprint)
+
+	// Call handleWebSocket with the parsed data
+	server.handleWebSocket(ws, initialMsg.Lat, initialMsg.Lng, initialMsg.Fingerprint)
+}
 
 	http.Handle("/ws", websocket.Handler(websocketHandler))
 

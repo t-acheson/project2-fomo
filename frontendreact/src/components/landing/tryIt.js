@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 // import testImg from '../assets/feeds.png';
-import mapImg from '../../assets/mapdemo.jpg';
+import mapImg from '../../assets/newMap.png';
 import '../cssFiles/aboutUs.css'
 
 

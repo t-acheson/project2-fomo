@@ -2,9 +2,20 @@ import React from 'react';
 import { Card, ListGroup } from 'react-bootstrap';
 import Comment from './comment';
 import { nestComments } from './nestedComments';
+import moment from 'moment-timezone';
 
 const CommentDisplay = ({ comments }) => {
     console.log('Comments received in CommentDisplay:', comments);
+
+    // Get the current time in New York
+    const currentTimeNY = moment().tz('America/New_York');
+
+    // Filter out comments with a timestamp in the future
+    const filteredComments = comments.filter(comment => {
+        const commentTime = moment(comment.timestamp);
+        return commentTime.isSameOrBefore(currentTimeNY);
+    });
+
     const nestedComments = nestComments(comments);
     console.log('Nested comments to be displayed:', nestedComments);
     

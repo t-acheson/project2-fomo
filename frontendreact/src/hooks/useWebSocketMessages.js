@@ -8,7 +8,7 @@ const useWebSocketMessages = (setComments) => {
       console.log('New message received:', message);
 
       // Get the current time in New York
-      const currentTimeNY = moment().tz('America/New_York');
+      // const currentTimeNY = moment().tz('America/New_York');
 
       if (message.type === 'ping') {
         // If the message type is 'ping', send back 'pong'
@@ -20,13 +20,13 @@ const useWebSocketMessages = (setComments) => {
       if (message.id && message.text) {
         const { id, parentid, text, likes, dislikes, timestamp } = message;
 
-        const commentTime = moment(timestamp);
+        // const commentTime = moment(timestamp);
 
-        if (commentTime.isAfter(currentTimeNY)) {
-          // If the comment time is in the future, do not display it
-          console.warn('Received comment with future timestamp:', message);
-          return;
-        }
+        // if (commentTime.isAfter(currentTimeNY)) {
+        //   // If the comment time is in the future, do not display it
+        //   console.warn('Received comment with future timestamp:', message);
+        //   return;
+        // }
 
 
 

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Button, Form, InputGroup, FormControl, Alert } from 'react-bootstrap';
+import { Button, FormControl, InputGroup, Alert } from 'react-bootstrap';
 import { LocationContext } from '../../App';
 import { sendMessage } from '../../hooks/webSocket';
 import Select from 'react-select';

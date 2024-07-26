@@ -20,7 +20,7 @@ const TimeLockedFeedPage = TimeLock(FeedPage);
 
 function App() {
  // create a location state
-    const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState(null);
 
 // use the `useEffect` hook to get the user's location
 //! to uncode for actual user location
@@ -57,6 +57,7 @@ function App() {
 
 
   return (
+    <LocationContext.Provider value={location}>
       <Router>
         <Header />
         <Routes>
@@ -75,6 +76,7 @@ function App() {
         </Routes>
         <Footer />
       </Router>
+    </LocationContext.Provider>
   );
 }
 

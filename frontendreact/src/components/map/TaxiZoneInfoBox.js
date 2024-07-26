@@ -8,7 +8,7 @@ const TaxiZoneInfoBox = ({ hoverInfo }) => {
 
   // this hook creates a new Leaflet control 
   useEffect(() => {
-    const info = L.control({ position: 'topright' });
+    const info = L.control({ position: 'bottomright' });
 
     // creates 'div' element with class of 'info' and calls update to set its initial content.
     info.onAdd = function () {

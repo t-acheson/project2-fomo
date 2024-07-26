@@ -7,7 +7,7 @@ const LegendControl = () => {
   const map = useMap();
 
   useEffect(() => {
-    const legend = L.control({ position: 'bottomright' });
+    const legend = L.control({ position: 'bottomleft' });
 
     legend.onAdd = function (map) {
       const div = L.DomUtil.create('div', 'info legend');

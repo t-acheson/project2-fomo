@@ -33,9 +33,11 @@ function MapPage() {
         <TaxiZoneGeoJSON features={geoLocation.features} 
         onFeatureHover={(info) => setHoverInfo(info)}/>
         {/* Placeholder for future components */}
+        <div>
         <TaxiZoneInfoBox hoverInfo={hoverInfo}/>
         {/* <TaxiZonePopup /> */}
         <LegendControl />
+        </div>
       </BaseMap>
     </div>
   );

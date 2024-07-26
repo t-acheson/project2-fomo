@@ -5,7 +5,8 @@ import (
 	"fmt"
 	// "github.com/google/uuid"
 	// "golang.org/x/net/websocket"
-	// // "time"
+	"time"
+
 )
 
 //func for mocking in tests
@@ -15,13 +16,20 @@ var getTopCommentFunc = getTopComment
 // If there are multiple comments with the same number of likes, it returns the most recent one.
 func getTopComment(lat float64, lng float64) (*Comment, error) {
 	var topComment Comment
+
+	// Get current time in New York
+	nyLocation, _ := time.LoadLocation("America/New_York")
+	currentTimeNY := time.Now().In(nyLocation)
+
+	// Modified to only get comments from now or earlier
 	err := db.QueryRow(`
 		SELECT id, parent_id, text, likes, dislikes, timestamp 
 		FROM comments 
 		WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 2000)
+		AND timestamp <= $3
 		ORDER BY likes DESC, timestamp DESC
 		LIMIT 1`,
-		lat, lng).Scan(&topComment.ID, &topComment.ParentID, &topComment.Text, &topComment.Likes, &topComment.Dislikes, &topComment.Timestamp)
+		lat, lng, currentTimeNY).Scan(&topComment.ID, &topComment.ParentID, &topComment.Text, &topComment.Likes, &topComment.Dislikes, &topComment.Timestamp)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				fmt.Println("No comments found in this area")

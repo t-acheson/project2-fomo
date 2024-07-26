@@ -35,7 +35,7 @@ if __name__ == "__main__":
         print("Usage: python3 GoSentiment.py 'text to analyze'")
         sys.exit(1)
     
-    text = sys.argv[1]
+    text = ' '.join(sys.argv[1:])
     processed_text = preprocess_text(text)
     sentiment = get_sentiment(processed_text)
     print(sentiment)

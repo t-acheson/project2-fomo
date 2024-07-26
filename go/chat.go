@@ -147,7 +147,7 @@ func (s *Server) removeConnection(fingerprint string) error {
 
 // Call Python script to get sentiment
 func getSentiment(text string) (int, error) {
-  cmd := exec.Command("python3", "../data/Sentiment/GoSentiment.py", text)
+  cmd := exec.Command("python3", "GoSentiment.py", text)
   output, err := cmd.Output()
   if err != nil {
     return 0, err

@@ -141,9 +141,12 @@ func (s *Server) removeConnection(fingerprint string) error {
 func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
   rows, err := db.Query(`
   SELECT id, parent_id, timestamp, text, likes, dislikes, tags
-    FROM comments
-    WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000);`,
-  lat, lng,
+  FROM comments
+  WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 5000)
+    AND timestamp <= $3
+  ORDER BY timestamp DESC
+  LIMIT 100;`,
+  lat, lng, time.Now(),
   )
   defer rows.Close()
   

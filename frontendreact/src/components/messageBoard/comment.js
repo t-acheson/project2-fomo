@@ -26,7 +26,7 @@ const Comment = ({ comment }) => {
     setShowReplyInput(false);
     setShowReplies(true);
   };
-
+    
   const handleCancelReply = () => {
     setShowReplyInput(false);
   };
@@ -35,6 +35,7 @@ const Comment = ({ comment }) => {
     setShowReplies(!showReplies);
   };
 
+  console.log ('comment like/dislike:', comment.id,comment.likes, comment.dislikes)
   return (
     <div className="comment">
       <ListGroup.Item key={comment.id}>

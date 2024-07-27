@@ -1,87 +1,112 @@
 import { latLng } from "leaflet";
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
-const socket = new WebSocket('wss://nycfomo.com/ws');
+// Singleton WebSocket Manager
+let socket = null;
+let reconnectAttempts = 0;
+const maxReconnectAttempts = 5;
+const reconnectDelay = 5000; // milliseconds
 
-    // <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3"></script>
-    // FingerprintJS.load().then(fp => {
-    // fp.get().then(result => {
-    //     const fingerprint = result.visitorId;
-    // });
-    // });
+const initializeWebSocket = async () => {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    console.warn('WebSocket already initialized and open.');
+    return;
+  }
 
-// ================================
-// 4 event listeners to console.log the WebSocket status
-// ================================
-// Connection opened
-socket.addEventListener('open', function (event) {
-    console.log('WebSocket is connected.');
-});
+  if (socket) {
+    console.warn('Closing existing WebSocket connection.');
+    socket.close();
+  }
 
-// Listen for messages
-socket.addEventListener('message', function (event) {
-    console.log('Message from server:', event.data);
-});
+  socket = new WebSocket('wss://nycfomo.com/ws');
 
-// Listen for errors
-socket.addEventListener('error', function (event) {
-    console.error('WebSocket error:', event.data);
-});
+  //try {
+  
+    socket.addEventListener('open', async (event) => {
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      const fingerprint = result.visitorId;
 
-// Listen for connection close
-socket.addEventListener('close', function (event) {
-    console.log('WebSocket connection closed:', event);
-});
+      console.log("WebSocket connection established with server.");
+      socket.send(JSON.stringify({
+        lat: 40.6478277863495, // Example latitude
+        lng: -73.98422384354889, // Example longitude
+        fingerprint: fingerprint // Send fingerprint data
+      }));
+      console.log('Location sent from:', fingerprint);
+      reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+    });
 
-// ! to change to real location sfter testing
-const sendLocation = (location) => {
-    socket.onopen = function(event) {
-        console.log("WebSocket connection established with server.");
-        socket.send(JSON.stringify({
-            lat: location.lat,
-            lng: location.lng
-        }));
-        console.log('Location sent:', location);
-    };
-}
-// ================================
-// Below are functions can be called in other files to interact with the WebSocket
-// ================================
-// 1. sendMessage: send a message to the server
+    socket.addEventListener('message', function(event) {
+      console.log('Message from server:', event.data);
+    });
+
+    socket.addEventListener('error', function(event) {
+      console.error('WebSocket error:', event);
+    });
+
+    socket.addEventListener('close', function(event) {
+      console.log('WebSocket connection closed:', event);
+      if (reconnectAttempts < maxReconnectAttempts) {
+        console.log(`Reconnecting in ${reconnectDelay / 1000} seconds...`);
+        setTimeout(() => {
+          reconnectAttempts++;
+          initializeWebSocket();
+        }, reconnectDelay);
+      } else {
+        console.error('Max reconnect attempts reached. Unable to reconnect.');
+      }
+    });
+
+  //} catch (error) {
+  //  console.error('Error initializing WebSocket:', error);
+  //}
+};
+
+// Function to send a message to the server
 const sendMessage = (message) => {
-    console.log('Attempting to send message:', JSON.stringify(message));  // Log before attempting to send
-    if (socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify(message));
-        console.log('Message sent successfully');  // Log on successful send
-    } else {
-        console.error('WebSocket is not open. Message not sent.');
-    }
+  if (!socket || socket.readyState !== WebSocket.OPEN) {
+    console.error('WebSocket is not initialized or not open. Message not sent.');
+    return;
+  }
+
+  console.log('Attempting to send message:', JSON.stringify(message));
+  try {
+    socket.send(JSON.stringify(message));
+    console.log('Message sent successfully');
+  } catch (error) {
+    console.error('Error sending message:', error);
+  }
 };
 
-//listenForMessages: listen for messages from the server
-// When it is called ,it can pass back the message data 
+// Function to listen for messages from the server
 const listenForMessages = (callback) => {
-    const handleMessage = (event) => {
-        try {
-            const messageData = JSON.parse(event.data);
-            callback(messageData);
-        } catch (error) {
-            console.error('Error parsing message data:', error);
-        }
-    };
+  if (!socket) {
+    console.error('WebSocket is not initialized.');
+    return () => {};
+  }
 
-    // Attach the event listener
-    socket.addEventListener('message', handleMessage);
+  const handleMessage = (event) => {
+    try {
+      const messageData = JSON.parse(event.data);
+      callback(messageData);
+    } catch (error) {
+      console.error('Error parsing message data:', error);
+    }
+  };
 
-    // Return a cleanup function to close the WebSocket connection
-    return () => {
-        socket.removeEventListener('message', handleMessage);
-        socket.close();
-        console.log('WebSocket connection closed.');
-    };
+  socket.addEventListener('message', handleMessage);
+
+  return () => {
+    socket.removeEventListener('message', handleMessage);
+    if (socket) {
+      socket.close();
+      console.log('WebSocket connection closed.');
+    }
+  };
 };
 
+// Ensure WebSocket is initialized when the module is loaded
+initializeWebSocket();
 
-export default socket;
-export { sendMessage };
-export { listenForMessages };
-export {sendLocation}
+export { sendMessage, listenForMessages };

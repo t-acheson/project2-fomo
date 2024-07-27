@@ -3,7 +3,12 @@ import React from 'react';
 const Time = ({ comments }) => {
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
-        return date.toLocaleString();
+        // Format the date in 'America/New_York' time zone
+        return date.toLocaleString('en-US', {
+            timeZone: 'America/New_York',
+            year: 'numeric', month: 'numeric', day: 'numeric',
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
     };
 
     return (

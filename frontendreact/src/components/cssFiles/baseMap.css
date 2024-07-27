@@ -1,13 +1,13 @@
 .reset-button-container {
     position: absolute;
-    bottom: 20px;
-    left: 20px;
+    bottom: 160px;
+    left: 10px;
     z-index: 1000;
   }
   
   .reset-button {
     padding: 8px 12px; 
-    background-color: #FFA64D;
+    background-color: #222831;
     color: #FFF;
     font-weight: 800;
     font-size: 16px;  
@@ -22,7 +22,7 @@
   }
   
   .reset-button:hover {
-    background-color: #D9534F;
+    color: #00BFFF;
   }
   
   .reset-button-text {

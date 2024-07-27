@@ -23,7 +23,7 @@ function Features() {
             <p>Get live updates on how busy different areas are, so you can plan your night out effectively.</p> */}
           </Col>
           <Col xs={12} md={4} className="imageHolder text-center">
-            <Image src={ballImage} fluid />
+            <Image src={ballImage} alt="a rolling disco ball image" fluid />
           </Col>
           <Col xs={12} md={4} className="holder">
           <h3>Get Chit-Chatting!</h3>

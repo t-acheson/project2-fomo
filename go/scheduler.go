@@ -2,17 +2,32 @@ package main
 
 import (
   "fmt"
-  "github.com/robfig/cron/v3"
   "strconv"
+  "time"
 )
 
-func runCron() {
-  c := cron.New()
-  c.AddFunc("0 7 * * *", func() {archiveComments()})
-  c.AddFunc("0 7 * * *", func() {cacheBusyness()})
-  c.Start()
-}
+func runScheduler() {
+  now := time.Now()
+  firstRun := time.Date(now.Year(), now.Month(), now.Day() + 1, 7, 0, 0, 0, time.UTC) // First run is tomorrow at 7am
 
+  // Sleep until tomorrow 7am
+  delay := time.Until(firstRun)
+  time.Sleep(delay)
+
+  // Start ticker to run every 48 hours at 7am
+  ticker := time.NewTicker(48 * time.Hour)
+  defer ticker.Stop()
+
+  // Call the the 2 function for the first time
+  archiveComments()
+  cacheBusyness()
+
+  // Listen to ticker ticks every 48hrs and execute
+  for range ticker.C {
+    archiveComments()
+    cacheBusyness()
+  }
+}
 
 func archiveComments() {
   fmt.Println("Archiving old comments")
@@ -29,7 +44,6 @@ func archiveComments() {
     fmt.Println("Error moving comments to archive:", err)
   }
 }
-
 
 func cacheBusyness() {
   fmt.Println("Regenerating busyness values")

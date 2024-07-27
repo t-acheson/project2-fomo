@@ -1,6 +1,6 @@
 # NYC FOMO - Community Engagement & Busyness Prediction
 
-**NYC FOMO** is a web application designed to predict the busyness of areas in New York City (NYC) and enhance community interaction by helping users find and participate in local events. Built for the COMP47360 Research Practicum, the application evolved from identifying potential sites for pop-up retail stores to focusing on community engagement and social interaction.
+**NYC FOMO** is a web application designed to predict the busyness of areas in New York City (NYC) and enhance community interaction by helping users find and participate in local events. Built for the COMP47360 Research Practicum, the application focuses on community engagement and social interaction.
 
 <img width="1425" alt="image" src="https://github.com/user-attachments/assets/5bceac0f-1c43-4c7a-bb34-e208e2e6ccdf">
 

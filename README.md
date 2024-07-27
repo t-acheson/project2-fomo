@@ -59,6 +59,11 @@ POSTGRES_USER=
 POSTGRES_PASSWORD=
 POSTGRES_DB=
 POSTGRES_PORT=
+
+TMAPIKey_M= (Ticketmaster API key)
+currentAPIKey= (Current weather from OpenWeather API)
+FoursquareAPIKey=
+
 ```
 
 ## Frontend Setup

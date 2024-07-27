@@ -267,7 +267,7 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
     sentiment, err := getSentiment(message.Text)
     if err != nil {
       fmt.Println("Error getting sentiment:", err)
-      sentiment = 0 // default to neutral if sentiment analysis fails
+      return
     }
 
     comment, err := s.insertComment(message.ParentID, message.Text, message.Latitude, message.Longitude, message.Tags, fingerprint, sentiment)
@@ -338,13 +338,11 @@ func (s *Server) insertComment(parentID *int, text string, lat float64, lng floa
     var id int
     var timestamp time.Time
 
-    fmt.Println("Inserting comment with sentiment:", sentiment) // Log sentiment
-
     err := db.QueryRow(`
       INSERT INTO comments (parent_id, text, location, timestamp, tags, author, sentiment) VALUES
       ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5, $6, $7, $8)
       RETURNING id, timestamp;`,
-      parentID, text, lat, lng, time.Now().In(nyc), pq.Array(tags.ToSlice()), fingerprint).Scan(&id, &timestamp)
+      parentID, text, lat, lng, time.Now().In(nyc), pq.Array(tags.ToSlice()), fingerprint, sentiment).Scan(&id, &timestamp)
       if err != nil {
       fmt.Println("Error writing to table comments:", err)
       return Comment{}, err
@@ -358,6 +356,7 @@ func (s *Server) insertComment(parentID *int, text string, lat float64, lng floa
       Dislikes: 0,
       Timestamp: timestamp,
       Tags: tags,
+      Sentiment: sentiment,
     }, nil
 }
 

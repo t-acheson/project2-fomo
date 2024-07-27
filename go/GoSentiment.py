@@ -36,6 +36,7 @@ if __name__ == "__main__":
         sys.exit(1)
     
     text = ' '.join(sys.argv[1:])
-    processed_text = preprocess_text(text)
-    sentiment = get_sentiment(processed_text)
+    # processed_text = preprocess_text(text)
+    # sentiment = get_sentiment(processed_text)
+    sentiment = get_sentiment(text)
     print(sentiment)

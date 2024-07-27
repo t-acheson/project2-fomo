@@ -107,6 +107,12 @@ func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64, f
   s.retrieve(ws, lat, lng)
   duration = time.Since(start)
   fmt.Println("Retreived historical messages for client in time:", duration)
+
+  // Retrieve their likes/dislikes, if any
+  start = time.Now()
+  s.retrieveLikes(ws, fingerprint)
+  duration = time.Since(start)
+  fmt.Println("Retrieved likes/dislikes from the user in time:", duration)
   
   //s.mu.Unlock()
   s.readLoop(ws, fingerprint)
@@ -196,6 +202,50 @@ func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
   }
   if err = rows.Err(); err != nil {
     fmt.Println("Error rows.Err():", err)
+  }
+}
+
+// Retrieve commentids of comments the user has liked/disliked
+func (s *Server) retrieveLikes(ws *websocket.Conn, fingerprint string) {
+  rows, err := db.Query(`
+    SELECT comment_id, like
+    FROM comments_interactions
+    WHERE fingerprint = $1;`,
+    fingerprint,
+  )
+  if err != nil {
+    fmt.Println("Error querying the database in retrieveLikes:", err)
+    return
+  }
+  defer rows.Close()
+
+  interactions := map[string][]int{"likes": {}, "dislikes": {}}
+
+  for rows.Next() {
+    var commentid int
+    var like bool
+    if err := rows.Scan(&commentid, &like); err != nil {
+      fmt.Println("Error scanning comments_interactions row:", err)
+      continue
+    }
+
+    if like == true {
+      interactions["likes"] = append(interactions["likes"], commentid)
+    } else {
+      interactions["dislikes"] = append(interactions["dislikes"], commentid)
+    }
+  }
+  if err := rows.Err(); err != nil {
+    fmt.Println("Error iterating over rows in retrieveLikes:", err)
+  }
+
+  message, err := json.Marshal(interactions)
+  if err != nil {
+    fmt.Println("Error marshalling likes/dislikes map:", err)
+    return
+  }
+  if _, err := ws.Write(message); err != nil {
+    fmt.Println("Error writing likes/dislikes map to ws:", err)
   }
 }
 

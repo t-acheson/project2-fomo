@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+var getTopSentimentFunc = getOverallSentiment
+
 // getOverallSentiment calculates the average sentiment score of comments within a 2km radius of the given latitude and longitude.
 func getOverallSentiment(lat float64, lng float64) (float64, error) {
 	// Get current time in New York timezone

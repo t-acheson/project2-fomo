@@ -51,6 +51,12 @@ type WebsocketReply struct {
   Dislikes int `json:"dislikes,omitempty"`
 }
 
+type History struct {
+  Type string `json:"type"`
+  Likes []int `json:"likes"`
+  Dislikes []int `json:"dislikes"`
+}
+
 func NewServer() *Server {
   return &Server {
     conns: make(map[string]*websocket.Conn),
@@ -219,7 +225,7 @@ func (s *Server) retrieveLikes(ws *websocket.Conn, fingerprint string) {
   }
   defer rows.Close()
 
-  interactions := map[string][]int{"likes": {}, "dislikes": {}}
+  interactions := History{Type: "history", Likes: []int{}, Dislikes: []int{}}
 
   for rows.Next() {
     var commentid int
@@ -230,9 +236,9 @@ func (s *Server) retrieveLikes(ws *websocket.Conn, fingerprint string) {
     }
 
     if like == true {
-      interactions["likes"] = append(interactions["likes"], commentid)
+      interactions.Likes = append(interactions.Likes, commentid)
     } else {
-      interactions["dislikes"] = append(interactions["dislikes"], commentid)
+      interactions.Dislikes = append(interactions.Dislikes, commentid)
     }
   }
   if err := rows.Err(); err != nil {

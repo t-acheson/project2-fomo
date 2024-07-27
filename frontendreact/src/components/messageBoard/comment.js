@@ -35,7 +35,6 @@ const Comment = ({ comment }) => {
     setShowReplies(!showReplies);
   };
 
-  console.log ('comment like/dislike:', comment.id,comment.likes, comment.dislikes)
   return (
     <div className="comment">
       <ListGroup.Item key={comment.id}>
@@ -65,6 +64,8 @@ const Comment = ({ comment }) => {
                   commentId={comment.id}
                   likesCounts={comment.likes}
                   dislikesCounts={comment.dislikes}
+                  liked={comment.liked}
+                  disliked={comment.disliked}
                 />
                 <button className="reply-button" onClick={handleReplyClick}>
                   Reply

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import '../cssFiles/likeAndDislikeButton.css';
 import { sendMessage } from '../../hooks/webSocket';
 
-const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts }) => {
-    const [liked, setLiked] = useState(false);
+const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts, liked: initialLiked, disliked: initialDisliked }) => {
+    const [liked, setLiked] = useState(initialLiked);
     const [likesCount, setLikesCount] = useState(likesCounts);
-    const [disliked, setDisliked] = useState(false);
+    const [disliked, setDisliked] = useState(initialDisliked);
     const [dislikeCount, setDislikeCount] = useState(dislikesCounts);
 
     useEffect(() => {
@@ -16,6 +16,13 @@ const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts }) => {
         setDislikeCount(dislikesCounts);
     }, [dislikesCounts]);
 
+    useEffect(() => {
+        setLiked(initialLiked);
+    }, [initialLiked]);
+
+    useEffect(() => {
+        setDisliked(initialDisliked);
+    }, [initialDisliked]);
 
     const handleLike = () => {
         if (!liked) {
@@ -48,7 +55,7 @@ const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts }) => {
             sendMessage({ type: 'dislike_update', commentid: commentId, dislike: false });
         }
     };
-    
+
     return (
         <div className="likeDislikeContainer">
             <div className="likeContainer" onClick={handleLike}>

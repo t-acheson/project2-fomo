@@ -1,21 +1,19 @@
 import React, { useState, useContext } from 'react';
-import { Button, Form, InputGroup, FormControl, Alert} from 'react-bootstrap';
-import { LocationContext } from '../../App'; 
-import { sendMessage } from '../../hooks/webSocket'; 
-import Select from 'react-select'; 
+import { Button, FormControl, InputGroup, Alert } from 'react-bootstrap';
+import { LocationContext } from '../../App';
+import { sendMessage } from '../../hooks/webSocket';
+import Select from 'react-select';
 import { customTagStyles } from './customTagStyle';
 import '../cssFiles/commentInput.css';
 
-
 const CommentInput = () => {
     const [text, setText] = useState('');
-    const location = useContext(LocationContext); 
+    const location = useContext(LocationContext);
     const { lat, lng } = location || { lat: 40.7128, lng: -74.0060 };
     const maxLength = 280; // Maximum length for the input
     const [selectedTags, setSelectedTags] = useState([]);
     const [alertMessage, setAlertMessage] = useState('');
     const [alertVariant, setAlertVariant] = useState('');
-
 
     const tags = [
         { value: 'Non-alcoholic', label: 'Non-alcoholic' },
@@ -35,9 +33,8 @@ const CommentInput = () => {
         { value: 'DateSpot', label: 'DateSpot' },
         { value: 'OpenMic', label: 'OpenMic' }
     ];
-    
 
-    const handleInputChange = (event) => { 
+    const handleInputChange = (event) => {
         if (event.target.value.length <= maxLength) {
             setText(event.target.value);
         }
@@ -49,7 +46,7 @@ const CommentInput = () => {
         }
     };
 
-    const handleSubmit = () => { 
+    const handleSubmit = () => {
         if (text.trim() === '') {
             setAlertMessage('Comment cannot be empty');
             setAlertVariant('danger');
@@ -66,10 +63,10 @@ const CommentInput = () => {
         });
 
         sendMessage({
-            type: 'new_comment', 
+            type: 'new_comment',
             text: text,
-            lat:lat, 
-            lng:lng,
+            lat: lat,
+            lng: lng,
             tags: tagsObject
         });
 
@@ -81,13 +78,17 @@ const CommentInput = () => {
 
     return (
         <div className="input-container">
-             {alertMessage && (
+            {alertMessage && (
                 <Alert variant={alertVariant} onClose={() => setAlertMessage('')} dismissible>
                     {alertMessage}
                 </Alert>
             )}
             <InputGroup className="input-group">
+                <label htmlFor="commentTextArea" className="sr-only">
+                    Enter your message (280 characters max)
+                </label>
                 <FormControl
+                    id="commentTextArea" 
                     className="input-box"
                     placeholder="Enter your message (280 characters max)"
                     value={text}
@@ -95,15 +96,17 @@ const CommentInput = () => {
                     maxLength={maxLength}
                     as="textarea"
                 />
+                <label htmlFor="tagSelect" className="sr-only">
+                    Select tags (max 3)
+                </label>
                 <Select
+                    inputId="tagSelect" 
                     isMulti
                     options={tags}
-                    value={selectedTags}
                     onChange={handleTagChange}
                     placeholder="Must select tags (max 3)"
-                    className="tag-select"
-                    styles={customTagStyles}
-                    classNamePrefix="react-select" // Add this line to apply the CSS styles
+                    className="tag-select" 
+                    styles={customTagStyles} 
                 />
             </InputGroup>
             <Button variant="primary" onClick={handleSubmit} className="button">

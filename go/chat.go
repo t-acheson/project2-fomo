@@ -63,6 +63,21 @@ func NewServer() *Server {
   }
 }
 
+var nyc *time.Location
+
+func setTimezone() {
+  _, err := db.Exec("SET TIME ZONE 'America/New_York';")
+  if err != nil {
+    fmt.Println("Error changing the timezone in postgres")
+  }
+
+  nyc, err = time.LoadLocation("America/New_York")
+	if err != nil {
+		fmt.Println("Error loading timezone:", err)
+		return
+	}
+}
+
 func (s *Server) handleWebSocket(ws *websocket.Conn, lat float64, lng float64, fingerprint string) {
   //s.mu.Lock()
   //defer s.mu.Unlock()
@@ -177,7 +192,7 @@ func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
     AND timestamp <= $3
   ORDER BY timestamp DESC
   LIMIT 100;`,
-  lat, lng, time.Now(),
+  lat, lng, time.Now().In(nyc),
   )
   defer rows.Close()
   
@@ -329,8 +344,8 @@ func (s *Server) insertComment(parentID *int, text string, lat float64, lng floa
       INSERT INTO comments (parent_id, text, location, timestamp, tags, author, sentiment) VALUES
       ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5, $6, $7, $8)
       RETURNING id, timestamp;`,
-      parentID, text, lat, lng, time.Now(), pq.Array(tags.ToSlice()), fingerprint, sentiment).Scan(&id, &timestamp)
-    if err != nil {
+      parentID, text, lat, lng, time.Now().In(nyc), pq.Array(tags.ToSlice()), fingerprint).Scan(&id, &timestamp)
+      if err != nil {
       fmt.Println("Error writing to table comments:", err)
       return Comment{}, err
     }
@@ -355,7 +370,7 @@ func (s *Server) insertReply(parentID *int, text string, fingerprint string, sen
     INSERT INTO comments (parent_id, text, location, timestamp, author, sentiment) VALUES
     ($1, $2, (SELECT location FROM comments WHERE id = $1), $3, $4, $5)
     RETURNING id, timestamp, ST_X(location::geometry), ST_Y(location::geometry);`,
-    parentID, text, time.Now(), fingerprint, sentiment).Scan(&id, &timestamp, &lat, &lng)
+    parentID, text, time.Now().In(nyc), fingerprint).Scan(&id, &timestamp, &lat, &lng)
   if err != nil {
     fmt.Println("Error writing reply to table comments:", err)
     return Comment{}, 0, 0, err

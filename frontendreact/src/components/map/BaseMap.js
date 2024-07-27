@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../cssFiles/baseMap.css';  
 
-const DEFAULT_CENTER = { lat: 40.7128, lng: -74.0060 };
+const DEFAULT_CENTER = { lat: 40.6428, lng: -74.0060 };
 const DEFAULT_ZOOM = 11;
 
 const ResetButton = ({ setViewport }) => {
@@ -22,9 +22,7 @@ const ResetButton = ({ setViewport }) => {
       >
         Reset
       </button>
-      <div className="reset-button-text">
-        Click to reset map
-      </div>
+      
     </div>
   );
 };

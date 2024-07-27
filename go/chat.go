@@ -163,13 +163,16 @@ func (s *Server) removeConnection(fingerprint string) error {
 // Call Python script to get sentiment
 func getSentiment(text string) (int, error) {
   cmd := exec.Command("python3", "GoSentiment.py", text)
-  output, err := cmd.Output()
+  output, err := cmd.CombinedOutput()
   if err != nil {
     fmt.Println("Error executing Python script:", err)
     return 0, err
   }
 
-  sentiment, err := strconv.Atoi(strings.TrimSpace(string(output)))
+  // Split the output and parse the last line that contains the integer sentiment
+  outputs := strings.Split(strings.TrimSpace(string(output)), "\n")
+  lastLine := outputs[len(outputs)-1]
+  sentiment, err := strconv.Atoi(lastLine)
   if err != nil {
     fmt.Println("Error converting sentiment output to integer:", err)
     return 0, err

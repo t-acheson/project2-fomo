@@ -76,14 +76,19 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
+        if (data && data.sentiment !== undefined) {
+          const sentiment = data.sentiment;
+          return `
+            <div>
+              <p style="font-size: larger;"><strong>Overall Area Vibes:</strong> ${sentiment.toFixed(2)}</p>
+            </div>
+          `;
 
-        const sentiment = data.sentiment;
+        } else {
+          console.log('Sentiment data is missing');
+          return 'Failed to fetch sentiment'; // Fallback content
+        }
 
-        return `
-          <div>
-            <p style="font-size: larger;"><strong>Overall Area Vibes:</strong> ${sentiment.toFixed(2)}</p>
-          </div>
-        `;
       } else {
         console.log('Failed to fetch sentiment');
         return 'Failed to fetch sentiment'; // Fallback content

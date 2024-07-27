@@ -16,13 +16,34 @@ const FeedPage = () => {
 
   useEffect(() => {
     const handleMessage = (message) => {
-      console.log('New message received:', message);
+      // console.log('New message received:', message);
   
       if (message.type === 'ping') {
         sendMessage({ type: 'pong' });
         return;
       }
-  
+      
+      if (message.likes && message.dislikes) {
+        // Add logging to debug
+        console.log('Likes:', message.likes);
+        console.log('Dislikes:', message.dislikes);
+
+        // Ensure likes and dislikes are arrays
+        const likesArray = Array.isArray(message.likes) ? message.likes : [];
+        const dislikesArray = Array.isArray(message.dislikes) ? message.dislikes : [];
+
+        setComments((prevComments) => {
+          const updatedComments = prevComments.map((c) => ({
+            ...c,
+            liked: likesArray.includes(c.id),
+            disliked: dislikesArray.includes(c.id),
+          }));
+          console.log('Updated comments state (like/dislike update):', updatedComments);
+          return updatedComments;
+        });
+        return;
+      }
+
       let type, comment, commentid, likes, dislikes;
   
       if (message.type && message.comment) {
@@ -83,7 +104,7 @@ const FeedPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log('Comments received in FeedPage:', comments);
+    // console.log('Comments received in FeedPage:', comments);
   }, [comments]);
 
   return (

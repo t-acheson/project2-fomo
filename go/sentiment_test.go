@@ -7,19 +7,8 @@ import (
     "strings"
 )
 
-func main() {
-    // Test the sentiment analysis function directly with a hardcoded string
-    testText := "This is a great day with lots of positive energy!"
-    sentiment, err := getSentiment(testText)
-    if err != nil {
-        fmt.Println("Error:", err)
-    } else {
-        fmt.Println("Sentiment Score:", sentiment)
-    }
-}
-
 // Assumes the getSentiment function is defined as follows:
-func getSentiment(text string) (int, error) {
+func testGetSentiment(text string) (int, error) {
     cmd := exec.Command("python3", "GoSentiment.py", text)
     output, err := cmd.CombinedOutput() // Capture both stdout and stderr
     if err != nil {

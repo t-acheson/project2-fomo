@@ -173,7 +173,7 @@ websocketHandler := func(ws *websocket.Conn) {
 			return
 		}
 
-		averageSentiment, err := yourpackage.getOverallSentiment(params.Lat, params.Lng)
+		averageSentiment, err := getOverallSentiment(params.Lat, params.Lng)
 		if err != nil {
 			http.Error(w, "Error calculating average sentiment", http.StatusInternalServerError)
 			return

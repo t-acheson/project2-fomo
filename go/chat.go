@@ -12,7 +12,6 @@ import (
   "os/exec"
   "strconv"
   "strings"
-  "database/sql"
 )
 
 type Server struct {
@@ -29,6 +28,7 @@ type Comment struct {
   Dislikes int `json:"dislikes"`
   Timestamp time.Time `json:"timestamp"`
   Tags Tags `json:"tags,omitempty"` //If the comment is a reply it doesnt need tags
+  Sentiment int `json:"sentiment,omitempty"` //For sentiment analysis
 }
 
 type Tags struct {
@@ -170,17 +170,6 @@ func getSentiment(text string) (int, error) {
   }
 
   fmt.Printf("Raw Sentiment Output: %s\n", output)
-
-  // Split the output and parse the last line that contains the integer sentiment
-  // outputs := strings.Split(strings.TrimSpace(string(output)), "\n")
-  // lastLine := outputs[len(outputs)-1]
-  // sentiment, err := strconv.Atoi(lastLine)
-  // if err != nil {
-  //   fmt.Println("Error converting sentiment output to integer:", err)
-  //   return 0, err
-  // }
-
-
   // Directly parse the output
   sentiment, err := strconv.Atoi(strings.TrimSpace(string(output)))
   if err != nil {

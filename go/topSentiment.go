@@ -1,14 +1,10 @@
 package main
 
 import (
-	"database/sql"
-	"encoding/json"
 	"fmt"
-	"net/http"
 	_ "github.com/lib/pq" // PostgreSQL driver
+	"time"
 )
-
-var db *sql.DB
 
 // getOverallSentiment calculates the average sentiment score of comments within a 2km radius of the given latitude and longitude.
 func getOverallSentiment(lat float64, lng float64) (float64, error) {

@@ -208,7 +208,7 @@ func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
 // Retrieve commentids of comments the user has liked/disliked
 func (s *Server) retrieveLikes(ws *websocket.Conn, fingerprint string) {
   rows, err := db.Query(`
-    SELECT comment_id, like
+    SELECT comment_id, "like"
     FROM comments_interactions
     WHERE fingerprint = $1;`,
     fingerprint,

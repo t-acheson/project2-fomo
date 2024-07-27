@@ -21,6 +21,11 @@
 go.work
 go.work.sum
 
-
 # node_modules
 node_modules
+
+# pickle files
+*.pkl
+
+# env
+.env

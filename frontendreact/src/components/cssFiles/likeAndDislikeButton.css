@@ -1,0 +1,87 @@
+.likeDislikeContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.likeContainer, .dislikeContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.heartBg, .heartBrokenBg {
+  position: relative;
+  background: rgba(255, 192, 200, 0);
+  border-radius: 50%;
+  height: 60px;
+  width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.heartBg:hover {
+  background: rgba(255, 192, 200, 0.7);
+}
+
+.heartBrokenBg:hover {
+  background: rgba(72, 66, 67, 0.7);
+}
+
+
+.heartIcon {
+  height: 100px;
+  width: 100px;
+  background: url('../../assets/heart.png') no-repeat;
+  background-size: 2900%;
+  background-position: left;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.heartIcon.liked {
+  animation: like-anim 0.7s steps(28) forwards;
+}
+
+@keyframes like-anim {
+  to { background-position: right; }
+}
+
+.dislikeBtn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+      'FILL' 1,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
+  font-size: 40px;
+  color: #A6ACAF;
+  transition: all 0.3s ease;
+}
+
+.dislikeActive .material-symbols-outlined {
+  color: #4d5662;
+}
+
+.likesStatus, .dislikesStatus {
+  font-family: 'Roboto', sans-serif;
+  color: #A6ACAF;
+  font-weight: 800;
+  font-size: 20px;
+  margin-left: 6px;
+}

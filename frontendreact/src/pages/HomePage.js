@@ -1,13 +1,15 @@
 import React from 'react';
-import Header from '../components/header.js'
-import Footer from '../components/footer.js';
+import HomeHero from '../components/landing/homeHero.js';
+import Features from '../components/landing/features.js';
+import Try from '../components/landing/tryIt.js';
 
 function HomePage() {
   return (
     <div>
       <main>
-        <h1>Home Page</h1>
-        <p>This is the home page</p>
+        <HomeHero />
+        <Features />
+        <Try />
       </main>
     </div>
   );

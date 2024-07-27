@@ -1,0 +1,73 @@
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif; /* Use a modern, clean font */
+  background-color: #222831; /* Light background color for contrast */
+  color: #333; /* Dark text color for readability */
+  margin-top: 60px; 
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400;
+  margin: 0 0 20px;
+  color: inherit;
+}
+
+h1 {
+  font-size: 2.875rem; /* 46px */
+}
+
+h2 {
+  font-size: 1.875rem; /* 30px */
+}
+
+h3 {
+  font-size: 1.375rem; /* 22px */
+}
+
+h4 {
+  font-size: 1.125rem; /* 18px */
+}
+
+h5 {
+  font-size: 1.0625rem; /* 17px */
+}
+
+h6 {
+  font-size: 0.9375rem; /* 15px */
+}
+
+p {
+  margin: 0 0 15px;
+}
+
+.titleHolder {
+  text-align: center;
+  margin: 0 0 40px;
+}
+
+.titleHolder h2 {
+  margin: 0 0 5px;
+  text-transform: uppercase;
+}
+
+.titleHolder .subtitle {
+  color: #fff;
+}
+
+.titleHolder .subtitle:before {
+  content: '-';
+  margin: 0 5px 0 0;
+}
+
+.titleHolder .subtitle:after {
+  content: '-';
+  margin: 0 0 0 5px;
+}

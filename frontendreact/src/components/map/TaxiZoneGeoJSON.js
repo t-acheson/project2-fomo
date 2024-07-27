@@ -67,11 +67,9 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
   const fetchSentiment = async (lat, lng) => {
     console.log('Fetching sentiment for lat:', lat, 'lng:', lng);
     try {
-      const response = await fetch('http://localhost:8081/sentiment', {
+      const response = await fetch('topsentiment', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ lat: parseFloat(lat), lng: parseFloat(lng) }),
       });
       console.log('Response status:', response.status);
@@ -83,7 +81,7 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
 
         return `
           <div>
-            <p style="font-size: larger;"><strong>Average Sentiment:</strong> ${sentiment.toFixed(2)}</p>
+            <p style="font-size: larger;"><strong>Overall Area Vibes:</strong> ${sentiment.toFixed(2)}</p>
           </div>
         `;
       } else {
@@ -125,10 +123,7 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
             const sentimentContent = await fetchSentiment(lat, lng);
             
             // Combine the results
-            const combinedContent = `
-            ${content ? content : ''}
-            ${sentimentContent ? sentimentContent : ''}
-            `;
+            const combinedContent = `${content} ${sentimentContent}`;
 
             e.target.bindPopup(combinedContent).openPopup();
             //layer.bindPopup(content).openPopup(); // Bind and open the popup with fetched content

@@ -7,7 +7,7 @@ const LegendControl = () => {
   const map = useMap();
 
   useEffect(() => {
-    const legend = L.control({ position: 'bottomright' });
+    const legend = L.control({ position: 'bottomleft' });
 
     legend.onAdd = function (map) {
       const div = L.DomUtil.create('div', 'info legend');
@@ -23,7 +23,7 @@ const LegendControl = () => {
           getBusynessDescription(grades[i]) + '<br>';
       }
 
-      div.style.fontSize = '18px'; // Increase font size
+      div.style.fontSize = '15px'; // Increase font size
       div.style.padding = '10px'; // Increase padding
       div.style.backgroundColor = 'white'; // Background color
       div.style.borderRadius = '5px'; // Border radius

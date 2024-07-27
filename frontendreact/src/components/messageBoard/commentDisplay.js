@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, ListGroup } from 'react-bootstrap';
+import { ListGroup } from 'react-bootstrap';
 import Comment from './comment';
 import { nestComments } from './nestedComments';
 import moment from 'moment-timezone';
@@ -21,12 +21,18 @@ const CommentDisplay = ({ comments }) => {
 
     const nestedComments = nestComments(filteredComments);
     console.log('Nested comments to be displayed:', nestedComments);
-    
+
+    const noCommentsStyle = {
+        color: 'white', 
+        fontSize: '16px' 
+    };
 
     return (
         <div className="comment-container">
             {nestedComments.length === 0 ? (
-                <div className="loading-message">No Comments Available</div>
+                <div className="loading-message" style={noCommentsStyle}>
+                    No Comments Available
+                </div>
             ) : (
                 <ListGroup className='commentBox'>
                     {nestedComments.map(comment => (
@@ -37,4 +43,5 @@ const CommentDisplay = ({ comments }) => {
         </div>
     );
 };
+
 export default CommentDisplay;

@@ -16,6 +16,7 @@
     width: 100%; 
     border-radius: 10px;
 }
+
 .input-container .input-box {
     border-radius: 5px !important; /* Force the radius */
 }
@@ -68,3 +69,19 @@
     border-radius: 4px; /* Ensure border radius is applied to all sides */
 }
 
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.input-box::placeholder {
+    color: black; 
+    opacity: 1;   
+}

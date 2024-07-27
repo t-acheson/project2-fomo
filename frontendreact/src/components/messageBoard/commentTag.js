@@ -1,4 +1,3 @@
-// TagFilter.js
 import React from 'react';
 import Select from 'react-select';
 import { customTagStyles } from './customTagStyle';
@@ -29,16 +28,22 @@ const TagFilter = ({ className, setSelectedTags }) => {
   };
 
   return (
-    <Select
-      isMulti
-      options={tags}
-      onChange={handleTagChange}
-      placeholder="Filter by tags"
-      className={`tag-select ${className}`} // Apply the custom className here
-      styles={customTagStyles} // Add this line to apply the CSS styles
-    />
+    <div className="tag-filter-container">
+
+      <label htmlFor="tagFilterSelect" className="sr-only">
+        Filter by tags
+      </label>
+      <Select
+        inputId="tagFilterSelect" 
+        isMulti
+        options={tags}
+        onChange={handleTagChange}
+        placeholder="Filter by tags"
+        className={`tag-select ${className}`} 
+        styles={customTagStyles} 
+      />
+    </div>
   );
 };
 
 export default TagFilter;
-

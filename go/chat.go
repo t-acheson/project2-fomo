@@ -170,13 +170,21 @@ func getSentiment(text string) (int, error) {
   }
 
   // Split the output and parse the last line that contains the integer sentiment
-  outputs := strings.Split(strings.TrimSpace(string(output)), "\n")
-  lastLine := outputs[len(outputs)-1]
-  sentiment, err := strconv.Atoi(lastLine)
+  // outputs := strings.Split(strings.TrimSpace(string(output)), "\n")
+  // lastLine := outputs[len(outputs)-1]
+  // sentiment, err := strconv.Atoi(lastLine)
+  // if err != nil {
+  //   fmt.Println("Error converting sentiment output to integer:", err)
+  //   return 0, err
+  // }
+
+
+  // Directly parse the output
+  sentiment, err := strconv.Atoi(strings.TrimSpace(string(output)))
   if err != nil {
-    fmt.Println("Error converting sentiment output to integer:", err)
-    return 0, err
+      return 0, fmt.Errorf("error parsing output as integer: %s, output: %s", err, string(output))
   }
+
 
   fmt.Println("Sentiment score:", sentiment) // Log sentiment score
   return sentiment, nil

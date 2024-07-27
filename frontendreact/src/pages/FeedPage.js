@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Dropdown, DropdownButton} from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import CommentInput from '../components/messageBoard/commentInput';
 import CommentDisplay from '../components/messageBoard/commentDisplay';
 import TagFilter from '../components/messageBoard/commentTag';
 import CommentFilter from '../components/messageBoard/commentFilters';
 import SortedComments from '../components/messageBoard/sortComments';
-import { sendMessage } from '../hooks/webSocket';
-import { listenForMessages } from '../hooks/webSocket'; // Import the listenForMessages function from the websocket file
-
+import { sendMessage, listenForMessages } from '../hooks/webSocket';
 
 const FeedPage = () => {
   const [comments, setComments] = useState([]); // State to hold the comments
@@ -16,27 +14,26 @@ const FeedPage = () => {
 
   useEffect(() => {
     const handleMessage = (message) => {
-      // console.log('New message received:', message);
-  
+      console.log('New message received:', message);
+
       if (message.type === 'ping') {
         sendMessage({ type: 'pong' });
         return;
       }
-      
-      if (message.likes && message.dislikes) {
-        // Add logging to debug
-        console.log('Likes:', message.likes);
-        console.log('Dislikes:', message.dislikes);
 
-        // Ensure likes and dislikes are arrays
-        const likesArray = Array.isArray(message.likes) ? message.likes : [];
-        const dislikesArray = Array.isArray(message.dislikes) ? message.dislikes : [];
+      if (message.type === 'history') {
+        const { likes, dislikes } = message;
+        console.log('Likes:', likes);
+        console.log('Dislikes:', dislikes);
+
+        const likesArray = Array.isArray(likes) ? likes : [];
+        const dislikesArray = Array.isArray(dislikes) ? dislikes : [];
 
         setComments((prevComments) => {
           const updatedComments = prevComments.map((c) => ({
             ...c,
-            liked: likesArray.includes(c.id),
-            disliked: dislikesArray.includes(c.id),
+            liked: likesArray.includes(c.id) ? true : (c.liked !== undefined ? c.liked : false),
+            disliked: dislikesArray.includes(c.id) ? true : (c.disliked !== undefined ? c.disliked : false),
           }));
           console.log('Updated comments state (like/dislike update):', updatedComments);
           return updatedComments;
@@ -45,7 +42,7 @@ const FeedPage = () => {
       }
 
       let type, comment, commentid, likes, dislikes;
-  
+
       if (message.type && message.comment) {
         type = message.type;
         comment = message.comment;
@@ -61,23 +58,23 @@ const FeedPage = () => {
         console.warn('Received malformed message:', message);
         return;
       }
-  
+
       if (type === 'new_comment') {
         setComments((prevComments) => {
           const updatedComments = [...prevComments, comment];
-          // console.log('Updated comments state (new_comment):', updatedComments);
+          console.log('Updated comments state (new_comment):', updatedComments);
           return updatedComments;
         });
       } else if (type === 'reply_update') {
         setComments((prevComments) => {
           const updatedComments = [...prevComments, comment]; // Add reply directly without nesting
-          // console.log('Updated comments state (reply_update):', updatedComments);
+          console.log('Updated comments state (reply_update):', updatedComments);
           return updatedComments;
         });
       } else if (type === 'like_update') {
         setComments((prevComments) => {
           const updatedComments = prevComments.map((c) =>
-            c.id === commentid ? { ...c, likes } : c
+            c.id === commentid ? { ...c, likes: message.likes } : c
           );
           console.log('Updated comments state (like_update):', updatedComments);
           return updatedComments;
@@ -85,7 +82,7 @@ const FeedPage = () => {
       } else if (type === 'dislike_update') {
         setComments((prevComments) => {
           const updatedComments = prevComments.map((c) =>
-            c.id === commentid ? { ...c, dislikes } : c
+            c.id === commentid ? { ...c, dislikes: message.dislikes } : c
           );
           console.log('Updated comments state (dislike_update):', updatedComments);
           return updatedComments;
@@ -94,17 +91,16 @@ const FeedPage = () => {
         console.warn('Unknown message type:', type);
       }
     };
-  
+
     const cleanup = listenForMessages(handleMessage);
-  
-    // Cleanup function to close WebSocket connection on component unmount
+
     return () => {
       if (cleanup) cleanup();
     };
   }, []);
 
   useEffect(() => {
-    // console.log('Comments received in FeedPage:', comments);
+    console.log('Comments state in FeedPage:', comments);
   }, [comments]);
 
   return (

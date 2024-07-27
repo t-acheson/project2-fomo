@@ -14,10 +14,7 @@ const CommentDisplay = ({ comments }) => {
     const filteredComments = comments.filter(comment => {
         const commentTime = moment(comment.timestamp);
         return commentTime.isSameOrBefore(currentTimeNY);
-    }).map(comment => ({
-        ...comment,
-        timestamp: moment(comment.timestamp).tz('America/New_York').format('YYYY-MM-DD HH:mm:ss') // Format timestamp to New York time
-    }));
+    });
 
     const nestedComments = nestComments(filteredComments);
     console.log('Nested comments to be displayed:', nestedComments);

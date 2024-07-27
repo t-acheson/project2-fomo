@@ -169,6 +169,8 @@ func getSentiment(text string) (int, error) {
     return 0, err
   }
 
+  fmt.Printf("Raw Sentiment Output: %s\n", output)
+
   // Split the output and parse the last line that contains the integer sentiment
   // outputs := strings.Split(strings.TrimSpace(string(output)), "\n")
   // lastLine := outputs[len(outputs)-1]
@@ -182,7 +184,8 @@ func getSentiment(text string) (int, error) {
   // Directly parse the output
   sentiment, err := strconv.Atoi(strings.TrimSpace(string(output)))
   if err != nil {
-      return 0, fmt.Errorf("error parsing output as integer: %s, output: %s", err, string(output))
+    fmt.Errorf("error parsing output as integer: %s, output: %s", err, string(output))
+    return 0, err
   }
 
 

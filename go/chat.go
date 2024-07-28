@@ -318,7 +318,7 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
       return
     }
     s.broadcast(WebsocketReply{
-      Type: "dislike_update",
+      Type: "like_update",
       CommentID: message.CommentID,
       Likes: updatedLikes,
       Dislikes: updatedDislikes,

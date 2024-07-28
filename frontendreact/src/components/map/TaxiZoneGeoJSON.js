@@ -52,7 +52,12 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
           const formattedTimestamp = new Date(timestamp).toLocaleString(); // Format the timestampß
           const formattedTags = Object.values(tags).join(', '); // 'Theater'
 
-          const vibeDescription = getVibe(sentiment);
+          //const vibeDescription = getVibe(sentiment);
+
+          // Handle where sentiment is missing or null
+          const vibeDescription = sentiment !== undefined && sentiment !== null
+          ? getVibe(sentiment)
+          : "Sentiment data not available. Checkout the vibes and let us know!";
 
           const content = `
             <div>

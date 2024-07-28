@@ -17,7 +17,7 @@ const FeedPage = () => {
       const socket = await initializeWebSocket();
 
       const handleMessage = (message) => {
-        console.log('New message received:', message);
+        // console.log('New message received:', message);
 
         if (message.type === 'ping') {
           sendMessage({ type: 'pong' });
@@ -26,8 +26,8 @@ const FeedPage = () => {
 
         if (message.type === 'history') {
           const { likes, dislikes } = message;
-          console.log('Likes:', likes);
-          console.log('Dislikes:', dislikes);
+          // console.log('Likes:', likes);
+          // console.log('Dislikes:', dislikes);
 
           const likesArray = Array.isArray(likes) ? likes : [];
           const dislikesArray = Array.isArray(dislikes) ? dislikes : [];
@@ -38,7 +38,7 @@ const FeedPage = () => {
               liked: likesArray.includes(c.id) ? true : (c.liked !== undefined ? c.liked : false),
               disliked: dislikesArray.includes(c.id) ? true : (c.disliked !== undefined ? c.disliked : false),
             }));
-            console.log('Updated comments state (like/dislike update):', updatedComments);
+            // console.log('Updated comments state (like/dislike update):', updatedComments);
             return updatedComments;
           });
           return;
@@ -65,13 +65,13 @@ const FeedPage = () => {
         if (type === 'new_comment') {
           setComments((prevComments) => {
             const updatedComments = [...prevComments, comment];
-            console.log('Updated comments state (new_comment):', updatedComments);
+            // console.log('Updated comments state (new_comment):', updatedComments);
             return updatedComments;
           });
         } else if (type === 'reply_update') {
           setComments((prevComments) => {
             const updatedComments = [...prevComments, comment]; // Add reply directly without nesting
-            console.log('Updated comments state (reply_update):', updatedComments);
+            // console.log('Updated comments state (reply_update):', updatedComments);
             return updatedComments;
           });
         } else if (type === 'like_update') {
@@ -79,7 +79,7 @@ const FeedPage = () => {
             const updatedComments = prevComments.map((c) =>
               c.id === commentid ? { ...c, likes: message.likes } : c
             );
-            console.log('Updated comments state (like_update):', updatedComments);
+            // console.log('Updated comments state (like_update):', updatedComments);
             return updatedComments;
           });
         } else if (type === 'dislike_update') {
@@ -87,7 +87,7 @@ const FeedPage = () => {
             const updatedComments = prevComments.map((c) =>
               c.id === commentid ? { ...c, dislikes: message.dislikes } : c
             );
-            console.log('Updated comments state (dislike_update):', updatedComments);
+            // console.log('Updated comments state (dislike_update):', updatedComments);
             return updatedComments;
           });
         } else {
@@ -109,9 +109,9 @@ const FeedPage = () => {
     initializeAndListen();
   }, []);
 
-  useEffect(() => {
-    console.log('Comments state in FeedPage:', comments);
-  }, [comments]);
+  // useEffect(() => {
+  //   // console.log('Comments state in FeedPage:', comments);
+  // }, [comments]);
 
   return (
     <Container>

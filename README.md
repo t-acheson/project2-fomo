@@ -28,22 +28,6 @@
 - **Mapping**: OpenStreetMap, Leaflet
 
 ### Clone the Repository
-
-```bash
-git clone https://github.com/your-username/nyc-fomo.git
-cd nyc-fomo
-```
-## Technologies Used
-
-- **Frontend**: React, React-Bootstrap
-- **Backend**: GoLang
-- **Machine Learning**: Python
-- **Database**: PostgreSQL
-- **Containerization**: Docker
-- **Deployment**: GitHub Actions for CI/CD
-- **Mapping**: OpenStreetMap, Leaflet
-
-### Clone the Repository
 ```bash
 git clone https://github.com/your-username/nyc-fomo.git
 cd nyc-fomo

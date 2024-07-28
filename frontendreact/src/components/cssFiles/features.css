@@ -1,0 +1,62 @@
+.featuresBlock {
+  padding: 100px 0 30px 0;
+}
+
+.featuresBlock .titleHolder {
+  text-align: center;
+  padding: 10px 20px;
+  margin-bottom: 40px;
+}
+
+.featuresBlock .titleHolder h1 {
+  margin-bottom: 30px;
+  color: #fff;
+}
+
+.featuresBlock .titleHolder h2 {
+  font-size: 20px;
+  color: #fff;
+}
+
+.featuresBlock .holder {
+  text-align: center;
+  margin: 30px 0;
+  padding: 10px 20px;
+}
+
+@media (min-width: 768px) {
+  .featuresBlock .holder {
+    padding: 10px 100px;
+  }
+}
+
+.featuresBlock .holder h3 {
+  background: linear-gradient(90deg, 
+              #FF6B6B 0%, 
+              #FFB06B 25%, 
+              #FFD56B 50%, 
+              #FFC06B 75%, 
+              #FF6B6B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  margin-bottom: 15px;
+}
+
+.featuresBlock .holder p {
+  color: #ffffff;
+}
+
+.featuresBlock .imageHolder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.featuresBlock .imageHolder img {
+  width: 200%; /* changed from 100% */
+  max-width: 600px; /* Maintain the width limit - changed from 450 */
+  height: 100%; /* changed from auto */
+}

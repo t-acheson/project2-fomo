@@ -1,65 +1,114 @@
 .heroBlock {
-    margin: 0;
+  margin: 0;
+}
+
+.heroBlock .carousel-item:before {
+  content: '';
+  background: rgba(0, 0, 0, 0);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0; 
+}
+
+.heroBlock .carousel-item img {
+  width: 100%;
+}
+
+.heroBlock .carousel-caption {
+  left: 25%;
+  right: 25%;
+  transform: translateY(50%);
+  -webkit-transform: translateY(50%);
+  bottom: 30%;
+}
+
+
+/* button style added - can remove */
+.custom-btn {
+  background-color: #ff7b00; /* Change this to your desired color */
+  border-color: #ff6600; 
+  color: #fff; 
   }
   
-  .heroBlock .carousel-item:before {
-    content: '';
-    background: rgba(0, 0, 0, 0.7);
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0; 
-  }
-  
-  .heroBlock .carousel-item img {
-    width: 100%;
-  }
-  
-  .heroBlock .carousel-caption {
-    left: 25%;
-    right: 25%;
-    transform: translateY(50%);
-    -webkit-transform: translateY(50%);
-    bottom: 30%;
-  }
-  
-  .heroBlock p {
-    margin: 0 0 30px;
-  }
-  
-  .hero-block .carousel-caption {
-    left: 7%;
-    right: 7%;
+  .custom-btn:hover,
+  .custom-btn:focus,
+  .custom-btn:active {
+  background-color: #eb2637; 
+  border-color: #cc5200;
   }
 
-  .hero-block .carousel-control {
-    width: 5%;
-  }
+/* .heroBlock p {
+  margin: 0 0 30px;
+} */
+
+.heroBlock .carousel-caption {
+  left: 7%;
+  right: 7%;
+}
+
+.heroBlock .carousel-control {
+  width: 5%;
+}
+
+.heroBlock p {
+  margin: 0 0 25px;
+
+  /* added by Muireann - can remove if you don't like*/
+  color: #c7d7eb;
+  background-color: rgba(5, 5, 5, 0.5);
+  /* font-weight: bold; */
+  font-size: larger;
+  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  border-bottom-left-radius: 15px; /* Wanted round corners */
+  border-bottom-right-radius: 15px;
+}
+
+.heroBlock h3 {
+  margin: 0 0 0;
+  /* color: #c7d7eb; */
+  color: #ff7b00;
+  background-color: rgba(5, 5, 5, 0.5);
+  font-weight: bold;
+  font-size: 350%;
+  font-family:'Courier New', Courier, monospace;
+  border-top-left-radius: 15px; /* Wanted round corners */
+  border-top-right-radius: 15px;
+}
+
 
 @media only screen and (max-width: 1023px) {
   .heroBlock .carousel-caption {
-    left: 7%;
-    right: 7%;
+      left: 7%;
+      right: 7%;
+
+      bottom: 30%; /* trying to ensure buttons stay visible*/
   }
-  
+
   .heroBlock .carousel-control {
-    width: 5%;
+      width: 5%;
   }
-  
+
   .heroBlock p {
-    margin: 0 0 25px;
+      margin: 0 0 25px;
   }
-  
 }
 
 @media only screen and (max-width: 767px) {
   .heroBlock .carousel-caption {
-    left: 4%;
-    right: 4%;
+      left: 4%;
+      right: 4%;
+
+      bottom: 50%; /* trying to ensure buttons stay visible*/
   }
-  
+
   .heroBlock .carousel-control {
-    width: 15%;
+      width: 15%;
   }
 }
+
+
+.carousel-caption .btn {
+  margin-bottom: 20px; 
+} 

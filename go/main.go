@@ -1,31 +1,27 @@
 package main
 
 import (
-	"fmt"      //Formatted I/O
-	"log"      //Logging errors
-	"net/http" //HTTP server
-	"time" //Used for time.Sleep
-	"os" //Pass in environment vars
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"regexp"
 	"golang.org/x/net/websocket"
-
-	"github.com/gorilla/sessions" //Session management
+	// "github.com/google/uuid"
 	"database/sql"
 )
-
-// Struct to hold user session data
-type User struct {
-	UserID string
-}
-
-// Define a global session store
-var store = sessions.NewCookieStore([]byte("sampleKey"))
 
 // Define a connection the the Postgres db
 var db *sql.DB
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	//Writes a response to a HTTP request to the HTTP response writer, w.
-	fmt.Fprintf(w, "Go server running")
+var busynessMap map[string]float32
+
+// Define a structure for the initial message
+type InitialMessage struct {
+	Lat         float64 `json:"lat"`
+	Lng         float64 `json:"lng"`
+	Fingerprint string  `json:"fingerprint"`
 }
 
 //Redirect HTTP request to HTTPS
@@ -33,22 +29,180 @@ func redirectHTTP(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
 }
 
+// CORS middleware function
+func CORSMiddleware(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Set CORS headers
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins
+		w.Header().Set("Access-Control-Allow-Methods", "POST") // Allow specific methods
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type") // Allow specific headers
+
+		// Handle preflight requests
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		// Call the actual handler
+		h(w, r)
+	}
+} 
+// Handles HTTP request at the "/location" endpoint.
+// Decodes the request body, calls the grpc server and encodes response as JSON
+func locationHandler(w http.ResponseWriter, r *http.Request) {
+	// Log that a request has been received at the "/location" endpoint
+	log.Println("Received request at /location endpoint")
+
+	w.Header().Set("Content-Type", "application/json")
+
+	// Code for turning the map to json
+	jsonBusyness, err := json.Marshal(busynessMap)
+	if err != nil {
+		fmt.Println("Error marshalling JSON:", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	
+	// Write JSON to response
+	_, err = w.Write(jsonBusyness)
+	if err != nil {
+		fmt.Println("Error writing response:", err)
+	}
+}
+
 func main() {
-	// Give the gRPC server a second to open
-	time.Sleep(1 * time.Second)
-
-	//Test the gRPC server
-	testRecommend()
-
-	// Give postgres a few seconds to open
-	time.Sleep(5 * time.Second)
-
 	//Connects to Postgres/PostGIS db
 	db = connectToPostgres()
 	defer db.Close()
 
-	//Set up HTTP handler at root URL
-	http.HandleFunc("/", handler)
+	// Generate busyness values initially
+	cacheBusyness()
+
+	// Run the timer for archiving comments and updating busyness
+	go runScheduler()
+
+	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Define the file server for static files
+		fs := http.FileServer(http.Dir("frontendreact/build"))
+		// Define the regex pattern to match file extensions
+		fileMatcher := regexp.MustCompile(`\.[a-zA-Z]*$`)
+		if !fileMatcher.MatchString(r.URL.Path) {
+			http.ServeFile(w, r, "frontendreact/build/index.html")
+		} else {
+			fs.ServeHTTP(w, r)
+		}
+	}))
+
+	// location handler
+	http.HandleFunc("/location", CORSMiddleware(locationHandler))
+	log.Println("Location handler is set up")
+
+	// Set up websocket server
+	server := NewServer()
+
+	// Set postgres timezone and nyc var to new york timezone
+	setTimezone()
+
+	// Define the WebSocket handler function
+websocketHandler := func(ws *websocket.Conn) {
+	var initialMsg InitialMessage
+	var rawMessage []byte
+
+	// Read the raw message
+	if err := websocket.Message.Receive(ws, &rawMessage); err != nil {
+		fmt.Println("Error receiving raw message:", err)
+		return
+	}
+
+	// Log the raw message data
+	fmt.Println("Raw message received:", string(rawMessage))
+
+	// Attempt to unmarshal the raw message into the struct
+	if err := json.Unmarshal(rawMessage, &initialMsg); err != nil {
+		// Log the raw data and partially parsed fields if unmarshalling fails
+		fmt.Printf("Error unmarshalling JSON: %v\n", err)
+		fmt.Printf("Partial message data: Lat: %f, Lng: %f, Fingerprint: %s\n",
+			initialMsg.Lat, initialMsg.Lng, initialMsg.Fingerprint)
+		return
+	}
+
+	// Log the successfully parsed fields
+	fmt.Printf("Successfully parsed message: Lat: %f, Lng: %f, Fingerprint: %s\n",
+		initialMsg.Lat, initialMsg.Lng, initialMsg.Fingerprint)
+
+	// Call handleWebSocket with the parsed data
+	server.handleWebSocket(ws, initialMsg.Lat, initialMsg.Lng, initialMsg.Fingerprint)
+}
+
+	http.Handle("/ws", websocket.Handler(websocketHandler))
+
+
+	//handler for top comment functions 
+	http.HandleFunc("/topcomment", CORSMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		// Log that a request has been received at the "/topcomment" endpoint
+		log.Println("Received request at /topcomment endpoint")
+		var params struct {
+			Lat float64 `json:"lat"`
+			Lng float64 `json:"lng"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+			http.Error(w, "Bad Request", http.StatusBadRequest)
+			return
+		}
+
+		topComment, err := getTopCommentFunc(params.Lat, params.Lng)
+		if err != nil {
+			http.Error(w, "Error getting Top Comment", http.StatusInternalServerError)
+			return
+		}
+
+
+		// Get the average sentiment
+		averageSentiment, err := getSentiment(params.Lat, params.Lng)
+		if err != nil {
+			http.Error(w, "Error getting Sentiment", http.StatusInternalServerError)
+			return
+		}
+
+		// Prepare response
+		response := struct {
+			Comment   *Comment  `json:"comment"`
+			Sentiment float64   `json:"sentiment"`
+		}{
+			Comment:   topComment,
+			Sentiment: averageSentiment,
+		}
+
+
+
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(response); err != nil {
+			http.Error(w, "Error encoding top comment response", http.StatusInternalServerError)
+			return
+		}
+	}))
+
+	http.HandleFunc("/topsentiment", CORSMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		var params struct {
+			Lat float64 `json:"lat"`
+			Lng float64 `json:"lng"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+			http.Error(w, "Bad Request", http.StatusBadRequest)
+			return
+		}
+
+		averageSentiment, err := getTopSentimentFunc(params.Lat, params.Lng)
+		if err != nil {
+			http.Error(w, "Error calculating average sentiment", http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(map[string]float64{"averageSentiment": averageSentiment})
+	}))
+
+
 
 	//Start TLS listener on port 443
 	go func() {
@@ -59,11 +213,6 @@ func main() {
 			log.Fatalf("HTTPS server failed to start: %v", err)
 		}
 	}()
-
-	//Starting websocket chat at /ws
-	log.Printf("Starting websocket chat")
-	server := NewServer()
-	http.Handle("/ws", websocket.Handler(server.handleWebSocket))
 
 	//Start HTTP listener on port 80
 	log.Printf("Starting HTTP listener")

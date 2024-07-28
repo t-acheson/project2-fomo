@@ -31,7 +31,19 @@ manhattan = [
     #"NoHo", "Roosevelt Island", "SoHo", 
     #"Times Square", "Union Square", "Wall Street",
     #"Yorkville", "Beekman Place", "Chelsea",
-    "East Village", "Flatiron", "Greenwich Village"
+    #"East Village", "Flatiron", "Greenwich Village",
+    
+    #Start here
+    #* Following in comments_fs2
+    #"Chinatown", "Civic Center", "Clinton",
+    #"Herald Square", "Hudson Square", "Harlem",
+    #"Lincoln Square", "Little Italy", "Lower East Side",
+    #"Manhattanville", "Midtown", "Midtown South",
+    #"Morningside Heights", "Murray Hill", "South Village",
+    #"Stuyvesant Town", "Sutton Place", "Tribeca",
+    #"Tudor City", "Turtle Bay", "Upper East Side",
+    #! Trouble inserting this pull in database but mostly complete
+    #"Upper West Side", "Washington Heights", "West Village"
 ]
 
 # Bronx neighborhoods
@@ -43,7 +55,26 @@ bronx = [
     #"North Riverdale", "Olinville", "Parkchester",
     #"Riverdale", "Schuylerville", "Throgs Neck", 
     #"Unionport", "Van Nest", "Wakefield",
-    "Baychester", "City Island", "Eastchester"
+    #"Baychester", "City Island", "Eastchester",
+    
+    
+    # Start here
+    #* Following in comments_fs2
+    #"Bedford Park", "Belmont", "Bronxdale",
+    #"Bronx Park South", "Bronx River", "Claremont Village",
+    #"Clason Point", "Concourse", "Concourse Village",
+    #"Co-op City", "Country Club", "Edenwald",
+    #"Edgewater Park", "Fordham", "Hunts Point", 
+    #"Kingsbridge Heights", "Melrose", "Morris Heights",
+    #"Morris Park", "Morrisania", "Mott Haven", 
+    #! Trouble inserting this pull in database but mostly complete
+    #"Mount Eden", "Mount Hope", "Norwood",
+    
+    #* Following in comments_fs3
+    #"Pelham Bay", "Pelham Gardens", "Pelham Parkway",
+    #"Port Morris", "Soundview", "Spuyten Duyvil",
+    #"University Heights", "West Farms", "Westchester Square", 
+    #"Williamsbridge", "Woodlawn"
 ]
 
 # Staten Island neighborhoods
@@ -55,7 +86,27 @@ statenIsland = [
     #"Oakwood", "Park Hill", "Randall Manor", 
     #"Sandy Ground", "Todt Hill", "Ward Hill", 
     #"Arden Heights", "Bloomfield", "Charleston",
-    "Elm Park", "Grant City", "Howland Hook"
+    #"Elm Park", "Grant City", "Howland Hook",
+    
+    # Start
+    #* Following in comments_fs2
+    #"Arlington", "Arrochar", "Bulls Head",
+    #"Butler Manor", "Clifton", "Concord",
+    #"Chelsea", "Eltingville", "Emerson Hill",
+    #"Grasmere", "Great Kills", "Greenridge",
+    #"Grymes Hill", "Huguenot", "Livingston",
+    #"Mariner's Harbor", "Midland Beach", "New Dorp",
+    #"New Dorp Beach", "New Springville", "Old Place",
+    #! Trouble inserting this pull in database but mostly complete
+    #"Old Town", "Pleasant Plains", "Port Ivory",
+    
+    #* Following in comments_fs3
+    #"Port Richmond", "Prince's Bay", "Richmond Town", 
+    #"Richmond Valley", "Rosebank", "Rossville", 
+    #"Shore Acres", "Silver Lake", "South Beach",
+    #"St. George", "Stapleton", "Sunnyside",
+    #"Tompkinsville", "Tottenville", "Travis",
+    #"Westerleigh", "Willowbrook", "Woodrow"
 ]
 
 # Brooklyn neighborhoods
@@ -67,7 +118,31 @@ brooklyn = [
     #"Paerdegat Basin", "Red Hook", "Sea Gate", 
     #"Tompkins Park North", "Vinegar Hill", "Weeksville", 
     #"Bay Ridge", "Carroll Gardens", "Downtown", 
-    "East New York", "Flatbush", "Gerritsen Beach"
+    #"East New York", "Flatbush", "Gerritsen Beach",
+    
+    # Start
+    #* Following in comments_fs2
+    #"Bedford Stuyvesant", "Bensonhurst", "Boerum Hill",
+    #"Borough Park", "Brighton Beach", "Brooklyn Heights",
+    #"Brownsville", "Bushwick", "City Line",
+    #"Clinton Hill", "Cobble Hill", "Coney Island",
+    #"Crown Heights", "Cypress Hills", "DUMBO",
+    #"Dyker Heights", "East Williamsburg", "Flatlands",
+    #"Fort Greene", "Fort Hamilton", "Fulton Ferry",
+    #! Trouble inserting this pull in database but mostly complete
+    #"Gowanus", "Gravesend", "Greenpoint",
+    
+    #* Following in comments_fs3
+    #"Homecrest", "Kings Highway", "Manhattan Terrace",
+    #"Mapleton", "Marine Park", "Midwood",
+    #"Mill Basin", "Mill Island", "New Lots",
+    #"North Side", "Ocean Parkway", "Park Slope",
+    #"Plum Beach", "Prospect Heights", "Prospect Lefferts Gardens",
+    #"Prospect Park South", "Remsen Village", "Rugby",
+    #"South Side", "Sheepshead Bay", "Spring Creek",
+    #"Starrett City", "Stuyvesant Heights", "Sunset Park",
+    #"West Brighton", "Williamsburg", 
+    #"Windsor Terrace", "Wingate"
 ]
 
 # Queens neighborhoods
@@ -79,7 +154,33 @@ queens = [
     #"Oakland Gardens", "Pomonok", "Queens Village", 
     #"Ravenswood", "Seaside", "Utopia", 
     #"Whitestone", "Astoria", "Bayside", 
-    "Clearview", "Dutch Kills", "Edgemere"
+    #"Clearview", "Dutch Kills", "Edgemere",
+    
+    # Start
+    #* Following in comments_fs2
+    #"Astoria Heights", "Auburndale", "Bayswater",
+    #"Beechhurst", "Bellaire", "Belle Harbor",
+    #"Bellerose", "Blissville", "Breezy Point",
+    #"Brookville", "Briarwood", "Broad Channel",
+    #"College Point", "Elmhurst", "Floral Park",
+    #"Flushing", "Forest Hills", "Forest Hills Gardens", 
+    #"Fresh Meadows", "Glendale", "Hillcrest",
+    #! Trouble inserting this pull in database but mostly complete
+    #"Holliswood", "Hollis", "Howard Beach",
+    
+    #* Following in comments_fs3
+    #"Hunters Point", "Jamaica", "Jamaica Center",
+    #"Jamaica Estates", "Jamaica Hills", "Kew Gardens Hills",
+    #"Lefrak City", "Little Neck", "Long Island City",
+    #"Lindenwood", "Maspeth", "Middle Village",
+    #"Murray Hill", "North Corona", "New Hyde Park",
+    #"Ozone Park", "Queensboro Hill", "Rego Park",
+    #"Richmond Hill", "Ridgewood", "Rochdale",
+    #"Rockaway Park", "Rosedale", "Roxbury",
+    #"South Corona", "Somerville", "South Jamaica", 
+    "South Ozone Park", "Springfield Gardens", "St. Albans",
+    "Steinway", "Sunnyside", "Sunnyside Gardens", 
+    "Woodhaven", "Woodside"
 ]
 
 # 6 categories to stay under 30,000
@@ -97,16 +198,16 @@ categories = [
     #11000     Business and Professional Services
     #10052     Arts and Entertainment > Strip Club
     #10043     Arts and Entertainment > Performing Arts Venue > Theater
-    #10039     Arts and Entertainment > Performing Arts Venue > Music Venue
-    #10035     Arts and Entertainment > Performing Arts Venue
+    "10039",     #Arts and Entertainment > Performing Arts Venue > Music Venue
+    "10035",     #Arts and Entertainment > Performing Arts Venue
     #10051     Arts and Entertainment > Stadium
-    "10032"    #Arts and Entertainment > Night Club
+    "10032",    #Arts and Entertainment > Night Club
     #10013     Arts and Entertainment > Dance Hall
-    #10010     Arts and Entertainment > Comedy Club
+    "10010",     #Arts and Entertainment > Comedy Club
     #10007     Arts and Entertainment > Carnival
     #10006     Arts and Entertainment > Bowling Alley
     #10003     Arts and Entertainment > Arcade
-    #10001     Arts and Entertainment > Amusement Park
+    "10001"     #Arts and Entertainment > Amusement Park
     #10000     Arts and Entertainment
 ]
 
@@ -178,7 +279,7 @@ cursor = connection.cursor()
 
 # Create table for New York weather data
 sql = """
-CREATE TABLE IF NOT EXISTS comments_fs (
+CREATE TABLE IF NOT EXISTS comments_fs3 (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255),
     address VARCHAR(255),
@@ -192,7 +293,7 @@ CREATE TABLE IF NOT EXISTS comments_fs (
 
 try:
     #Drop table if table Comments already exists
-    #cursor.execute("DROP TABLE IF EXISTS Comments")
+    #cursor.execute("DROP TABLE IF EXISTS comments_fs2")
     #Create new table - with above commented out, new table only created if doesn't exist
     cursor.execute(sql)
     #Save the changes made to schema
@@ -209,7 +310,7 @@ def comments_to_db(name, address, comment, created_at, latitude, longitude):
         
     vals = (name, address, comment, created_at, latitude, longitude)
     # Insert into table - list name, address etc. again to specify the column heading of table to insert vals into
-    cursor.execute("INSERT INTO comments_fs (name, address, comment, created_at, latitude, longitude) VALUES (%s, %s, %s, %s, %s, %s)", vals)
+    cursor.execute("INSERT INTO comments_fs3 (name, address, comment, created_at, latitude, longitude) VALUES (%s, %s, %s, %s, %s, %s)", vals)
     connection.commit()
 # end : function to commit Comments to database
                         

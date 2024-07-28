@@ -1,38 +1,43 @@
 .header {
-    background-color: #222831;
-    color: #fff;
-  }
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #222831;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+  z-index: 1000;
+  border-bottom: 2px solid #1b2027;
+}
 
 .header .navbar-brand {
-    width: 100px;
-    height: 55px;
-    color: #F7F6F6;
-    font-weight: bold;
-    font-size: 30px;
-    text-align: left;
+  color: #F7F6F6;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.header .navbar-brand:hover {
+  color: #ff5a5f; 
 }
 
 .header .nav-link {
-    color: #FFFFFF;
-    font-weight: 400;
-    font-size: 16px;
-    text-align: right;
+  color: #FFFFFF;
+  font-weight: 400;
+  font-size: 1rem;
+  margin-left: 15px;
+  transition: color 0.3s;
 }
 
-/* Style the hamburger icon and its border */
+.header .nav-link:hover {
+  color: #ff5a5f;
+}
+
 .header .navbar-toggler {
-    border-color: #fff;
-  }
-  
-  .header .navbar-toggler-icon {
-    display: none; /* Reduces extra space ontop of the hamberger icon */
-  }
+  border: none;
+}
 
 .header .navbar-toggler::after {
-    content: "\2630"; /* Unicode for the hamburger icon */
-    color: #fff; 
-    font-size: 20px; 
-    display: block;
-    line-height: 20px;
-    padding: 5px;
-  }
+  content: "\2630";
+  color: #fff;
+  font-size: 1.5rem;
+}

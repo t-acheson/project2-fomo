@@ -28,7 +28,7 @@ type dbStruct struct {
 func connectToPostgres() *sql.DB {
   // Create an instance of dbStruct
   dbLogin := dbStruct{
-    host: "postgres",
+    host: "postgres-container",
     port: 5432,
     user: os.Getenv("POSTGRES_USER"),
     password: os.Getenv("POSTGRES_PASSWORD"),
@@ -74,9 +74,15 @@ func connectToPostgres() *sql.DB {
   _, err = db.Exec(`
     CREATE TABLE IF NOT EXISTS comments (
       id SERIAL PRIMARY KEY,
+      parent_id INT,
       timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       text TEXT NOT NULL,
-      location GEOGRAPHY(POINT, 4326) NOT NULL 
+      location GEOGRAPHY(POINT, 4326) NOT NULL,
+      likes INT DEFAULT 0,
+      dislikes INT DEFAULT 0,
+      tags TEXT[],
+      author TEXT,
+      FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
     );
   `)
   if err != nil {
@@ -84,8 +90,38 @@ func connectToPostgres() *sql.DB {
   }
 
   _, err = db.Exec(`
+    CREATE TABLE IF NOT EXISTS archived_comments (
+      id INT PRIMARY KEY,                                                                                                                                                                        
+      parent_id INT,              
+      timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      text TEXT NOT NULL,         
+      location GEOGRAPHY(POINT, 4326) NOT NULL,
+      likes INT DEFAULT 0,           
+      dislikes INT DEFAULT 0,
+      tags TEXT[],
+      author TEXT,
+      FOREIGN KEY (parent_id) REFERENCES archived_comments(id) ON DELETE CASCADE
+    );   
+  `)
+  if err != nil {
+    fmt.Println("Error creating table archived_comments:", err)
+  }
+
+  _, err = db.Exec(`
+    CREATE TABLE IF NOT EXISTS comments_interactions (
+      comment_id INT REFERENCES comments(id) ON DELETE CASCADE,
+      fingerprint TEXT NOT NULL,
+      "like" BOOLEAN NOT NULL,
+      PRIMARY KEY (fingerprint, comment_id, "like")
+    );
+  `)
+  if err != nil {
+    fmt.Println("Error creating table comments_interactions:", err)
+  }
+
+  _, err = db.Exec(`
     CREATE TABLE IF NOT EXISTS users (
-      uuid UUID PRIMARY KEY,
+      fingerprint TEXT PRIMARY KEY,
       location GEOGRAPHY(POINT, 4326) NOT NULL
     );
   `)

@@ -1,29 +1,43 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import MapPage from '../pages/MapPage';
-import { LoadScript, GoogleMap } from '@react-google-maps/api';
+import '@testing-library/jest-dom'; 
+import MapPage from '../pages/MapPage'; 
 
-// Mock the LoadScript and GoogleMap components
-jest.mock('@react-google-maps/api', () => ({
-  LoadScript: ({ children }) => <div>{children}</div>, // Mocked LoadScript component
-  GoogleMap: ({ mapContainerStyle }) => (
-    <div data-testid="google-map" style={mapContainerStyle}></div> // Mocked GoogleMap component
-  )
+jest.mock('../components/map/BaseMap', () => ({ children }) => <div>{children}</div>);
+jest.mock('../components/map/UserMarker', () => () => <div>UserMarker Component</div>);
+jest.mock('../components/map/TaxiZoneGeoJSON', () => ({ features, onFeatureHover }) => (
+  <div>
+    TaxiZoneGeoJSON Component
+    {features.map((feature, index) => (
+      <div key={index}>{feature.name}</div>
+    ))}
+  </div>
+));
+jest.mock('../components/map/TaxiZoneInfoBox', () => ({ hoverInfo }) => (
+  <div>{hoverInfo ? hoverInfo.name : 'No Hover Info'}</div>
+));
+jest.mock('../components/map/BusynessLegend', () => () => <div>LegendControl Component</div>);
+
+jest.mock('../data/FOMOTaxiMap', () => ({
+  features: [
+    { name: 'Zone 1' },
+    { name: 'Zone 2' }
+  ]
 }));
 
-describe('MapPage', () => {
-  beforeEach(() => {
-    render(<MapPage />); // Render the MapPage component before each test
-  });
 
-  it('renders without crashing', () => {
-    // Test case to check if the MapPage component renders without crashing
-  });
+  test('renders map and components', () => {
+    render(<MapPage />);
 
-  it('renders the Google Map', () => {
-    const googleMapElement = screen.getByTestId('google-map'); // Get the GoogleMap element by its test id
-    expect(googleMapElement).toBeInTheDocument(); // Assert that the GoogleMap element is in the document
-  });
-});
+    // Check if the map components are rendered
+    expect(screen.getByText('UserMarker Component')).toBeInTheDocument();
+    expect(screen.getByText('TaxiZoneGeoJSON Component')).toBeInTheDocument();
+    expect(screen.getByText('LegendControl Component')).toBeInTheDocument();
 
+    // Check if the features are rendered
+    expect(screen.getByText('Zone 1')).toBeInTheDocument();
+    expect(screen.getByText('Zone 2')).toBeInTheDocument();
+
+    // Check if the hover info box is rendered with default text
+    expect(screen.getByText('No Hover Info')).toBeInTheDocument();
+  });

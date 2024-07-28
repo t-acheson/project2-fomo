@@ -13,8 +13,14 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 # Copy remaining files to server
 COPY *.py .
 
+# Copy the pickle file to server
+COPY RF_m1.pkl .
+
+# Copy the .env to the server
+COPY .env .
+
 # Expose gRPC server port
 EXPOSE 50051
 
 # Set command to run server
-CMD ["python3", "-u", "recommendations_server.py"]
+CMD ["python3", "-u", "busyness_server.py"]

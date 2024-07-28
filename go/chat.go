@@ -435,9 +435,6 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
     return 0,0,0,0,err
   }
 
-  var lat, lng float64
-  var likes, dislikes int
-
   if column == "likes" {
     if liked { // User has liked the comment previously
       // Check if the user is attempting to re-like the comment
@@ -451,7 +448,7 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
       lat, lng, likes, dislikes, err := updateComment(id, "likes", "- 1")
       if err != nil { return 0,0,0,0,err}
       // If not returned, like has been removed from comment successfully
-      return lat,lng,likes,dislikes, nil
+      return lat,lng,likes,dislikes,nil
 
     } else { // User has disliked the comment previously
       // User wants to like interact with a comment they have disliked
@@ -541,7 +538,7 @@ func updateComment(id int, column string, update string) (float64, float64, int,
   var lat, lng float64
   var likes, dislikes int
   query := fmt.Sprintf("UPDATE comments SET %s = %s %s WHERE id = $1 RETURNING ST_X(location::geometry), ST_Y(location::geometry), likes, dislikes;", column, column, update)
-  err = db.QueryRow(query, id).Scan(&lat, &lng, &likes, &dislikes)
+  err := db.QueryRow(query, id).Scan(&lat, &lng, &likes, &dislikes)
   if err != nil {
     fmt.Println("Error updating the likes/dislikes of comment:", err)
     return 0, 0, 0, 0, err

@@ -299,11 +299,13 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
     }, message.Latitude, message.Longitude)
 
   case "like_update":
+    fmt.Println("Recieved like_update")
     likeLat, likeLng, updatedLikes, updatedDislikes, err := s.interact(message.CommentID, "likes", message.Like, fingerprint)
     if err != nil {
       fmt.Println("Error updating likes:", err)
       return
     }
+    fmt.Println("Broadcasting like_update reply")
     s.broadcast(WebsocketReply{
       Type: "like_update",
       CommentID: message.CommentID,
@@ -312,11 +314,13 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
     }, likeLat, likeLng)
 
   case "dislike_update":
+    fmt.Println("Recieved disliked_update")
     dislikeLat, dislikeLng, updatedLikes, updatedDislikes, err := s.interact(message.CommentID, "dislikes", message.Dislike, fingerprint)
     if err != nil {
       fmt.Println("Error updating dislikes:", err)
       return
     }
+    fmt.Println("Broadcasting disliked_update reply")
     s.broadcast(WebsocketReply{
       Type: "like_update",
       CommentID: message.CommentID,
@@ -425,6 +429,7 @@ func checkInteraction(commentid int, fingerprint string) (bool, bool, error) {
       disliked = true
     }
   }
+  fmt.Println("CommentID, Liked, Disliked:", commentid, liked, disliked)
   return liked, disliked, nil
 }
 

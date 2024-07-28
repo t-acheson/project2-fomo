@@ -43,14 +43,25 @@
   .info h4 {
     font-size: 16px;
   }
+  
 }
 
 /* Ensure the info box doesn't overlap with the navbar on very small screens */
-@media (max-width: 480px) {
+@media (max-width: 400px) {
   .info {
     position: absolute;
     top: 100px; /* Position it below the navbar */
     right: 10px;
     max-width: 180px;
+  }
+  .legend {
+    font-size: 10px;
+    padding: 5px;
+    max-width: 100%;
+  }
+  .info-box {
+    font-size: 10px;
+    padding: 5px;
+    max-width: 100%;
   }
 }

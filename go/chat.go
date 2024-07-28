@@ -465,6 +465,7 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
         err := removeInteraction(id, fingerprint, false)
         if err != nil { return 0,0,0,0,err}
         _,_,_,_,err = updateComment(id, "dislikes", "-1")
+        if err != nil { return 0,0,0,0,err}
       }
 
       // Add the like to the comment
@@ -505,6 +506,7 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
         err := removeInteraction(id, fingerprint, true)
         if err != nil { return 0,0,0,0,err}
         _,_,_,_,err = updateComment(id, "likes", "-1")
+        if err != nil { return 0,0,0,0,err}
       }
 
       // Add the dislike to the comment

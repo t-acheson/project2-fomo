@@ -32,7 +32,8 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
         console.log(data);
 
         if (data) {
-          const { text, tags, timestamp, likes, dislikes } = data;
+          const { comment, sentiment } = data;
+          const { text, tags, timestamp, likes, dislikes } = comment;
           const formattedTimestamp = new Date(timestamp).toLocaleString(); // Format the timestampß
           const formattedTags = Object.values(tags).join(', '); // 'Theater'
 
@@ -43,6 +44,7 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
               <p style="font-size: smaller;"><strong>Tags:</strong> ${formattedTags}</p>
               <p style="font-size: smaller;"><strong>Likes:</strong> ${likes}, <strong>Dislikes:</strong> ${dislikes}</p>
               <p style="font-size: smaller;">${formattedTimestamp}</p>
+              <p style="font-size: larger;"><strong>Overall Area Vibes:</strong> ${sentiment.toFixed(2)}</p>
             </div>
           `;
 

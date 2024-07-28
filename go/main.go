@@ -156,8 +156,28 @@ websocketHandler := func(ws *websocket.Conn) {
 			return
 		}
 
+
+		// Get the average sentiment
+		averageSentiment, err := getSentiment(params.Lat, params.Lng)
+		if err != nil {
+			http.Error(w, "Error getting Sentiment", http.StatusInternalServerError)
+			return
+		}
+
+		// Prepare response
+		response := struct {
+			Comment   *Comment  `json:"comment"`
+			Sentiment float64   `json:"sentiment"`
+		}{
+			Comment:   topComment,
+			Sentiment: averageSentiment,
+		}
+
+
+
+
 		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(topComment); err != nil {
+		if err := json.NewEncoder(w).Encode(response); err != nil {
 			http.Error(w, "Error encoding top comment response", http.StatusInternalServerError)
 			return
 		}

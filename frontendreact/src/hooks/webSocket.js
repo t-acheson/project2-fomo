@@ -31,12 +31,12 @@ const initializeWebSocket = async () => {
       lng: -73.98422384354889, // Example longitude
       fingerprint: fingerprint // Send fingerprint data
     }));
-    // console.log('Location sent from:', fingerprint);
+    console.log('Location sent from:', fingerprint);
     reconnectAttempts = 0; // Reset reconnect attempts on successful connection
   });
 
   socket.addEventListener('message', function(event) {
-    // console.log('Message from server:', event.data);
+    console.log('Message from server:', event.data);
   });
 
   socket.addEventListener('error', function(event) {

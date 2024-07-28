@@ -54,3 +54,48 @@ func getTopComment(lat float64, lng float64) (*Comment, error) {
 
 	return &topComment, nil
 }
+
+
+func getSentiment(lat float64, lng float64) (float64, error) {
+	var totalSentiment int
+	var commentCount int
+
+	// Get current time in New York
+	nyLocation, _ := time.LoadLocation("America/New_York")
+	currentTimeNY := time.Now().In(nyLocation)
+
+	// Retrieve comments within 2km radius 
+	rows, err := db.Query(`
+		SELECT sentiment
+		FROM comments 
+		WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint($1, $2), 4326), 2000)
+		AND timestamp <= $3`,
+		lat, lng, currentTimeNY)
+	if err != nil {
+		fmt.Println("Error retrieving comments from database:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Loop through the retrieved comments to calculate the average sentiment
+	for rows.Next() {
+		var sentimentScore int
+		if err := rows.Scan(&sentimentScore); err != nil {
+			fmt.Println("Error scanning comment row:", err)
+			continue
+		}
+		
+		totalSentiment += sentimentScore
+		commentCount++
+	}
+
+	// Calculate the average sentiment score
+	var averageSentiment float64
+	if commentCount > 0 {
+		averageSentiment = float64(totalSentiment) / float64(commentCount)
+	} else {
+		averageSentiment = 0 
+	}
+
+	return averageSentiment, nil
+}

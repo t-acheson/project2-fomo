@@ -19,9 +19,9 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
   // Convert sentiment float to description
   const getVibe = (vibeScore) => {
     if (vibeScore >= 0.75) {
-      return "Great Vibes! Get down here!";
+      return "People are loving it here!";
     } else if (vibeScore >= 0.5) {
-      return "Good atmosphere!";
+      return "Good atmosphere";
     } else if (vibeScore >= 0.25) {
       return "Fine, there are better places to be.";
     } else {

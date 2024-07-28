@@ -401,7 +401,7 @@ func (s *Server) insertReply(parentID *int, text string, fingerprint string) (Co
 func checkInteraction(commentid int, fingerprint string) (bool, bool, error) {
   var liked bool
   var disliked bool
-  err := db.Query(`
+  rows, err := db.Query(`
     SELECT EXISTS (
       SELECT 1
       FROM comments_interactions
@@ -419,7 +419,7 @@ func checkInteraction(commentid int, fingerprint string) (bool, bool, error) {
     if err := rows.Scan(&interaction); err != nil {
       fmt.Println("Error scanning interaction:", err)
     }
-    if interaction == "true" {
+    if interaction == true {
       liked = true
     } else {
       disliked = true
@@ -463,14 +463,14 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
       // Remove the users dislike
       err := removeInteraction(id, fingerprint, false)
       if err != nil { return 0,0,0,0,err}
-      _,_,_,_,err := updateComment(id, "dislikes", "-1")
+      _,_,_,_,err = updateComment(id, "dislikes", "-1")
 
       // Add the like to the comment
-      err := addInteraction(id, fingerprint, true)
+      err = addInteraction(id, fingerprint, true)
       if err != nil {return 0,0,0,0,err}
       lat, lng, likes, dislikes, err := updateComment(id, "likes", "+ 1")
       if err != nil {return 0,0,0,0,err}
-      return lat,lng,likes,dislikes
+      return lat,lng,likes,dislikes,nil
     }
 
   // Dislike interaction
@@ -499,14 +499,14 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
       // Remove the users like
       err := removeInteraction(id, fingerprint, true)
       if err != nil { return 0,0,0,0,err}
-      _,_,_,_,err := updateComment(id, "likes", "-1")
+      _,_,_,_,err = updateComment(id, "likes", "-1")
 
       // Add the dislike to the comment
-      err := addInteraction(id, fingerprint, false)
+      err = addInteraction(id, fingerprint, false)
       if err != nil {return 0,0,0,0,err}
       lat, lng, likes, dislikes, err := updateComment(id, "dislikes", "+ 1")
       if err != nil {return 0,0,0,0,err}
-      return lat,lng,likes,dislikes
+      return lat,lng,likes,dislikes,nil
     }
   }
 }

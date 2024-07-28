@@ -73,7 +73,7 @@ func getSentiment(lat float64, lng float64) (float64, error) {
 		lat, lng, currentTimeNY)
 	if err != nil {
 		fmt.Println("Error retrieving comments from database:", err)
-		return -1, err
+		return nil, err
 	}
 	defer rows.Close()
 

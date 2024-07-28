@@ -305,7 +305,7 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
       fmt.Println("Error updating likes:", err)
       return
     }
-    fmt.Println("Broadcasting like_update reply")
+    fmt.Println("Broadcasting like_update reply Type,CommentID,Likes,Dislikes:","like_update",message.CommentID,updatedLikes,updatedDislikes)
     s.broadcast(WebsocketReply{
       Type: "like_update",
       CommentID: message.CommentID,
@@ -320,7 +320,7 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
       fmt.Println("Error updating dislikes:", err)
       return
     }
-    fmt.Println("Broadcasting disliked_update reply")
+    fmt.Println("Broadcasting dislike_update reply Type,CommentID,Likes,Dislikes:","like_update",message.CommentID,updatedLikes,updatedDislikes)
     s.broadcast(WebsocketReply{
       Type: "like_update",
       CommentID: message.CommentID,
@@ -459,11 +459,13 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
         return 0,0,0,0,err
       }
 
-      // User wants to add a like to a comment they have previously disliked
-      // Remove the users dislike
-      err := removeInteraction(id, fingerprint, false)
-      if err != nil { return 0,0,0,0,err}
-      _,_,_,_,err = updateComment(id, "dislikes", "-1")
+      if disliked {
+        // User wants to add a like to a comment they have previously disliked
+        // Remove the users dislike
+        err := removeInteraction(id, fingerprint, false)
+        if err != nil { return 0,0,0,0,err}
+        _,_,_,_,err = updateComment(id, "dislikes", "-1")
+      }
 
       // Add the like to the comment
       err = addInteraction(id, fingerprint, true)
@@ -472,6 +474,8 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
       if err != nil {return 0,0,0,0,err}
       return lat,lng,likes,dislikes,nil
     }
+
+
 
   // Dislike interaction
   } else {
@@ -495,11 +499,13 @@ func (s *Server) interact(id int, column string, increment bool, fingerprint str
         return 0,0,0,0,err
       }
 
-      // User wants to add a dislike to a comment they have previously liked
-      // Remove the users like
-      err := removeInteraction(id, fingerprint, true)
-      if err != nil { return 0,0,0,0,err}
-      _,_,_,_,err = updateComment(id, "likes", "-1")
+      if liked {
+        // User wants to add a dislike to a comment they have previously liked
+        // Remove the users like
+        err := removeInteraction(id, fingerprint, true)
+        if err != nil { return 0,0,0,0,err}
+        _,_,_,_,err = updateComment(id, "likes", "-1")
+      }
 
       // Add the dislike to the comment
       err = addInteraction(id, fingerprint, false)

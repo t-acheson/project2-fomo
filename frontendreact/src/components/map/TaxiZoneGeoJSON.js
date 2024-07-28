@@ -24,8 +24,10 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
       return "Good atmosphere";
     } else if (vibeScore >= 0.25) {
       return "Fine, there are better places to be.";
+    } else if (vibeScore >= 0) {
+      return "Bleak! Don't waste your time here";
     } else {
-      return "Bleak! Don't waste your time.";
+      return "AVOID!";
     }
   };
 

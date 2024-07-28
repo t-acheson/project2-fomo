@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom'; // for additional matchers
+import '@testing-library/jest-dom'; 
 import MapPage from '../pages/MapPage'; 
 
 jest.mock('../components/map/BaseMap', () => ({ children }) => <div>{children}</div>);

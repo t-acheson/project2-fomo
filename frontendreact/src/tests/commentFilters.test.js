@@ -1,7 +1,7 @@
 // src/tests/CommentFilter.test.js
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom'; // for additional matchers
+import '@testing-library/jest-dom'; 
 import CommentFilter from '../components/messageBoard/commentFilters'; 
 
 describe('CommentFilter Component', () => {

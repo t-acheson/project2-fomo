@@ -3,7 +3,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-import Header from '../components/Header';
+import Header from '../components/header';
 
 describe('Header Component', () => {
   // Test if the Header component renders correctly

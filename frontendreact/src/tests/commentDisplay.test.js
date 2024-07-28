@@ -1,7 +1,7 @@
 // src/tests/CommentDisplay.test.js
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom'; // for additional matchers
+import '@testing-library/jest-dom'; 
 import CommentDisplay from '../components/messageBoard/commentDisplay'; 
 import Comment from '../components/messageBoard/comment'; 
 import { nestComments } from '../components/messageBoard/nestedComments'; 

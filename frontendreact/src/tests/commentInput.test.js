@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom'; // for additional matchers
+import '@testing-library/jest-dom'; 
 import CommentInput from '../components/messageBoard/commentInput'; 
 import { LocationContext } from '../App'; 
 import { sendMessage } from '../hooks/webSocket';

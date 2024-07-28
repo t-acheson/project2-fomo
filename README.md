@@ -27,111 +27,96 @@
 - **Deployment**: GitHub Actions for CI/CD
 - **Mapping**: OpenStreetMap, Leaflet
 
-## Setup & Installation
-
-### Prerequisites
-
-- Docker
-- Node.js and npm
-- GoLang
-- Python
-
 ### Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/nyc-fomo.git
 cd nyc-fomo
 ```
-### API Keys and Environment Variables
+## Technologies Used
 
-You will need to set up the necessary API keys and environment variables. Create a `.env` file with the following keys:
+- **Frontend**: React, React-Bootstrap
+- **Backend**: GoLang
+- **Machine Learning**: Python
+- **Database**: PostgreSQL
+- **Containerization**: Docker
+- **Deployment**: GitHub Actions for CI/CD
+- **Mapping**: OpenStreetMap, Leaflet
 
-#### `.env` file:
-
-```makefile
-SSH_HOST=
-SSH_PORT=
-SSH_USER=
-SSH_PASSWORD=
-
-POSTGRES_HOST=
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-POSTGRES_DB=
-POSTGRES_PORT=
-
-TMAPIKey_M= (Ticketmaster API key)
-currentAPIKey= (Current weather from OpenWeather API)
-FoursquareAPIKey=
-
+### Clone the Repository
+```bash
+git clone https://github.com/your-username/nyc-fomo.git
+cd nyc-fomo
 ```
+## Requirements
 
-## Frontend Setup
+- **Operating System:** Linux Ubuntu Server
+- **Software:** Docker
 
-1. **Navigate to the frontend directory:**
+## Setup
 
-    ```bash
-    cd frontend
-    ```
+1. **Configure Environment Variables:**
+   - Navigate to the `config` directory.
+   - Open `createEnvironmentVars.sh` and update the default environment variables to match your server and domain.
 
-2. **Install dependencies:**
+2. **Create Docker Network:**
+   - Run `./createPostgisNetwork.sh` to create the Docker network required for microservices interfacing with PostgreSQL.
 
-    ```bash
-    npm install
-    ```
+3. **Install SSL Certificate:**
+   - Execute `./setupCertbot.sh` to follow a step-by-step guide for obtaining an SSL certificate for your domain. This will also place the certificate in the correct directory.
+   - **Note:** Install `snap` if it's not already installed. For non-Ubuntu distributions, you may need to install Certbot using alternative methods.
 
-3. **Start the frontend server:**
+## Running the Containers
 
-    ```bash
-    npm start
-    ```
+1. **Start PostgreSQL Container:**
+   - Run `./runPostgis.sh` to start the Docker container for PostgreSQL.
+   - Check Docker logs to ensure each container is up and running before proceeding.
 
-## Backend Setup
+2. **Start Python gRPC Server:**
+   - Run `./rungRPCServer.sh`.
+   - Ensure that the necessary pickle file is generated and placed in the correct directory ([Choosing a Model](#choosing-a-model)).
 
-1. **Navigate to the backend directory:**
+3. **Build and Run Docker Compose:**
+   - Run `docker-compose build` to build the static React pages.
+   - Then, execute `docker-compose up -d` to load them into a volume for use by the Go server.
+   - The application is now fully running. To take down the Docker compose, use `docker-compose down`.
 
-    ```bash
-    cd backend
-    ```
+## Rebuilding the Containers
 
-2. **Install Go dependencies and build:**
+- **After Updating React Files:**
+  1. Run `docker-compose down`.
+  2. Remove the volume storing the files in use by the Go server: `docker volume rm project2-fomo_frontend-build`.
+  3. Rebuild and restart the containers: `docker-compose build` and `docker-compose up -d`.
 
-    ```bash
-    go mod tidy
-    go build
-    ```
+## Updating the gRPC Server and Client
 
-3. **Run the backend server:**
+- **After Updating gRPC Server Proto Files:**
+  - Run `./generategRPC.sh` in the `protos` directory to rebuild the necessary logic for use by the Python server and Go client.
 
-    ```bash
-    go run main.go
-    ```
+## Choosing a Model
 
-## Machine Learning Models
+Two models are provided for use in the application:
 
-1. **Navigate to the machine learning directory:**
+1. **Random Forest Model:**
+   - **File Size:** Large
+   - **Prediction Quality:** Moderately good
+   - **Load Time:** Fast on the Go server once deployed
 
-    ```bash
-    cd data
-    ```
+2. **XGBoost Model:**
+   - **File Size:** Smaller
+   - **Prediction Quality:** Very accurate
+   - **Load Time:** Slow to deploy
 
-2. **Install Python dependencies:**
+   **Recommendation:**
+   - Use the Random Forest model for development.
+   - Use the XGBoost model for production.
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+   **Creating Pickle Files:**
+   1. Navigate to the `data` directory.
+   2. Run the necessary scripts to generate pickle files.
+   3. Move the generated pickle files to `python/grpc-server`.
+   4. Update the Dockerfile with the name of the created pickle file.
 
-3. **Run the model training and prediction scripts as needed.**
-
-## Running with Docker
-
-1. **Build and run Docker containers:**
-
-    ```bash
-    docker-compose up --build
-    ```
-
-2. **Access the application at [http://localhost:3000](http://localhost:3000).**
 
 ## Deployment
 

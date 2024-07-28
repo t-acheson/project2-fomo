@@ -27,5 +27,4 @@ node_modules
 # pickle files
 *.pkl
 
-# env
 .env

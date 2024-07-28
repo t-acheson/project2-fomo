@@ -47,8 +47,8 @@ type WebsocketReply struct {
   Type string `json:"type"`
   Comment *Comment `json:"comment,omitempty"`
   CommentID int `json:"commentid,omitempty"`
-  Likes int `json:"likes,omitempty"`
-  Dislikes int `json:"dislikes,omitempty"`
+  Likes *int `json:"likes,omitempty"`
+  Dislikes *int `json:"dislikes,omitempty"`
 }
 
 type History struct {
@@ -309,8 +309,8 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
     s.broadcast(WebsocketReply{
       Type: "like_update",
       CommentID: message.CommentID,
-      Likes: updatedLikes,
-      Dislikes: updatedDislikes,
+      Likes: intPtr(updatedLikes),
+      Dislikes: intPtr(updatedDislikes),
     }, likeLat, likeLng)
 
   case "dislike_update":
@@ -324,8 +324,8 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
     s.broadcast(WebsocketReply{
       Type: "like_update",
       CommentID: message.CommentID,
-      Likes: updatedLikes,
-      Dislikes: updatedDislikes,
+      Likes: intPtr(updatedLikes),
+      Dislikes: intPtr(updatedDislikes),
     }, dislikeLat, dislikeLng)
 
   case "reply_update":
@@ -339,6 +339,10 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
       Comment: &comment,
     }, replyLat, replyLng)
   }
+}
+
+func intPtr(i int) *int {
+  return &i
 }
 
 func (t *Tags) ToSlice() []string {

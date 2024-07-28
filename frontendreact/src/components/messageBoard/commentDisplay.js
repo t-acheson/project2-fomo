@@ -8,12 +8,14 @@ const CommentDisplay = ({ comments }) => {
     // console.log('Comments received in CommentDisplay:', comments);
 
     // Get the current time in New York
-    const currentTimeNY = moment().tz('America/New_York');
+    //const currentTimeNY = moment().tz('America/New_York');
+    const currentTime = moment();
 
     // Filter out comments with a timestamp in the future
     const filteredComments = comments.filter(comment => {
         const commentTime = moment(comment.timestamp);
-        return commentTime.isSameOrBefore(currentTimeNY);
+        return commentTime.isSameOrBefore(currentTime);
+        //return commentTime.isSameOrBefore(currentTimeNY);
     });
 
     const nestedComments = nestComments(filteredComments);

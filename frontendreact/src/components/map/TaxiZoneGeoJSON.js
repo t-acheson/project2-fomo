@@ -32,7 +32,8 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
         console.log(data);
 
         if (data) {
-          const { text, tags, timestamp, likes, dislikes } = data;
+          const { comment, sentiment } = data;
+          const { text, tags, timestamp, likes, dislikes } = comment;
           const formattedTimestamp = new Date(timestamp).toLocaleString(); // Format the timestampß
           const formattedTags = Object.values(tags).join(', '); // 'Theater'
 
@@ -43,6 +44,7 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
               <p style="font-size: smaller;"><strong>Tags:</strong> ${formattedTags}</p>
               <p style="font-size: smaller;"><strong>Likes:</strong> ${likes}, <strong>Dislikes:</strong> ${dislikes}</p>
               <p style="font-size: smaller;">${formattedTimestamp}</p>
+              <p style="font-size: larger;"><strong>Overall Area Vibes:</strong> ${sentiment.toFixed(2)}</p>
             </div>
           `;
 
@@ -59,6 +61,43 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
     } catch (error) {
       console.error('Failed to fetch top comment', error);
       return 'Error fetching comment'; // Error message
+    }
+  };
+
+
+
+  const fetchSentiment = async (lat, lng) => {
+    console.log('Fetching sentiment for lat:', lat, 'lng:', lng);
+    try {
+      const response = await fetch('topsentiment', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ lat: parseFloat(lat), lng: parseFloat(lng) }),
+      });
+      console.log('Response status:', response.status);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        if (data && data.sentiment !== undefined) {
+          const sentiment = data.sentiment;
+          return `
+            <div>
+              <p style="font-size: larger;"><strong>Overall Area Vibes:</strong> ${sentiment.toFixed(2)}</p>
+            </div>
+          `;
+
+        } else {
+          console.log('Sentiment data is missing');
+          return 'Failed to fetch sentiment'; // Fallback content
+        }
+
+      } else {
+        console.log('Failed to fetch sentiment');
+        return 'Failed to fetch sentiment'; // Fallback content
+      }
+    } catch (error) {
+      console.error('Failed to fetch sentiment', error);
+      return 'Error fetching sentiment'; // Error message
     }
   };
 
@@ -88,7 +127,13 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
             const { lat, lng } = e.latlng;
             console.log('Clicked lat:', lat, 'lng:', lng);
             const content = await fetchTopComment(lat, lng); // Await fetching top comment
-            layer.bindPopup(content).openPopup(); // Bind and open the popup with fetched content
+            const sentimentContent = await fetchSentiment(lat, lng);
+            
+            // Combine the results
+            const combinedContent = `${content} ${sentimentContent}`;
+
+            e.target.bindPopup(combinedContent).openPopup();
+            //layer.bindPopup(content).openPopup(); // Bind and open the popup with fetched content
           }
         });
       }}

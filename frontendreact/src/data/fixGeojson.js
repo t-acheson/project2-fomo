@@ -37,4 +37,4 @@ geojsonData.features.forEach((feature) => {
 const outputFilePath = './FOMOTaxiMap.geojson';
 fs.writeFileSync(outputFilePath, JSON.stringify(geojsonData, null, 2));
 
-// console.log('GeoJSON winding order checked and corrected!');
+console.log('GeoJSON winding order checked and corrected!');

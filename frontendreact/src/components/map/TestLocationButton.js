@@ -9,9 +9,9 @@ function TestLocationButton() {
   //use the `useContext` hook to access the location state from the `LocationContext` context
   const location = useContext(LocationContext);
 
-  // const handleClick = () => {
-  //   console.log('Current location:', location);
-  // };
+  const handleClick = () => {
+    console.log('Current location:', location);
+  };
 
   return (
     <button onClick={handleClick}>Test Location</button>

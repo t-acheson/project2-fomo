@@ -16,7 +16,7 @@ const TaxiZonePopup = ({ info, onClose }) => {
       }
 
       const data = await response.json();
-      // console.log('Server response:', data);
+      console.log('Server response:', data);
     } catch (error) {
       console.error('Fetch error:', error);
     }

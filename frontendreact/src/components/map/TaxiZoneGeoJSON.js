@@ -16,6 +16,19 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
     fetchAndPrepareData();
   }, [features]);
 
+  // Convert sentiment float to description
+  const getVibe = (vibeScore) => {
+    if (vibeScore >= 0.75) {
+      return "Great Vibes! Get down here!";
+    } else if (vibeScore >= 0.5) {
+      return "Good atmosphere!";
+    } else if (vibeScore >= 0.25) {
+      return "Fine, there are better places to be.";
+    } else {
+      return "Bleak! Don't waste your time.";
+    }
+  };
+
   const fetchTopComment = async (lat, lng) => {
     console.log('Fetching top comment for lat:', lat, 'lng:', lng);
     try {
@@ -37,6 +50,7 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
           const formattedTimestamp = new Date(timestamp).toLocaleString(); // Format the timestampß
           const formattedTags = Object.values(tags).join(', '); // 'Theater'
 
+          const vibeDescription = getVibe(sentiment);
 
           const content = `
             <div>
@@ -44,7 +58,7 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
               <p style="font-size: smaller;"><strong>Tags:</strong> ${formattedTags}</p>
               <p style="font-size: smaller;"><strong>Likes:</strong> ${likes}, <strong>Dislikes:</strong> ${dislikes}</p>
               <p style="font-size: smaller;">${formattedTimestamp}</p>
-              <p style="font-size: larger;"><strong>Overall Area Vibes:</strong> ${sentiment.toFixed(2)}</p>
+              <p style="font-size: smaller;"><strong>Overall Area Vibes:</strong> ${vibeDescription}</p>
             </div>
           `;
 

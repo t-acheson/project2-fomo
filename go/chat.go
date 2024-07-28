@@ -406,11 +406,10 @@ func checkInteraction(commentid int, fingerprint string) (bool, bool, error) {
   var liked bool
   var disliked bool
   rows, err := db.Query(`
-    SELECT EXISTS (
-      SELECT 1
-      FROM comments_interactions
-      WHERE fingerprint = $1
-        AND comment_id = $2
+    SELECT "like"
+    FROM comments_interactions
+    WHERE fingerprint = $1
+    AND comment_id = $2
     );`,fingerprint, commentid)
   if err != nil {
     fmt.Println("Error retrieving interactions with comment")

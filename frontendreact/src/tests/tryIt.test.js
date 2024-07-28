@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import TryIt from '../components/landing/tryIt'; 
 
 
-jest.mock('../assets/Map.png', () => 'mapImg.jpg');
+jest.mock('../assets/newMap.png', () => 'newMap.png');
 
 describe('TryIt Component', () => {
   test('renders the TryIt component', () => {
@@ -21,7 +21,7 @@ describe('TryIt Component', () => {
   test('displays the image with correct src attribute', () => {
     render(<TryIt />);
     const image = screen.getByRole('img');
-    expect(image).toHaveAttribute('src', 'mapImg.jpg'); // Adjust according to your mock setup
+    expect(image).toHaveAttribute('src', 'newMap.png'); 
   });
 
   test('image link has correct href attribute', () => {
@@ -30,3 +30,4 @@ describe('TryIt Component', () => {
     expect(link).toHaveAttribute('href', '/map');
   });
 });
+

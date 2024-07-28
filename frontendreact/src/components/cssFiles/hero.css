@@ -109,6 +109,46 @@
 }
 
 
+@media only screen and (max-width: 500px) {
+  .heroBlock .carousel-caption {
+      left: 4%;
+      right: 4%;
+
+      bottom: 50%; /* trying to ensure buttons stay visible*/
+  }
+
+  .heroBlock .carousel-control {
+      width: 15%;
+  }
+
+
+  .heroBlock p {
+    margin: 0 0 25px;
+  
+    /* added by Muireann - can remove if you don't like*/
+    color: #c7d7eb;
+    background-color: rgba(5, 5, 5, 0.5);
+    /* font-weight: bold; */
+    font-size: smaller;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    border-bottom-left-radius: 15px; /* Wanted round corners */
+    border-bottom-right-radius: 15px;
+  }
+  
+  .heroBlock h3 {
+    margin: 0 0 0;
+    /* color: #c7d7eb; */
+    color: #ff7b00;
+    background-color: rgba(5, 5, 5, 0.5);
+    font-weight: bold;
+    font-size: 150%;
+    font-family:'Courier New', Courier, monospace;
+    border-top-left-radius: 15px; /* Wanted round corners */
+    border-top-right-radius: 15px;
+  }
+}
+
+
 .carousel-caption .btn {
   margin-bottom: 20px; 
 } 

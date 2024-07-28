@@ -64,43 +64,6 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
     }
   };
 
-
-
-  const fetchSentiment = async (lat, lng) => {
-    console.log('Fetching sentiment for lat:', lat, 'lng:', lng);
-    try {
-      const response = await fetch('topsentiment', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ lat: parseFloat(lat), lng: parseFloat(lng) }),
-      });
-      console.log('Response status:', response.status);
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        if (data && data.sentiment !== undefined) {
-          const sentiment = data.sentiment;
-          return `
-            <div>
-              <p style="font-size: larger;"><strong>Overall Area Vibes:</strong> ${sentiment.toFixed(2)}</p>
-            </div>
-          `;
-
-        } else {
-          console.log('Sentiment data is missing');
-          return 'Failed to fetch sentiment'; // Fallback content
-        }
-
-      } else {
-        console.log('Failed to fetch sentiment');
-        return 'Failed to fetch sentiment'; // Fallback content
-      }
-    } catch (error) {
-      console.error('Failed to fetch sentiment', error);
-      return 'Error fetching sentiment'; // Error message
-    }
-  };
-
   return preparedFeatures.map((taxizone, index) => (
     <GeoJSON
       key={index}
@@ -127,13 +90,7 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
             const { lat, lng } = e.latlng;
             console.log('Clicked lat:', lat, 'lng:', lng);
             const content = await fetchTopComment(lat, lng); // Await fetching top comment
-            const sentimentContent = await fetchSentiment(lat, lng);
-            
-            // Combine the results
-            const combinedContent = `${content} ${sentimentContent}`;
-
-            e.target.bindPopup(combinedContent).openPopup();
-            //layer.bindPopup(content).openPopup(); // Bind and open the popup with fetched content
+            layer.bindPopup(content).openPopup(); // Bind and open the popup with fetched content
           }
         });
       }}

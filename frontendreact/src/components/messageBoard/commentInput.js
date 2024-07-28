@@ -14,6 +14,7 @@ const CommentInput = () => {
     const [selectedTags, setSelectedTags] = useState([]);
     const [alertMessage, setAlertMessage] = useState('');
     const [alertVariant, setAlertVariant] = useState('');
+    const [tagKey, setTagKey] = useState(Date.now());
 
     const tags = [
         { value: 'Non-alcoholic', label: 'Non-alcoholic' },
@@ -74,6 +75,7 @@ const CommentInput = () => {
         setSelectedTags([]);
         setAlertMessage('Comment added successfully!');
         setAlertVariant('success');
+        setTagKey(Date.now());
     };
 
     return (
@@ -100,9 +102,11 @@ const CommentInput = () => {
                     Select tags (max 3)
                 </label>
                 <Select
+                    key={tagKey}
                     inputId="tagSelect" 
                     isMulti
                     options={tags}
+                    value={selectedTags}
                     onChange={handleTagChange}
                     placeholder="Must select tags (max 3)"
                     className="tag-select" 

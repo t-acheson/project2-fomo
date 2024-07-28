@@ -77,17 +77,9 @@ const FeedPage = () => {
         } else if (type === 'like_update') {
           setComments((prevComments) => {
             const updatedComments = prevComments.map((c) =>
-              c.id === commentid ? { ...c, likes: message.likes } : c
+              c.id === commentid ? { ...c, likes: message.likes, dislikes: message.dislikes } : c
             );
             // console.log('Updated comments state (like_update):', updatedComments);
-            return updatedComments;
-          });
-        } else if (type === 'dislike_update') {
-          setComments((prevComments) => {
-            const updatedComments = prevComments.map((c) =>
-              c.id === commentid ? { ...c, dislikes: message.dislikes } : c
-            );
-            // console.log('Updated comments state (dislike_update):', updatedComments);
             return updatedComments;
           });
         } else {
@@ -109,9 +101,9 @@ const FeedPage = () => {
     initializeAndListen();
   }, []);
 
-  // useEffect(() => {
-  //   // console.log('Comments state in FeedPage:', comments);
-  // }, [comments]);
+  useEffect(() => {
+    // console.log('Comments state in FeedPage:', comments);
+  }, [comments]);
 
   return (
     <Container>

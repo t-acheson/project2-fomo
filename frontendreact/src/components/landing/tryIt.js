@@ -12,7 +12,7 @@ import '../cssFiles/aboutUs.css'
 //Creates a componet that displays a heading with an image and content blow that splits the page 50:50.
 function tryIt(){
     return (
-        <section id="about" className='aboutUsBlock'>
+        <section id="about" className='aboutUsBlock' data-testid="about-us">
         <Container fluid>
             <div className='titleHolder'>
                 <h2>Try Our Map</h2>

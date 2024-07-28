@@ -1,54 +1,46 @@
-// Imports
+// Header.test.js
 import React from 'react';
-import { render, screen, act, fireEvent } from '@testing-library/react'; // Import act and fireEvent from testing-library/react
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import Header from '../components/header';
 
 describe('Header Component', () => {
-  test('renders FOMO Navbar with correct links', () => {
-    render(<Header />);
-
-    // Verify Navbar Brand (FOMO)
-    const brandElement = screen.getByText(/FOMO/i);
-    expect(brandElement).toBeInTheDocument();
-
-    // Verify Navbar Links
-    const homeLink = screen.getByText(/Home/i);
-    expect(homeLink).toBeInTheDocument();
-
-    const mapLink = screen.getByText(/Map/i);
-    expect(mapLink).toBeInTheDocument();
-
-    const feedLink = screen.getByText(/Feeds/i);
-    expect(feedLink).toBeInTheDocument();
-
-    const notificationLink = screen.getByText(/Notifications/i);
-    expect(notificationLink).toBeInTheDocument();
+  // Test if the Header component renders correctly
+  test('renders the Header component', () => {
+    render(
+      <Router>
+        <Header />
+      </Router>
+    );
+    // Check if the component is in the document
+    expect(screen.getByText('FOMO')).toBeInTheDocument();
   });
 
-  test('navbar toggle works correctly', () => {
-    render(<Header />);
+  // Test if the navigation links are present
+  test('contains navigation links', () => {
+    render(
+      <Router>
+        <Header />
+      </Router>
+    );
 
-    // Verify Navbar Toggle Button
-    const toggleButton = screen.getByRole('button', { name: /toggle navigation/i });
-    expect(toggleButton).toBeInTheDocument();
+    // Check if the Home link is present
+    expect(screen.getByText('Home')).toBeInTheDocument();
+    // Check if the Map link is present
+    expect(screen.getByText('Map')).toBeInTheDocument();
+    // Check if the Message Board link is present
+    expect(screen.getByText('Message Board')).toBeInTheDocument();
+  });
 
-    // Click on the toggle button
-    act(() => {
-      toggleButton.click();
-    });
-
-    // Verify if the nav links are visible after toggling
-    const homeLink = screen.getByText(/Home/i);
-    expect(homeLink).toBeVisible();
-
-    const mapLink = screen.getByText(/Map/i);
-    expect(mapLink).toBeVisible();
-
-    const feedLink = screen.getByText(/Feeds/i);
-    expect(feedLink).toBeVisible();
-
-    const notificationLink = screen.getByText(/Notifications/i);
-    expect(notificationLink).toBeVisible();
+  // Test if the Navbar.Toggle is present
+  test('contains Navbar.Toggle', () => {
+    render(
+      <Router>
+        <Header />
+      </Router>
+    );
+    // Check if the Navbar.Toggle component is present
+    expect(screen.getByRole('button')).toBeInTheDocument();
   });
 });

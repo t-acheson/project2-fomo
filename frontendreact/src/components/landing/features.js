@@ -7,7 +7,7 @@ import '../cssFiles/features.css';
 
 function Features() {
   return (
-    <section id="features" className="featuresBlock">
+    <section id="features" className="featuresBlock" data-testid="features-section">
       <Container fluid>
         <div className="titleHolder">
           <h1>Say Goodbye to FOMO!</h1>

@@ -2,12 +2,11 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import HomePage from '../pages/HomePage';
-import HomeHero from '../components/homeHero';
-import About from '../components/aboutUs';
 
-// Mock the HomeHero and About components if necessary
-jest.mock('../components/homeHero', () => () => <div data-testid="home-hero">Welcome to the Home Page</div>);
-jest.mock('../components/aboutUs', () => () => <div data-testid="about-us">This is the about section</div>);
+// Mock the HomeHero, Features, and Try components
+jest.mock('../components/landing/homeHero', () => () => <div data-testid="home-hero">Welcome to the Home Page</div>);
+jest.mock('../components/landing/features', () => () => <div data-testid="features">These are the features</div>);
+jest.mock('../components/landing/tryIt', () => () => <div data-testid="try-it">Try it out now</div>);
 
 describe('HomePage', () => {
   beforeEach(() => {
@@ -25,9 +24,15 @@ describe('HomePage', () => {
     expect(homeHeroElement).toHaveTextContent(/Welcome to the Home Page/i);
   });
 
-  it('renders the About component', () => {
-    const aboutElement = screen.getByTestId('about-us');
-    expect(aboutElement).toBeInTheDocument();
-    expect(aboutElement).toHaveTextContent(/This is the about section/i);
+  it('renders the Features component', () => {
+    const featuresElement = screen.getByTestId('features');
+    expect(featuresElement).toBeInTheDocument();
+    expect(featuresElement).toHaveTextContent(/These are the features/i);
+  });
+
+  it('renders the Try component', () => {
+    const tryElement = screen.getByTestId('try-it');
+    expect(tryElement).toBeInTheDocument();
+    expect(tryElement).toHaveTextContent(/Try it out now/i);
   });
 });

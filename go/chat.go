@@ -409,8 +409,7 @@ func checkInteraction(commentid int, fingerprint string) (bool, bool, error) {
     SELECT "like"
     FROM comments_interactions
     WHERE fingerprint = $1
-    AND comment_id = $2
-    );`,fingerprint, commentid)
+    AND comment_id = $2;`,fingerprint, commentid)
   if err != nil {
     fmt.Println("Error retrieving interactions with comment")
     return false, false, err

@@ -29,3 +29,6 @@ node_modules
 
 # env
 .env
+
+# Ignore the GeoJSON
+/frontendreact/src/data/FOMOTaxiMap.js

@@ -1,4 +1,3 @@
-// src/tests/LegendControl.test.js
 import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -7,13 +6,11 @@ import L from 'leaflet';
 import LegendControl from '../components/map/BusynessLegend';
 import { getHeatmapColor, getBusynessDescription } from '../components/map/heatmap';
 
-// Mock react-leaflet's useMap hook
 jest.mock('react-leaflet', () => ({
   ...jest.requireActual('react-leaflet'),
   useMap: jest.fn(),
 }));
 
-// Mock heatmap functions
 jest.mock('../components/map/heatmap', () => ({
   getHeatmapColor: jest.fn(),
   getBusynessDescription: jest.fn(),
@@ -26,11 +23,13 @@ describe('LegendControl Component', () => {
     mockMap = {
       removeControl: jest.fn(),
       _controlCorners: {
-        bottomright: document.createElement('div'),
+        bottomleft: document.createElement('div'),
       },
+      addControl: jest.fn(),
       on: jest.fn(),
       off: jest.fn(),
     };
+
     useMap.mockReturnValue(mockMap);
     getHeatmapColor.mockImplementation((grade) => `color${grade}`);
     getBusynessDescription.mockImplementation((grade) => `description${grade}`);
@@ -43,9 +42,9 @@ describe('LegendControl Component', () => {
   test('renders LegendControl component and adds legend to map', () => {
     render(<LegendControl />);
 
-    expect(mockMap._controlCorners.bottomright.innerHTML).toContain('Busyness Scale');
-    expect(mockMap._controlCorners.bottomright.innerHTML).toContain('color0.8');
-    expect(mockMap._controlCorners.bottomright.innerHTML).toContain('description0.8');
+    expect(mockMap._controlCorners.bottomleft.innerHTML).toContain('Busyness Scale');
+    expect(mockMap._controlCorners.bottomleft.innerHTML).toContain('color0.8');
+    expect(mockMap._controlCorners.bottomleft.innerHTML).toContain('description0.8');
   });
 
   test('removes legend from map on unmount', () => {
@@ -56,5 +55,3 @@ describe('LegendControl Component', () => {
     expect(mockMap.removeControl).toHaveBeenCalled();
   });
 });
-
-

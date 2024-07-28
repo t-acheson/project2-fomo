@@ -20,7 +20,8 @@ export const getHeatmapColor = (busyness) => {
   
   const prepareHeatmapData = async (features) => {
     const busynessData = await fetchBusyness();
-    console.log('111111111111111111',busynessData);
+    // Debugging log
+    // console.log('111111111111111111',busynessData);
     if (!busynessData) return features; // Return original features if fetching fails
     
     // Create a map of busyness data for easy lookup by location_id

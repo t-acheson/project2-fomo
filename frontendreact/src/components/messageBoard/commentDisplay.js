@@ -5,7 +5,7 @@ import { nestComments } from './nestedComments';
 import moment from 'moment-timezone';
 
 const CommentDisplay = ({ comments }) => {
-    console.log('Comments received in CommentDisplay:', comments);
+    // console.log('Comments received in CommentDisplay:', comments);
 
     // Get the current time in New York
     const currentTimeNY = moment().tz('America/New_York');
@@ -17,7 +17,7 @@ const CommentDisplay = ({ comments }) => {
     });
 
     const nestedComments = nestComments(filteredComments);
-    console.log('Nested comments to be displayed:', nestedComments);
+    // console.log('Nested comments to be displayed:', nestedComments);
 
     const noCommentsStyle = {
         color: 'white', 

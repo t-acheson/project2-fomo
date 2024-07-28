@@ -183,6 +183,25 @@ websocketHandler := func(ws *websocket.Conn) {
 		}
 	}))
 
+	http.HandleFunc("/topsentiment", CORSMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		var params struct {
+			Lat float64 `json:"lat"`
+			Lng float64 `json:"lng"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
+			http.Error(w, "Bad Request", http.StatusBadRequest)
+			return
+		}
+
+		averageSentiment, err := getTopSentimentFunc(params.Lat, params.Lng)
+		if err != nil {
+			http.Error(w, "Error calculating average sentiment", http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(map[string]float64{"averageSentiment": averageSentiment})
+	}))
+
 
 
 	//Start TLS listener on port 443

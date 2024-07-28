@@ -32,7 +32,8 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
   };
 
   const fetchTopComment = async (lat, lng) => {
-    console.log('Fetching top comment for lat:', lat, 'lng:', lng);
+    // Debugging log
+    // console.log('Fetching top comment for lat:', lat, 'lng:', lng);
     try {
       const response = await fetch('topcomment', {
         method: 'POST',
@@ -41,10 +42,12 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
         },
         body: JSON.stringify({ lat: parseFloat(lat), lng: parseFloat(lng) }),
       });
-      console.log('Response status:', response.status);
+      // Debugging log
+      // console.log('Response status:', response.status);
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        // Debugging log
+        // console.log(data);
 
         if (data) {
           const { comment, sentiment } = data;
@@ -72,16 +75,55 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
           setPopupContent(content); // Update the state
           return content; // Return the formatted content
         } else {
-          console.log('No comments found in this area');
+          // Debugging log
+          // console.log('No comments found in this area');
           return 'No comments found in this area'; // Return the no comment message
         }
       } else {
-        console.log('Failed to fetch top comment');
+        // Debugging log
+        // console.log('Failed to fetch top comment');
         return 'No comments found in this area'; // Fallback content
       }
     } catch (error) {
       console.error('Failed to fetch top comment', error);
       return 'Error fetching comment'; // Error message
+    }
+  };
+
+
+
+  const fetchSentiment = async (lat, lng) => {
+    // console.log('Fetching sentiment for lat:', lat, 'lng:', lng);
+    try {
+      const response = await fetch('topsentiment', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ lat: parseFloat(lat), lng: parseFloat(lng) }),
+      });
+      // console.log('Response status:', response.status);
+      if (response.ok) {
+        const data = await response.json();
+        // console.log(data);
+        if (data && data.sentiment !== undefined) {
+          const sentiment = data.sentiment;
+          return `
+            <div>
+              <p style="font-size: larger;"><strong>Overall Area Vibes:</strong> ${sentiment.toFixed(2)}</p>
+            </div>
+          `;
+
+        } else {
+          // console.log('Sentiment data is missing');
+          return 'Failed to fetch sentiment'; // Fallback content
+        }
+
+      } else {
+        // console.log('Failed to fetch sentiment');
+        return 'Failed to fetch sentiment'; // Fallback content
+      }
+    } catch (error) {
+      console.error('Failed to fetch sentiment', error);
+      return 'Error fetching sentiment'; // Error message
     }
   };
 
@@ -107,11 +149,17 @@ const TaxiZoneGeoJSON = ({ features, onFeatureHover }) => {
             }
           },
           click: async (e) => {
-            console.log(e);
+            // console.log(e);
             const { lat, lng } = e.latlng;
-            console.log('Clicked lat:', lat, 'lng:', lng);
+            // console.log('Clicked lat:', lat, 'lng:', lng);
             const content = await fetchTopComment(lat, lng); // Await fetching top comment
-            layer.bindPopup(content).openPopup(); // Bind and open the popup with fetched content
+            const sentimentContent = await fetchSentiment(lat, lng);
+            
+            // Combine the results
+            const combinedContent = `${content} ${sentimentContent}`;
+
+            e.target.bindPopup(combinedContent).openPopup();
+            //layer.bindPopup(content).openPopup(); // Bind and open the popup with fetched content
           }
         });
       }}

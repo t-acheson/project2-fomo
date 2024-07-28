@@ -156,50 +156,11 @@ websocketHandler := func(ws *websocket.Conn) {
 			return
 		}
 
-
-		// Get the average sentiment
-		averageSentiment, err := getSentiment(params.Lat, params.Lng)
-		if err != nil {
-			http.Error(w, "Error getting Sentiment", http.StatusInternalServerError)
-			return
-		}
-
-		// Prepare response
-		response := struct {
-			Comment   *Comment  `json:"comment"`
-			Sentiment float64   `json:"sentiment"`
-		}{
-			Comment:   topComment,
-			Sentiment: averageSentiment,
-		}
-
-
-
-
 		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(response); err != nil {
+		if err := json.NewEncoder(w).Encode(topComment); err != nil {
 			http.Error(w, "Error encoding top comment response", http.StatusInternalServerError)
 			return
 		}
-	}))
-
-	http.HandleFunc("/topsentiment", CORSMiddleware(func(w http.ResponseWriter, r *http.Request) {
-		var params struct {
-			Lat float64 `json:"lat"`
-			Lng float64 `json:"lng"`
-		}
-		if err := json.NewDecoder(r.Body).Decode(&params); err != nil {
-			http.Error(w, "Bad Request", http.StatusBadRequest)
-			return
-		}
-
-		averageSentiment, err := getTopSentimentFunc(params.Lat, params.Lng)
-		if err != nil {
-			http.Error(w, "Error calculating average sentiment", http.StatusInternalServerError)
-			return
-		}
-
-		json.NewEncoder(w).Encode(map[string]float64{"averageSentiment": averageSentiment})
 	}))
 
 

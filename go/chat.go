@@ -8,16 +8,11 @@ import (
   "time"
   "encoding/json"
   "github.com/lib/pq"
-
-  "os/exec"
-  "strconv"
-  "strings"
 )
 
 type Server struct {
   conns map[string]*websocket.Conn // Map of FingerprintJS fingerprint hash to websocket connection
   //mu sync.Mutex
-  //db *sql.DB
 }
 
 type Comment struct {
@@ -28,7 +23,6 @@ type Comment struct {
   Dislikes int `json:"dislikes"`
   Timestamp time.Time `json:"timestamp"`
   Tags Tags `json:"tags,omitempty"` //If the comment is a reply it doesnt need tags
-  Sentiment int `json:"sentiment,omitempty"` //For sentiment analysis
 }
 
 type Tags struct {
@@ -170,34 +164,6 @@ func (s *Server) removeConnection(fingerprint string) error {
   return nil
 }
 
-
-
-// Call Python script to get sentiment
-func getSentiment(text string) (int, error) {
-  cmd := exec.Command("python3", "GoSentiment.py", text)
-  output, err := cmd.CombinedOutput()
-  if err != nil {
-    fmt.Println("Error executing Python script:", err)
-    return 0, err
-  }
-
-  fmt.Printf("Raw Sentiment Output: %s\n", output)
-  // Directly parse the output
-  sentiment, err := strconv.Atoi(strings.TrimSpace(string(output)))
-  if err != nil {
-    fmt.Errorf("error parsing output as integer: %s, output: %s", err, string(output))
-    return 0, err
-  }
-
-
-  fmt.Println("Sentiment score:", sentiment) // Log sentiment score
-  return sentiment, nil
-}
-
-
-
-
-
 // Select applicable historical comments and iteratively send them to the new client
 func (s *Server) retrieve(ws *websocket.Conn, lat float64, lng float64) {
   rows, err := db.Query(`
@@ -322,14 +288,7 @@ func (s *Server) readLoop(ws *websocket.Conn, fingerprint string) {
 func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
   switch message.Type {
   case "new_comment":
-    // Sentiment
-    sentiment, err := getSentiment(message.Text)
-    if err != nil {
-      fmt.Println("Error getting sentiment:", err)
-      return
-    }
-
-    comment, err := s.insertComment(message.ParentID, message.Text, message.Latitude, message.Longitude, message.Tags, fingerprint, sentiment)
+    comment, err := s.insertComment(message.ParentID, message.Text, message.Latitude, message.Longitude, message.Tags, fingerprint)
     if err != nil {
       fmt.Println("Error writing comment to db:", err)
       return
@@ -364,13 +323,7 @@ func (s *Server) handleMessage(message WebsocketMessage, fingerprint string) {
     }, dislikeLat, dislikeLng)
 
   case "reply_update":
-    sentiment, err := getSentiment(message.Text)
-    if err != nil {
-      fmt.Println("Error getting sentiment:", err)
-      sentiment = 0 // default to neutral if sentiment analysis fails
-    }
-
-    comment, replyLat, replyLng, err := s.insertReply(message.ParentID, message.Text, fingerprint, sentiment)
+    comment, replyLat, replyLng, err := s.insertReply(message.ParentID, message.Text, fingerprint)
     if err != nil {
       fmt.Println("Error writing reply to db:", err)
       return
@@ -393,15 +346,15 @@ func (t *Tags) ToSlice() []string {
     return tags
 }
 
-func (s *Server) insertComment(parentID *int, text string, lat float64, lng float64, tags Tags, fingerprint string, sentiment int) (Comment, error) {
+func (s *Server) insertComment(parentID *int, text string, lat float64, lng float64, tags Tags, fingerprint string) (Comment, error) {
     var id int
     var timestamp time.Time
 
     err := db.QueryRow(`
-      INSERT INTO comments (parent_id, text, location, timestamp, tags, author, sentiment) VALUES
-      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5, $6, $7, $8)
+      INSERT INTO comments (parent_id, text, location, timestamp, tags, author) VALUES
+      ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5, $6, $7)
       RETURNING id, timestamp;`,
-      parentID, text, lat, lng, time.Now().In(nyc), pq.Array(tags.ToSlice()), fingerprint, sentiment).Scan(&id, &timestamp)
+      parentID, text, lat, lng, time.Now().In(nyc), pq.Array(tags.ToSlice()), fingerprint).Scan(&id, &timestamp)
       if err != nil {
       fmt.Println("Error writing to table comments:", err)
       return Comment{}, err
@@ -415,18 +368,17 @@ func (s *Server) insertComment(parentID *int, text string, lat float64, lng floa
       Dislikes: 0,
       Timestamp: timestamp,
       Tags: tags,
-      Sentiment: sentiment,
     }, nil
 }
 
-func (s *Server) insertReply(parentID *int, text string, fingerprint string, sentiment int) (Comment, float64, float64, error) {
+func (s *Server) insertReply(parentID *int, text string, fingerprint string) (Comment, float64, float64, error) {
   var id int
   var timestamp time.Time
   var lat, lng float64
 
   err := db.QueryRow(`
-    INSERT INTO comments (parent_id, text, location, timestamp, author, sentiment) VALUES
-    ($1, $2, (SELECT location FROM comments WHERE id = $1), $3, $4, $5)
+    INSERT INTO comments (parent_id, text, location, timestamp, author) VALUES
+    ($1, $2, (SELECT location FROM comments WHERE id = $1), $3, $4)
     RETURNING id, timestamp, ST_X(location::geometry), ST_Y(location::geometry);`,
     parentID, text, time.Now().In(nyc), fingerprint).Scan(&id, &timestamp, &lat, &lng)
   if err != nil {

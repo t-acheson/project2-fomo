@@ -27,15 +27,12 @@ const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts, liked: init
     const handleLike = () => {
         if (!liked) {
             setLiked(true);
-            setLikesCount(likesCount + 1);
             if (disliked) {
                 setDisliked(false);
-                setDislikeCount(dislikeCount - 1);
             }
             sendMessage({ type: 'like_update', commentid: commentId, like: true });
         } else {
             setLiked(false);
-            setLikesCount(likesCount - 1);
             sendMessage({ type: 'like_update', commentid: commentId, like: false });
         }
     };
@@ -43,15 +40,12 @@ const LikeDislikeButton = ({ commentId, likesCounts, dislikesCounts, liked: init
     const handleDislike = () => {
         if (!disliked) {
             setDisliked(true);
-            setDislikeCount(dislikeCount + 1);
             if (liked) {
                 setLiked(false);
-                setLikesCount(likesCount - 1);
             }
             sendMessage({ type: 'dislike_update', commentid: commentId, dislike: true });
         } else {
             setDisliked(false);
-            setDislikeCount(dislikeCount - 1);
             sendMessage({ type: 'dislike_update', commentid: commentId, dislike: false });
         }
     };

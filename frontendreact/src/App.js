@@ -6,7 +6,6 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import MapPage from './pages/MapPage';
 import HomePage from './pages/HomePage';
 import FeedPage from './pages/FeedPage';
-import NotificationPage from './pages/NotificationPage';
 import Header from './components/header';
 import Footer from './components/footer';
 import './App.css'

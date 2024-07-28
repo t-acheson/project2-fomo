@@ -14,7 +14,7 @@ func getOverallSentiment(lat float64, lng float64) (float64, error) {
     nyLocation, err := time.LoadLocation("America/New_York")
     if err != nil {
         fmt.Println("Error loading New York timezone:", err)
-        return 0, err
+        return
     }
     currentTimeNY := time.Now().In(nyLocation)
 
@@ -26,7 +26,7 @@ func getOverallSentiment(lat float64, lng float64) (float64, error) {
 		`, lat, lng, currentTimeNY)
 	if err != nil {
 		fmt.Println("Error retrieving comments:", err)
-		return 0, err
+		return
 	}
 	defer rows.Close()
 
@@ -37,7 +37,7 @@ func getOverallSentiment(lat float64, lng float64) (float64, error) {
 		var sentiment int
 		if err := rows.Scan(&sentiment); err != nil {
 			fmt.Println("Error scanning sentiment:", err)
-			return 0, err
+			return
 		}
 		totalSentiment += sentiment
 		count++
@@ -45,11 +45,11 @@ func getOverallSentiment(lat float64, lng float64) (float64, error) {
 
 	if err := rows.Err(); err != nil {
 		fmt.Println("Error with rows:", err)
-		return 0, err
+		return
 	}
 
 	if count == 0 {
-		return 0, nil // No comments in range
+		return nil // No comments in range
 	}
 
 	averageSentiment := float64(totalSentiment) / float64(count)

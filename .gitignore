@@ -28,3 +28,6 @@ node_modules
 *.pkl
 
 .env
+
+# Ignore the GeoJSON
+/frontendreact/src/data/FOMOTaxiMap.js
